@@ -1,0 +1,2005 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SCWIS Care360</title>
+  <style>
+    :root {
+      --ink: #1b2a41;
+      --muted: #68798d;
+      --line: #deebf6;
+      --soft-blue: #eaf5ff;
+      --blue: #3f6fe5;
+      --sky: #58a9e8;
+      --green: #3a9f6a;
+      --mint: #eaf8f0;
+      --purple: #7b61df;
+      --lavender: #f3efff;
+      --amber: #d78b22;
+      --cream: #fff8e8;
+      --rose: #d94f5f;
+      --rose-soft: #fff0f2;
+      --teal: #238c8f;
+      --panel: #ffffff;
+      --shadow: 0 16px 34px rgba(28, 57, 95, 0.08);
+      --radius: 12px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: Inter, "Segoe UI", Arial, "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+      color: var(--ink);
+      background: #fff;
+      letter-spacing: 0;
+    }
+    button, input, select { font: inherit; }
+    button { cursor: pointer; }
+    body.locked .app-shell { display: none; }
+    body.locked .login-screen { display: grid; }
+
+    .login-screen {
+      min-height: 100vh;
+      display: none;
+      grid-template-columns: minmax(420px, 0.95fr) minmax(420px, 1.05fr);
+      background:
+        radial-gradient(circle at 8% 12%, rgba(88,169,232,0.24), transparent 28%),
+        radial-gradient(circle at 92% 80%, rgba(58,159,106,0.23), transparent 30%),
+        linear-gradient(135deg, #16355b 0%, #1e5f82 54%, #eff8ff 54.2%, #ffffff 100%);
+      padding: 42px;
+      gap: 34px;
+      align-items: center;
+    }
+    .login-card, .login-demo {
+      background: rgba(255,255,255,0.94);
+      border: 1px solid rgba(255,255,255,0.75);
+      border-radius: 22px;
+      box-shadow: 0 28px 70px rgba(12, 39, 70, 0.22);
+    }
+    .login-card { padding: 34px; max-width: 500px; justify-self: end; width: 100%; }
+    .login-demo { padding: 24px; width: 100%; max-width: 630px; }
+    .brand-row { display: flex; align-items: center; gap: 14px; margin-bottom: 22px; }
+    .brand-mark {
+      width: 58px; height: 58px; border-radius: 18px;
+      background: linear-gradient(135deg, var(--blue), var(--green));
+      color: white; display: grid; place-items: center; font-weight: 900; font-size: 20px;
+      box-shadow: 0 14px 26px rgba(63,111,229,0.25);
+    }
+    h1, h2, h3, h4, p { margin: 0; }
+    h1 { font-size: 34px; line-height: 1.08; }
+    .muted { color: var(--muted); }
+    .badge-row { display: flex; gap: 10px; flex-wrap: wrap; margin: 20px 0 24px; }
+    .badge {
+      display: inline-flex; align-items: center; gap: 7px;
+      border-radius: 999px; padding: 7px 11px;
+      background: #f5f9ff; border: 1px solid #d9e8f8;
+      color: #244563; font-weight: 800; font-size: 12px;
+    }
+    .badge::before { content: ""; width: 7px; height: 7px; border-radius: 99px; background: var(--green); }
+    .field { display: grid; gap: 7px; margin: 13px 0; }
+    .field label { color: #3d526b; font-weight: 800; font-size: 13px; }
+    .field input, .field select, .soft-select {
+      border: 1px solid #ccdaea; background: white; color: var(--ink);
+      border-radius: 10px; padding: 12px 13px; outline: none;
+    }
+    .field input:focus, .field select:focus, .soft-select:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(63,111,229,0.12); }
+    .primary-btn, .soft-btn, .ghost-btn, .danger-btn {
+      border: 0; border-radius: 10px; padding: 11px 14px; font-weight: 850;
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .primary-btn { background: var(--blue); color: white; box-shadow: 0 12px 22px rgba(63,111,229,0.22); }
+    .soft-btn { background: #edf4ff; color: var(--blue); }
+    .ghost-btn { background: white; color: #31506f; border: 1px solid #d7e5f4; }
+    .ghost-btn.active { border-color: var(--blue); background: #eef4ff; color: var(--blue); }
+    .danger-btn { background: var(--rose-soft); color: #b92c44; }
+    .login-actions { display: grid; gap: 10px; margin-top: 18px; }
+    .login-error { display: none; color: #b92c44; font-weight: 800; font-size: 13px; }
+    .login-error.show { display: block; }
+    .demo-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 13px; margin-top: 18px; }
+    .demo-account {
+      text-align: left; border: 1px solid #d7e5f4; background: #fff; border-radius: 14px;
+      padding: 15px; display: grid; gap: 8px; transition: transform .18s ease, box-shadow .18s ease;
+    }
+    .demo-account:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+    .demo-account strong { font-size: 15px; }
+    .demo-account small { color: var(--muted); line-height: 1.5; }
+    .language-row { display: flex; justify-content: space-between; align-items: center; gap: 14px; margin-bottom: 18px; }
+
+    .app-shell { min-height: 100vh; display: grid; grid-template-columns: 270px minmax(0, 1fr); background: white; }
+    .sidebar {
+      background: linear-gradient(180deg, #dff0ff 0%, #edf7ff 55%, #f6fbff 100%);
+      border-right: 1px solid #d5e8f8;
+      padding: 24px 18px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+    }
+    .side-brand { display: flex; gap: 12px; align-items: center; }
+    .side-brand .brand-mark { width: 44px; height: 44px; border-radius: 14px; font-size: 15px; }
+    .user-card {
+      background: rgba(255,255,255,0.72);
+      border: 1px solid #d3e6f7;
+      border-radius: 16px;
+      padding: 14px;
+      display: grid;
+      gap: 9px;
+    }
+    .avatar {
+      width: 38px; height: 38px; border-radius: 13px; background: #fff;
+      display: grid; place-items: center; color: var(--blue); font-weight: 900;
+      border: 1px solid #c7def4;
+    }
+    .nav-list { display: grid; gap: 9px; }
+    .nav-btn {
+      border: 1px solid transparent; background: transparent; color: #31506f;
+      border-radius: 12px; padding: 12px; display: flex; align-items: center; gap: 10px;
+      text-align: left; font-weight: 850;
+    }
+    .nav-btn:hover { background: rgba(255,255,255,0.56); }
+    .nav-btn.active { background: #fff; color: var(--blue); border-color: #cddff7; box-shadow: 0 10px 20px rgba(63,111,229,0.08); }
+    .nav-icon {
+      width: 30px; height: 30px; border-radius: 10px; display: grid; place-items: center;
+      background: #eef5ff; color: var(--blue);
+    }
+    .sidebar-spacer { flex: 1; }
+    .logout { width: 100%; }
+
+    .main {
+      background: #fff;
+      min-width: 0;
+      padding: 26px 34px 50px;
+    }
+    .topbar {
+      display: flex; justify-content: space-between; align-items: flex-start; gap: 20px;
+      padding-bottom: 20px; border-bottom: 1px solid #e7eef6; margin-bottom: 24px;
+    }
+    .topbar h2 { font-size: 28px; display: flex; align-items: center; gap: 10px; }
+    .page-kicker { color: var(--muted); margin-top: 6px; line-height: 1.5; }
+    .lang-control { display: flex; align-items: center; gap: 10px; color: #526a83; font-weight: 800; }
+
+    .screen { display: none; }
+    .screen.active { display: block; }
+    .section { margin-top: 22px; }
+    .section-head {
+      display: flex; justify-content: space-between; align-items: flex-end; gap: 16px;
+      margin-bottom: 15px;
+    }
+    .section-title { display: flex; align-items: center; gap: 11px; }
+    .title-icon {
+      width: 36px; height: 36px; border-radius: 12px; display: grid; place-items: center;
+      color: white; font-weight: 900; flex: 0 0 auto;
+    }
+    .i-blue { background: var(--blue); }
+    .i-green { background: var(--green); }
+    .i-purple { background: var(--purple); }
+    .i-amber { background: var(--amber); }
+    .i-rose { background: var(--rose); }
+    .i-teal { background: var(--teal); }
+    .card {
+      background: var(--panel); border: 1px solid #e0eaf4; border-radius: var(--radius);
+      box-shadow: var(--shadow); padding: 20px;
+    }
+    .card.tint-blue { background: linear-gradient(180deg, #f6fbff, #fff); border-left: 4px solid var(--blue); }
+    .card.tint-green { background: linear-gradient(180deg, #f1fbf5, #fff); border-left: 4px solid var(--green); }
+    .card.tint-purple { background: linear-gradient(180deg, #f6f2ff, #fff); border-left: 4px solid var(--purple); }
+    .card.tint-amber { background: linear-gradient(180deg, #fff9ed, #fff); border-left: 4px solid var(--amber); }
+    .grid { display: grid; gap: 18px; }
+    .two { grid-template-columns: repeat(2, minmax(0,1fr)); }
+    .three { grid-template-columns: repeat(3, minmax(0,1fr)); }
+    .four { grid-template-columns: repeat(4, minmax(0,1fr)); }
+    .five { grid-template-columns: repeat(5, minmax(0,1fr)); }
+    .aside { grid-template-columns: minmax(0,1.55fr) minmax(300px,0.65fr); align-items: start; }
+    .metric {
+      min-height: 104px; border-radius: 12px; padding: 17px; border: 1px solid #e1ebf5;
+      background: #fff; display: grid; align-content: space-between; gap: 6px;
+      box-shadow: 0 12px 24px rgba(28,57,95,0.06);
+    }
+    .metric .label { color: var(--muted); font-size: 12px; font-weight: 850; }
+    .metric .value { font-size: 29px; font-weight: 950; color: var(--blue); }
+    .metric .hint { color: var(--muted); font-size: 12px; }
+    .metric.green .value { color: var(--green); }
+    .metric.purple .value { color: var(--purple); }
+    .metric.amber .value { color: var(--amber); }
+    .metric.rose .value { color: var(--rose); }
+    .metric.teal .value { color: var(--teal); }
+
+    .student-layout { grid-template-columns: minmax(0, 1fr) 270px; align-items: start; }
+    .privacy-mini { display: grid; gap: 14px; position: sticky; top: 24px; }
+    .privacy-mini .card { padding: 16px; box-shadow: 0 10px 20px rgba(28,57,95,0.06); }
+    .check-list { list-style: none; padding: 0; margin: 12px 0 0; display: grid; gap: 9px; }
+    .check-list li { display: flex; align-items: flex-start; gap: 9px; color: #344b64; line-height: 1.45; }
+    .check { color: var(--green); font-weight: 950; }
+    .welcome-panel {
+      display: grid; grid-template-columns: minmax(0,1fr) 160px minmax(260px,0.9fr);
+      gap: 16px; align-items: stretch;
+    }
+    .status-pill {
+      border: 1px solid #dbe7f3; border-radius: 14px; padding: 18px; background: #fff;
+      display: grid; align-content: center; gap: 8px;
+    }
+    .status-pill strong { color: var(--green); font-size: 23px; }
+    .why-box {
+      background: #f2f6ff; border-left: 4px solid var(--purple);
+      border-radius: 12px; padding: 18px; display: grid; gap: 12px;
+    }
+    .why-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; }
+    .why-pill { background: rgba(255,255,255,0.76); border-radius: 10px; padding: 12px; color: #415872; line-height: 1.45; }
+    .color-note { border-left: 4px solid var(--blue); background: #f6fbff; }
+    .color-note.green { border-left-color: var(--green); background: #f3fbf6; }
+    .color-note.purple { border-left-color: var(--purple); background: #f7f3ff; }
+    .color-note.amber { border-left-color: var(--amber); background: #fff9ed; }
+    .checkin-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 16px; }
+    .checkin-card { background: #f8fbff; border: 1px solid #e2ebf5; border-radius: 14px; padding: 17px; min-height: 150px; }
+    .mood-grid { display: grid; grid-template-columns: repeat(3, 68px); gap: 10px; margin-top: 12px; }
+    .mood-btn {
+      height: 60px; border-radius: 14px; border: 2px solid #d9e6f4; background: white; font-size: 28px;
+      font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+    }
+    .mood-btn.active { border-color: var(--blue); background: #eef4ff; box-shadow: 0 0 0 3px rgba(63,111,229,0.12); }
+    .range-row { display: grid; gap: 12px; margin-top: 17px; }
+    input[type="range"] { width: 100%; accent-color: var(--blue); }
+    .range-labels { display: flex; justify-content: space-between; color: #8a9bb0; font-size: 12px; font-weight: 800; }
+    .value-pill { color: #4b5f78; font-weight: 900; }
+    .history-chart { width: 100%; height: 230px; }
+    .history-list { display: grid; gap: 12px; margin-top: 12px; }
+    .history-item {
+      display: flex; justify-content: space-between; gap: 18px; align-items: flex-start;
+      border-left: 3px solid var(--blue); padding: 10px 0 10px 14px;
+    }
+    .history-item p { color: #5d7189; margin-top: 7px; line-height: 1.6; }
+    .history-score { color: var(--green); font-weight: 950; }
+    .toggle-row {
+      display: flex; justify-content: space-between; align-items: center; gap: 16px;
+      padding: 14px 0; border-bottom: 1px solid #edf2f7;
+    }
+    .toggle-row:last-child { border-bottom: 0; }
+    .toggle-row strong { display: block; margin-bottom: 4px; }
+    .toggle-row span span { color: var(--muted); font-size: 13px; line-height: 1.4; }
+    .switch { position: relative; display: inline-block; width: 46px; height: 26px; flex: 0 0 auto; }
+    .switch input { display: none; }
+    .slider { position: absolute; inset: 0; background: #c9d5e3; border-radius: 999px; transition: .2s; }
+    .slider::before { content: ""; position: absolute; width: 20px; height: 20px; left: 3px; top: 3px; border-radius: 50%; background: white; transition: .2s; box-shadow: 0 2px 7px rgba(0,0,0,0.2); }
+    .switch input:checked + .slider { background: var(--blue); }
+    .switch input:checked + .slider::before { transform: translateX(20px); }
+    .consent-log { list-style: none; margin: 12px 0 0; padding: 0; display: grid; gap: 9px; color: #4c627a; }
+    .consent-log li { display: flex; gap: 8px; align-items: center; }
+    .dot { width: 8px; height: 8px; border-radius: 99px; background: var(--green); flex: 0 0 auto; }
+    .resource-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; }
+    .resource { display: flex; gap: 12px; align-items: center; border-radius: 12px; background: #f7fbff; border: 1px solid #e2ecf6; padding: 14px; }
+    .resource-icon { width: 38px; height: 38px; border-radius: 12px; display: grid; place-items: center; color: white; background: var(--blue); }
+
+    .tab-strip { display: flex; gap: 8px; padding: 6px; border-radius: 14px; background: #f4f8fc; border: 1px solid #e1ebf5; margin-bottom: 18px; width: fit-content; }
+    .tab-strip button { border: 0; background: transparent; padding: 10px 13px; border-radius: 10px; color: #526a83; font-weight: 900; }
+    .tab-strip button.active { background: white; color: var(--blue); box-shadow: 0 8px 16px rgba(63,111,229,0.09); }
+    .filter-row { display: flex; justify-content: space-between; gap: 12px; align-items: center; margin-bottom: 12px; }
+    table { border-collapse: collapse; width: 100%; }
+    th, td { text-align: left; padding: 13px 10px; border-bottom: 1px solid #ecf1f7; vertical-align: top; }
+    th { color: #63768d; font-size: 12px; text-transform: uppercase; letter-spacing: .02em; }
+    tr.case-row { cursor: pointer; }
+    tr.case-row:hover { background: #f7fbff; }
+    tr.case-row.active { background: #eef5ff; }
+    .tag {
+      display: inline-flex; align-items: center; border-radius: 999px; padding: 5px 9px;
+      font-size: 12px; font-weight: 900; background: #edf4ff; color: var(--blue);
+    }
+    .tag.high { background: var(--rose-soft); color: var(--rose); }
+    .tag.medium { background: var(--cream); color: var(--amber); }
+    .tag.low { background: var(--mint); color: var(--green); }
+    .review-panel { display: grid; gap: 13px; }
+    .confidence-bar { height: 9px; border-radius: 999px; background: #e6edf5; overflow: hidden; }
+    .confidence-bar span { display: block; height: 100%; background: linear-gradient(90deg, var(--blue), var(--green)); }
+    .privacy-guarantee {
+      background: linear-gradient(90deg, #e8f9f1, #f7fffb);
+      border: 1px solid #bdebd4;
+      border-left: 5px solid var(--green);
+      border-radius: 12px;
+      padding: 18px 20px;
+      display: flex;
+      align-items: flex-start;
+      gap: 13px;
+      color: #2c6a55;
+      line-height: 1.55;
+    }
+    .journey-track {
+      display: grid; grid-template-columns: repeat(7, minmax(140px,1fr)); gap: 14px;
+      overflow-x: auto; padding-bottom: 8px;
+    }
+    .journey-step {
+      min-width: 140px; border: 1px solid #dfeaf5; border-radius: 14px; padding: 16px;
+      background: #fff; display: grid; gap: 10px;
+    }
+    .journey-step .bubble {
+      width: 46px; height: 46px; border-radius: 50%; display: grid; place-items: center;
+      color: white; background: var(--blue); font-weight: 950;
+    }
+    .journey-step:nth-child(2) .bubble { background: var(--purple); }
+    .journey-step:nth-child(3) .bubble { background: var(--rose); }
+    .journey-step:nth-child(4) .bubble { background: var(--green); }
+    .journey-step:nth-child(5) .bubble { background: var(--teal); }
+    .journey-step:nth-child(6) .bubble { background: var(--amber); }
+    .journey-step:nth-child(7) .bubble { background: var(--blue); }
+    .empty-state { min-height: 210px; display: grid; place-items: center; border: 1px dashed #cfdceb; border-radius: 14px; background: #fafcff; color: var(--muted); text-align: center; padding: 20px; }
+    .audit-list { list-style: none; margin: 12px 0 0; padding: 0; display: grid; gap: 12px; color: #4b6178; }
+    .audit-list li { padding-left: 14px; border-left: 3px solid #cbdff2; }
+
+    .live-table small { color: var(--muted); }
+    .chart-card { min-height: 360px; }
+    .trend-chart { width: 100%; height: 270px; }
+    .donut-wrap { display: grid; grid-template-columns: 230px minmax(0,1fr); gap: 16px; align-items: center; }
+    .donut {
+      width: 210px; height: 210px; border-radius: 50%;
+      background: conic-gradient(var(--blue) 0 27%, var(--purple) 27% 52%, var(--amber) 52% 68%, var(--green) 68% 86%, var(--teal) 86% 100%);
+      position: relative; margin: auto;
+    }
+    .donut::after { content: ""; position: absolute; inset: 50px; background: white; border-radius: 50%; box-shadow: inset 0 0 0 1px #e3edf7; }
+    .legend { display: grid; gap: 10px; }
+    .legend-item { display: flex; align-items: center; gap: 9px; color: #526a83; font-weight: 800; }
+    .legend-swatch { width: 12px; height: 12px; border-radius: 99px; }
+    .ai-flow { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 14px; }
+    .flow-card { background: #fff; border: 1px solid #e2ebf6; border-radius: 14px; padding: 16px; display: grid; gap: 9px; text-align: center; }
+    .flow-card .bubble { margin: auto; width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; background: #edf4ff; color: var(--blue); font-weight: 950; }
+    .warning-box {
+      border: 1px solid #efcf75; background: linear-gradient(180deg, #fffbea, #fffef8);
+      border-radius: 14px; padding: 22px; display: grid; gap: 12px;
+    }
+    .bullet-list { margin: 0; padding-left: 22px; color: #415872; line-height: 1.65; }
+    .bullet-list li::marker { color: var(--amber); }
+    .cost-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; margin-top: 12px; }
+    .cost-card { background: #f7fbff; border: 1px solid #e4eef8; border-radius: 12px; padding: 15px; }
+    .cost-card strong { display: block; font-size: 20px; color: var(--blue); margin-top: 4px; }
+    .why-card { min-height: 175px; display: grid; gap: 10px; }
+    .why-card .badge { width: fit-content; }
+
+    .toast {
+      position: fixed; right: 24px; bottom: 24px; background: #16355b; color: white;
+      border-radius: 12px; padding: 12px 15px; font-weight: 850; box-shadow: var(--shadow); z-index: 30;
+    }
+    .modal-backdrop {
+      position: fixed; inset: 0; display: none; place-items: center; padding: 20px;
+      background: rgba(20, 42, 69, 0.38); z-index: 40;
+    }
+    .modal-backdrop.show { display: grid; }
+    .modal {
+      width: min(540px, 100%); background: white; border: 1px solid #dce8f5;
+      border-radius: 16px; padding: 22px; box-shadow: 0 24px 70px rgba(12, 39, 70, 0.28);
+    }
+    .modal-body { margin-top: 12px; color: #415872; line-height: 1.65; }
+    .modal-actions { display: flex; justify-content: flex-end; margin-top: 18px; }
+    .schedule-grid { display: grid; gap: 10px; margin-top: 12px; }
+    .schedule-row {
+      display: grid; grid-template-columns: 110px repeat(2, minmax(0, 1fr)); gap: 10px; align-items: center;
+    }
+    .schedule-date { color: #526a83; font-weight: 900; }
+    .slot {
+      border: 1px solid #dce8f5; background: #f7fbff; color: #254765;
+      border-radius: 10px; padding: 10px; font-weight: 850; text-align: center;
+    }
+    button.slot { cursor: pointer; font: inherit; }
+    button.slot:disabled { cursor: not-allowed; }
+    .slot.full { background: var(--rose-soft); border-color: #f0b7c0; color: var(--rose); }
+    .slot.open { background: #eefaf4; border-color: #c7ebd5; color: var(--green); }
+    .slot.open:hover, .slot.selected { border-color: var(--green); box-shadow: 0 0 0 3px rgba(58,159,106,0.12); }
+    .slot-confirm { display: none; margin-top: 14px; padding: 14px; border-radius: 12px; background: #f4fbf7; border: 1px solid #c9ebd6; }
+    .slot-confirm.show { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .suggestion-list { display: grid; gap: 10px; margin-top: 12px; }
+    .suggestion-card { width: 100%; background: #f2f7ff; border: 1px solid #d9e8ff; border-radius: 12px; padding: 12px; color: #2f5fcf; text-align: left; font: inherit; cursor: pointer; }
+    .suggestion-card:hover, .suggestion-card.active { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(63,111,229,0.1); }
+    .message-draft { width: 100%; min-height: 112px; resize: vertical; border: 1px solid #dce8f5; border-radius: 12px; padding: 12px; color: var(--ink); margin-top: 12px; font: inherit; line-height: 1.55; }
+    .chat-drawer {
+      position: fixed; top: 0; right: 0; width: min(430px, 100%); height: 100vh;
+      background: #fff; border-left: 1px solid #dce8f5; box-shadow: -20px 0 55px rgba(12, 39, 70, 0.18);
+      transform: translateX(105%); transition: transform .22s ease; z-index: 38;
+      display: flex; flex-direction: column;
+    }
+    .chat-drawer.show { transform: translateX(0); }
+    .chat-head { padding: 18px; border-bottom: 1px solid #e8f0f8; display: flex; justify-content: space-between; gap: 12px; align-items: center; }
+    .chat-thread { padding: 18px; display: grid; gap: 12px; overflow: auto; flex: 1; background: #f7fbff; align-content: start; align-items: start; grid-auto-rows: max-content; }
+    .chat-bubble { width: fit-content; height: auto; max-width: 82%; padding: 12px 14px; border-radius: 14px; line-height: 1.5; box-shadow: 0 8px 18px rgba(28,57,95,0.06); }
+    .chat-bubble.student { justify-self: end; background: var(--blue); color: #fff; border-bottom-right-radius: 4px; }
+    .chat-bubble.counselor { justify-self: start; background: #fff; border: 1px solid #dce8f5; color: #344b64; border-bottom-left-radius: 4px; }
+    .chat-compose { padding: 14px; border-top: 1px solid #e8f0f8; display: flex; gap: 10px; }
+    .chat-compose input { flex: 1; border: 1px solid #dce8f5; border-radius: 10px; padding: 11px; }
+
+    @media (max-width: 1180px) {
+      .five { grid-template-columns: repeat(3,minmax(0,1fr)); }
+      .four { grid-template-columns: repeat(2,minmax(0,1fr)); }
+      .three, .two, .aside, .student-layout, .welcome-panel, .donut-wrap { grid-template-columns: 1fr; }
+      .privacy-mini { position: static; }
+      .ai-flow { grid-template-columns: repeat(2,minmax(0,1fr)); }
+    }
+    @media (max-width: 860px) {
+      .login-screen { grid-template-columns: 1fr; padding: 22px; }
+      .login-card { justify-self: stretch; max-width: none; }
+      .demo-grid { grid-template-columns: 1fr; }
+      .app-shell { grid-template-columns: 1fr; }
+      .sidebar { position: static; height: auto; }
+      .main { padding: 22px 18px 42px; }
+      .topbar { flex-direction: column; }
+      .checkin-grid, .resource-grid, .cost-grid, .ai-flow { grid-template-columns: 1fr; }
+      .five, .four, .three, .two { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body class="locked">
+  <main class="login-screen" id="loginScreen">
+    <section class="login-card">
+      <div class="language-row">
+        <span class="badge" data-t="badgePrivacy"></span>
+        <select id="loginLang" class="soft-select" aria-label="Language">
+          <option value="en">English</option>
+          <option value="zh">中文</option>
+          <option value="ko">한국어</option>
+          <option value="ja">日本語</option>
+        </select>
+      </div>
+      <div class="brand-row">
+        <div class="brand-mark">SC</div>
+        <div>
+          <h1>SCWIS Care360</h1>
+          <p class="muted" data-t="loginSubtitle"></p>
+        </div>
+      </div>
+      <div class="badge-row">
+        <span class="badge" data-t="badgePrivacy"></span>
+        <span class="badge" data-t="badgeFerpa"></span>
+        <span class="badge" data-t="badgeAi"></span>
+      </div>
+      <div class="field">
+        <label for="loginUser" data-t="loginUser"></label>
+        <input id="loginUser" autocomplete="username">
+      </div>
+      <div class="field">
+        <label for="loginPass" data-t="password"></label>
+        <input id="loginPass" type="password" autocomplete="current-password">
+      </div>
+      <div class="login-actions">
+        <button class="primary-btn" id="loginBtn" data-t="loginButton"></button>
+        <p class="login-error" id="loginError" data-t="loginError"></p>
+      </div>
+    </section>
+
+    <section class="login-demo">
+      <div class="section-title">
+        <span class="title-icon i-blue">✓</span>
+        <div>
+          <h2 data-t="demoTitle"></h2>
+          <p class="page-kicker" data-t="demoSub"></p>
+        </div>
+      </div>
+      <div class="demo-grid" id="demoList"></div>
+    </section>
+  </main>
+
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="side-brand">
+        <div class="brand-mark">SC</div>
+        <div>
+          <h3>SCWIS Care360</h3>
+          <p class="muted" id="roleLine"></p>
+        </div>
+      </div>
+      <div class="user-card">
+        <div style="display:flex;gap:10px;align-items:center;">
+          <div class="avatar" id="avatarText">L</div>
+          <div>
+            <strong id="currentName">Logan</strong>
+            <p class="muted" id="currentRole"></p>
+          </div>
+        </div>
+      </div>
+      <nav class="nav-list" id="roleNav"></nav>
+      <div class="sidebar-spacer"></div>
+      <button class="ghost-btn logout" id="logoutBtn" data-t="logout"></button>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div>
+          <h2 id="pageTitle"></h2>
+          <p class="page-kicker" id="pageSubtitle"></p>
+        </div>
+        <label class="lang-control">
+          <span data-t="language"></span>
+          <select id="systemLang" class="soft-select" aria-label="Language">
+            <option value="en">English</option>
+            <option value="zh">中文</option>
+            <option value="ko">한국어</option>
+            <option value="ja">日本語</option>
+          </select>
+        </label>
+      </header>
+      <section id="content"></section>
+    </main>
+  </div>
+
+  <div class="modal-backdrop" id="actionModal" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="section-title">
+        <span class="title-icon i-blue" id="modalIcon">✓</span>
+        <h3 id="modalTitle"></h3>
+      </div>
+      <div class="modal-body" id="modalBody"></div>
+      <div class="modal-actions">
+        <button class="primary-btn" id="modalClose"></button>
+      </div>
+    </div>
+  </div>
+
+  <aside class="chat-drawer" id="chatDrawer" aria-hidden="true">
+    <div class="chat-head">
+      <div>
+        <h3 id="chatTitle"></h3>
+        <p class="muted" id="chatSubtitle"></p>
+      </div>
+      <button class="ghost-btn" id="chatClose">×</button>
+    </div>
+    <div class="chat-thread" id="chatThread"></div>
+    <div class="chat-compose">
+      <input id="chatInput" aria-label="Chat message">
+      <button class="primary-btn" id="chatSend">➤</button>
+    </div>
+  </aside>
+
+  <script>
+    const I18N = {
+      en: {
+        language:"Language",
+        loginSubtitle:"Privacy-first campus wellness support",
+        badgePrivacy:"Privacy-first",
+        badgeFerpa:"FERPA-compliant",
+        badgeAi:"AI-assisted",
+        loginUser:"Student ID / Staff ID",
+        password:"Password",
+        loginButton:"Sign in",
+        loginError:"Please use one of the demo accounts below.",
+        demoTitle:"Demo Accounts",
+        demoSub:"Select a demo role to enter the correct interface directly.",
+        logout:"Log out",
+        roles:{student:"Student Wellness App", counselor:"Counselor Dashboard", admin:"Administrator Analytics Panel"},
+        roleSub:{student:"A personal wellness space with consent controls and supportive resources.", counselor:"Human-reviewed wellness alerts, case review, and student journey support.", admin:"Anonymized campus insights for planning, governance, and improvement."},
+        demo:{logan:"Student 1: Logan", liam:"Student 2: Liam", counselor:"Counselor: Dr. Sangwook HA", admin:"Admin: Michael"},
+        navStudent:["Wellness","Privacy & Data","Support"],
+        navCounselor:["Alert Dashboard","Case Review","Student Journey"],
+        navAdmin:["Analytics","AI Transparency","Governance","Why SCWIS"],
+        welcomeBack:"Welcome back",
+        studentWelcome:"Your wellness check-in helps us provide better support when you need it.",
+        currentStatus:"Current Status",
+        statusGood:"Balanced",
+        suggestion:"Suggestion",
+        suggestionText:"Keep going. Maintain your healthy routines and take a short rest break after study blocks.",
+        whyTitle:"Why am I seeing this suggestion?",
+        basedOn:"Based on",
+        basedOnText:"Your submitted wellness history and recent check-in scores.",
+        notUsed:"Not used",
+        notUsedText:"Location, personal messages, browsing history, financial data",
+        localNote:"This suggestion is generated for wellness support only. Raw private data is not shown to staff unless you ask for support.",
+        privacyGuarantees:"Your Privacy Guarantees",
+        privacyItems:["Personal wellness companion, not surveillance","Your data is never used for grades or discipline","Opt out anytime with no loss of service access","AI identifies patterns and humans make decisions"],
+        usedDataTitle:"What data is used?",
+        usedDataItems:["Only necessary data for wellness support","Encrypted and role-protected","No real-time location tracking"],
+        checkinTitle:"Weekly Wellness Check-In",
+        checkinMeta:"Voluntary | Private | around 2 min",
+        mood:"Mood",
+        stress:"Stress",
+        sleep:"Sleep",
+        workload:"Academic workload",
+        social:"Social connection",
+        activity:"Physical activity",
+        low:"Low", medium:"Medium", high:"High", poor:"Poor", average:"Average", great:"Great",
+        light:"Light", manageable:"Manageable", heavy:"Heavy", isolated:"Isolated", connected:"Connected", active:"Active", inactive:"Inactive", veryActive:"Very active",
+        submit:"Submit",
+        last:"Last",
+        historyTitle:"Wellness History",
+        downloadData:"Download Excel",
+        deleteData:"Delete optional data",
+        deleteOne:"Delete",
+        score:"Score",
+        emptyHistory:"No wellness history records yet.",
+        dataControl:"My Data Control Center",
+        controlText:"You control every data source SCWIS can access. Change any consent setting at any time.",
+        consentBased:"Consent-based",
+        lms:"LMS engagement data",
+        lmsDesc:"Course access and submission patterns only",
+        campus:"Campus activity data",
+        campusDesc:"Gym access, events, and facility use",
+        dining:"Dining and library data",
+        diningDesc:"Meal regularity, library visits, and study patterns",
+        wellnessData:"Wellness check-in data",
+        wellnessDesc:"Voluntary mood, stress, sleep, and wellbeing responses",
+        predictive:"Predictive analytics",
+        predictiveWarn:"Opting out will not affect your grades, services, scholarships, or campus access.",
+        optOut:"Opt out of predictive analytics",
+        enablePredictive:"Enable predictive analytics",
+        consentHistory:"Consent History",
+        enabled:"Enabled",
+        disabled:"Disabled",
+        savedState:"Saved",
+        supportPreferences:"Support Preferences",
+        contactMethod:"Preferred Contact Method",
+        supportType:"Preferred Support Type",
+        peerBefore:"Prefer peer support before counselor contact",
+        savePreferences:"Save Preferences",
+        contactOptions:["In-app notification","Email","SMS"],
+        supportOptions:["1-on-1 counseling","Peer support group","Self-guided resources","Combination"],
+        supportResources:"Support Resources",
+        bookAppointment:"Book Counseling Appointment",
+        confidential:"Confidential 1-on-1 support",
+        peerGroup:"Join Peer Support Group",
+        connectStudents:"Connect with fellow students",
+        stressResources:"Stress Management Resources",
+        guides:"Guides, videos, and workshops",
+        contactWellness:"Contact Wellness Services",
+        weekday:"Weekdays 8:00-18:00",
+        emergency:"Emergency Support",
+        hotline:"24/7 confidential crisis line",
+        messageCenter:"Message Center",
+        private:"Private",
+        openChat:"Open Chat",
+        markRead:"Mark all read",
+        supportMessage:"Hi {name}, your recent check-in showed some signs of stress. This is a supportive check-in, not a disciplinary notice. Would you like to book a voluntary chat or receive wellness resources?",
+        book:"Book",
+        reply:"Reply",
+        understanding:"Understanding Your Support",
+        whyMessage:"Why did I receive a message?",
+        whyMessageText:"Messages are sent by human counselors after reviewing wellness patterns.",
+        whatDataWasUsed:"What data was used?",
+        whatDataWasUsedText:"Only check-in responses and consented data sources. Grades and private messages are not accessed.",
+        confidentialTitle:"Is this confidential?",
+        confidentialText:"Yes. Communications are role-protected and available only to assigned wellness staff.",
+        counselorMetrics:["Students Needing Review","High Priority","Avg Response Time","Follow-Ups This Week"],
+        counselorMetricHints:["Open cases","Needs review","Human response","Completed"],
+        filter:"Filter",
+        filterOptions:["All","Academic Stress","Social Isolation","Sleep Disruption","Only Pending"],
+        riskList:"Risk Alert List",
+        humanPanel:"Human Review Panel",
+        caseId:"Case ID",
+        riskCategory:"Risk Category",
+        aiConfidence:"AI Confidence Pattern",
+        status:"Status",
+        identity:"Identity",
+        categories:["Academic Stress","Social Isolation","Sleep Disruption","Reduced Engagement","Wellbeing Concern"],
+        statuses:["Pending","Reviewing","Scheduled","Resolved"],
+        confidencePatterns:["Late LMS activity and increased workload","Lower campus engagement over two weeks","Repeated low sleep check-ins","Dining and library activity reduced","Stress trend increased"],
+        identities:["Anonymized","Anonymized","Anonymized","Anonymized","Student-consented"],
+        recommendedAction:"Recommended Action",
+        actionText:"Send supportive message and invite a voluntary appointment.",
+        counselorButtons:["Mark for Counselor Review","Send Supportive Message","Schedule Appointment","Dismiss After Review"],
+        caseDetails:"Case Details",
+        emptyCase:"No uploaded case details are available yet. Select or upload a case packet to review supporting context.",
+        auditTrail:"Audit Trail",
+        auditItems:["Alert created by AI pattern flag","Counselor opened case panel","Identity remains restricted until need-to-know review"],
+        rbacNote:"Role-Based Access Control: Only data necessary for wellness support is displayed. Sensitive details are restricted.",
+        rbacTitle:"Role-Based Access Control",
+        studentJourneyTitle:"Case Lifecycle — End-to-End Student Journey",
+        studentJourneySub:"Complete workflow from check-in to resolution. Every step is privacy-preserving and human-reviewed.",
+        journeySteps:[
+          ["Check-In","Student voluntarily records wellness data.","Student controlled"],
+          ["AI Detects","System identifies possible risk patterns.","AI-assisted only"],
+          ["Alert Generated","Case ID is created and identity is anonymized.","Anonymized"],
+          ["Human Reviews","Counselor examines AI findings before action.","Human-in-the-loop"],
+          ["Counselor Contacts","Supportive message or voluntary appointment.","Human-decided"],
+          ["Student Responds","Student can ask questions or share concerns.","Consent-based"],
+          ["Support Plan","Resources or follow-up are scheduled.","Care-focused"]
+        ],
+        privacyStepTitle:"Privacy Guarantee Across Every Step",
+        privacyStepText:"At no point is student data used for academic evaluation, discipline, or any purpose beyond wellness support. AI flags patterns. Only humans make decisions. Every action is logged in the audit trail.",
+        adminTitle:"Admin Analytics Panel",
+        adminSubtitle:"Anonymized campus-level insights for planning, resource allocation, and reporting.",
+        adminMetrics:["Participation Rate","Counseling Demand","Avg Wellness Score","System Uptime","Opt-Out Rate"],
+        liveActivity:"Recent Student Check-In Activity (Live)",
+        liveLabel:"Live",
+        liveNote:"Anonymized summary only. Private message contents and identities are protected.",
+        liveHeaders:["Last Check-In","Mood","Stress","Sleep","Workload","Social","Physical","Wellness Score"],
+        trendTitle:"Campus Wellness Trend",
+        supportCategories:"Support Categories",
+        supportLegend:["Academic Stress","Social Isolation","Sleep Disruption","Reduced Engagement","Wellbeing Concern"],
+        aiWorks:"How SCWIS AI Works",
+        dataUses:"What Data the AI Uses",
+        dataNotUse:"What the AI Does NOT Use",
+        aiUseItems:["Campus access patterns such as library entry and gym attendance","Self-reported check-in data voluntarily submitted by students","LMS engagement signals such as submission timing and platform use","Historical trend data to compare current patterns against baseline"],
+        aiNotItems:["Academic grades or GPA","Disciplinary records","Private messages or social media","Demographic profiling"],
+        aiFlow:[
+          ["Data Collection","Only consented and necessary wellness signals are used."],
+          ["Pattern Analysis","Statistical models detect meaningful changes."],
+          ["Human Review","Counselors review every alert before action."],
+          ["Supportive Outreach","Students receive voluntary, supportive contact."]
+        ],
+        limitations:"AI Limitations & Disclaimers",
+        limitationItems:["SCWIS AI is a decision-support tool, not a decision-maker. All final decisions are made by qualified human counselors.","AI may miss some students who need support. Self-referral and peer referral remain essential.","Patterns reflect correlation, not causation. Context is always reviewed by a human.","Students can opt out at any time. AI predictions are never used for academic evaluation or disciplinary action."],
+        privacyReporting:"Privacy-Safe Reporting",
+        privacyReportingText:"Anonymized campus insights. Administrators cannot view individual student records. All data is aggregated.",
+        threshold:"Privacy threshold: Groups smaller than 10 students are hidden to prevent re-identification.",
+        budget:"Budget Value Dashboard",
+        oneTime:"Total One-Time Implementation Cost",
+        annual:"Total Annual Maintenance Cost",
+        served:"Students Served",
+        costPer:"Cost Per Student/Year",
+        auditSummary:"Data Access Audit Summary",
+        auditRows:["Counselor Accesses","Consent Changes","Data Deletion Requests","Privacy Incidents"],
+        whyTitleAdmin:"Why Choose SCWIS for Your Campus?",
+        whySubtitle:"A privacy-first, human-centered wellness system designed for real university environments.",
+        whyCards:[
+          ["Privacy-First Design","Students control every data source. No grades, discipline records, or private messages are accessed."],
+          ["Human-in-the-Loop AI","AI flags patterns. Humans make decisions. Every alert goes through a qualified counselor."],
+          ["Opt-Out Without Stigma","Students can opt out without losing services, scholarships, or campus access."],
+          ["Scales to 15,000+ Students","The architecture supports growth without redesigning the core system."],
+          ["Works Under Network Outage","Offline check-ins can sync once connection is restored."],
+          ["Budget-Conscious & Self-Sustaining","Implementation stays within budget and creates student employment roles."]
+        ],
+        whyTags:["Built-in","Human-centered"],
+        close:"Close",
+        appointmentTitle:"Book a Voluntary Appointment",
+        appointmentSub:"Available counselor appointment slots for the next seven days.",
+        morning:"Morning",
+        afternoon:"Afternoon",
+        available:"Available",
+        full:"Fully booked",
+        selectedSlot:"Selected slot",
+        confirmAppointment:"Confirm Appointment",
+        appointmentSuccess:"Appointment booked successfully.",
+        chatWithCounselor:"Chat with Counselor",
+        chatWithStudent:"Chat with Student",
+        chatPrivate:"Private support conversation",
+        studentChatPlaceholder:"Type your message...",
+        chatPlaceholder:"Type a supportive message...",
+        aiConcernSummary:"AI Concern Summary",
+        confidence:"Confidence",
+        aiFeedback:"AI Feedback",
+        aiFeedbackOptions:["Accurate","False Positive","Needs More Context"],
+        openChatWithStudent:"Open Chat with Student",
+        supportiveMessageTitle:"Send Supportive Message",
+        supportiveMessageIntro:"AI-assisted, not AI-decided: these drafts are suggestions only. The counselor reviews and edits the final message before sending.",
+        aiSuggestedReplies:"AI-suggested supportive replies",
+        refreshSuggestions:"Refresh Suggestions",
+        finalMessage:"Final message to student",
+        sendMessage:"Send Message",
+        messageSent:"Supportive message sent successfully.",
+        feedbackSaved:"AI feedback saved.",
+        cancel:"Cancel",
+        studentActionTitles:["Open Chat","All Messages Read","Book Appointment","Reply"],
+        studentActionBodies:[
+          "Secure chat is open. A wellness staff member can respond during service hours, and the conversation remains private.",
+          "All support messages have been marked as read. No follow-up action will be taken unless you choose to respond.",
+          "Appointment scheduler is open. Available voluntary slots: May 16 10:00, May 17 14:30, May 20 11:15.",
+          "Reply box is open. You can ask a question, request resources, or say you do not need support right now."
+        ],
+        counselorActionBodies:[
+          "This case has been marked for counselor review and added to the audit trail.",
+          "A supportive message draft is ready for human review before sending.",
+          "Appointment scheduling panel is open with voluntary meeting slots.",
+          "Dismissal requires a short review note and is recorded in the audit trail."
+        ],
+        exportHeaders:["Date","Score","Mood","Stress","Sleep","Social","Physical","Workload"],
+        toastSaved:"Saved",
+        toastSubmitted:"Check-in submitted",
+        toastDeleted:"Optional wellness history deleted",
+        toastDownloaded:"Excel file downloaded"
+      },
+      zh: {
+        language:"Language",
+        loginSubtitle:"隐私优先的校园健康支持系统",
+        badgePrivacy:"隐私优先",
+        badgeFerpa:"FERPA 合规",
+        badgeAi:"AI 辅助",
+        loginUser:"学号 / 员工 ID",
+        password:"密码",
+        loginButton:"登录",
+        loginError:"请使用下方任一演示账号。",
+        demoTitle:"演示账号",
+        demoSub:"选择演示角色后，会直接进入对应角色界面。",
+        logout:"退出登录",
+        roles:{student:"学生健康应用", counselor:"咨询师仪表盘", admin:"管理员分析面板"},
+        roleSub:{student:"提供健康打卡、同意控制和支持资源的个人空间。", counselor:"用于人工审阅健康提醒、案例审查和学生支持旅程。", admin:"用于规划、治理和改进的匿名化校园洞察。"},
+        demo:{logan:"学生 1: Logan", liam:"学生 2: Liam", counselor:"咨询师: Dr. Sangwook HA", admin:"管理员: Michael"},
+        navStudent:["健康状态","隐私与数据","支持服务"],
+        navCounselor:["提醒仪表盘","案例审查","学生旅程"],
+        navAdmin:["分析","AI 透明度","治理","选择 SCWIS 的理由"],
+        welcomeBack:"欢迎回来",
+        studentWelcome:"你的健康打卡可以帮助我们在你需要时提供更好的支持。",
+        currentStatus:"当前状态",
+        statusGood:"状态良好",
+        suggestion:"建议",
+        suggestionText:"继续保持健康习惯。学习一段时间后可以安排一次短暂休息。",
+        whyTitle:"为什么会看到这个建议？",
+        basedOn:"基于",
+        basedOnText:"你已提交的健康历史和近期打卡分数。",
+        notUsed:"未使用",
+        notUsedText:"Location, personal messages, browsing history, financial data",
+        localNote:"该建议仅用于健康支持。除非你主动请求支持，否则原始私人数据不会展示给工作人员。",
+        privacyGuarantees:"你的隐私保障",
+        privacyItems:["个人健康伙伴，不是监控系统","数据绝不会用于成绩或纪律处分","可随时退出，服务访问不受影响","AI 识别模式，由人做决定"],
+        usedDataTitle:"使用了哪些数据？",
+        usedDataItems:["仅使用健康支持所必需的数据","数据加密并受角色权限保护","不进行实时位置追踪"],
+        checkinTitle:"每周健康打卡",
+        checkinMeta:"自愿 | 私密 | 约 2 分钟",
+        mood:"心情",
+        stress:"压力",
+        sleep:"睡眠",
+        workload:"学业负担",
+        social:"社交联系",
+        activity:"身体活动",
+        low:"低", medium:"中等", high:"高", poor:"差", average:"一般", great:"很好",
+        light:"轻松", manageable:"可应对", heavy:"繁重", isolated:"孤立", connected:"有联系", active:"活跃", inactive:"久坐", veryActive:"非常活跃",
+        submit:"提交",
+        last:"上次",
+        historyTitle:"健康历史",
+        downloadData:"下载 Excel",
+        deleteData:"删除可选数据",
+        deleteOne:"删除",
+        score:"分数",
+        emptyHistory:"暂无健康历史记录。",
+        dataControl:"我的数据控制中心",
+        controlText:"你可以控制 SCWIS 能访问的每一种数据源，并且随时更改同意设置。",
+        consentBased:"基于同意",
+        lms:"LMS 学习参与数据",
+        lmsDesc:"仅使用课程访问和提交时间模式",
+        campus:"校园活动数据",
+        campusDesc:"健身房、活动参与和设施使用情况",
+        dining:"餐饮与图书馆数据",
+        diningDesc:"用餐规律、图书馆访问和学习模式",
+        wellnessData:"健康打卡数据",
+        wellnessDesc:"自愿提交的心情、压力、睡眠和健康回应",
+        predictive:"预测分析",
+        predictiveWarn:"退出不会影响你的成绩、服务、奖学金或校园访问权限。",
+        optOut:"退出预测分析",
+        enablePredictive:"启用预测分析",
+        consentHistory:"同意历史",
+        enabled:"已启用",
+        disabled:"已关闭",
+        savedState:"已保存",
+        supportPreferences:"支持偏好",
+        contactMethod:"偏好的联系方式",
+        supportType:"偏好的支持类型",
+        peerBefore:"优先接受同伴支持，再联系咨询师",
+        savePreferences:"保存偏好",
+        contactOptions:["应用内通知","电子邮件","短信"],
+        supportOptions:["一对一咨询","同伴支持小组","自助资源","组合支持"],
+        supportResources:"支持资源",
+        bookAppointment:"预约咨询",
+        confidential:"保密的一对一支持",
+        peerGroup:"加入同伴支持小组",
+        connectStudents:"与其他学生建立联系",
+        stressResources:"压力管理资源",
+        guides:"指南、视频和工作坊",
+        contactWellness:"联系学生健康服务",
+        weekday:"工作日 8:00-18:00",
+        emergency:"紧急支持",
+        hotline:"24/7 保密危机热线",
+        messageCenter:"消息中心",
+        private:"私密",
+        openChat:"打开聊天",
+        markRead:"全部已读",
+        supportMessage:"你好，{name}。你最近的打卡显示出一些压力迹象。这是一条支持性问候，不是纪律通知。你想预约一次自愿沟通，或接收一些健康资源吗？",
+        book:"预约",
+        reply:"回复",
+        understanding:"了解你的支持",
+        whyMessage:"为什么我会收到消息？",
+        whyMessageText:"消息由人工咨询师在审阅健康模式后发送。",
+        whatDataWasUsed:"使用了哪些数据？",
+        whatDataWasUsedText:"只使用打卡回应和你已同意的数据源，不访问成绩或私人消息。",
+        confidentialTitle:"这些内容保密吗？",
+        confidentialText:"是的。沟通内容受角色权限保护，仅指定健康支持人员可访问。",
+        counselorMetrics:["待审阅学生","高优先级","平均响应时间","本周跟进"],
+        counselorMetricHints:["开放案例","需要审阅","人工响应","已完成"],
+        filter:"筛选",
+        filterOptions:["全部","学业压力","社交孤立","睡眠紊乱","仅待处理"],
+        riskList:"风险提醒列表",
+        humanPanel:"人工审阅面板",
+        caseId:"案例 ID",
+        riskCategory:"风险类别",
+        aiConfidence:"AI 置信模式",
+        status:"状态",
+        identity:"身份",
+        categories:["学业压力","社交孤立","睡眠紊乱","参与度下降","健康关注"],
+        statuses:["待处理","审阅中","已预约","已解决"],
+        confidencePatterns:["深夜 LMS 活动与学业负担上升","两周内校园参与度下降","多次睡眠打卡偏低","餐饮和图书馆活动减少","压力趋势上升"],
+        identities:["匿名化","匿名化","匿名化","匿名化","学生已同意"],
+        recommendedAction:"建议行动",
+        actionText:"发送支持性消息，并邀请学生进行自愿预约。",
+        counselorButtons:["标记为咨询师审阅","发送支持性消息","安排预约","审阅后关闭"],
+        caseDetails:"案例详情",
+        emptyCase:"目前还没有上传案例详情。请选择或上传案例资料以审阅支持性背景信息。",
+        auditTrail:"审计记录",
+        auditItems:["AI 模式标记创建提醒","咨询师打开案例面板","在必要审阅前，身份仍保持受限"],
+        rbacNote:"基于角色的访问控制：只显示健康支持所需的数据，敏感细节受到限制。",
+        rbacTitle:"基于角色的访问控制",
+        studentJourneyTitle:"案例生命周期：端到端学生旅程",
+        studentJourneySub:"从打卡到解决的完整流程。每一步都保护隐私，并由人工审阅。",
+        journeySteps:[
+          ["打卡","学生自愿记录健康数据。","学生控制"],
+          ["AI 检测","系统识别可能的风险模式。","仅 AI 辅助"],
+          ["生成提醒","创建案例 ID，并对身份进行匿名化。","匿名化"],
+          ["人工审阅","咨询师在采取行动前审阅 AI 发现。","人机协同"],
+          ["咨询师联系","发送支持性消息或邀请自愿预约。","由人决定"],
+          ["学生回应","学生可以提问或表达担忧。","基于同意"],
+          ["支持计划","安排资源或后续跟进。","以关怀为中心"]
+        ],
+        privacyStepTitle:"每一步的隐私保障",
+        privacyStepText:"学生数据在任何时候都不会用于学业评价、纪律处分或健康支持之外的目的。AI 只标记模式，最终决定由人作出。每个操作都会记录在审计轨迹中。",
+        adminTitle:"管理员分析面板",
+        adminSubtitle:"用于规划、资源分配和报告的匿名化校园层面洞察。",
+        adminMetrics:["参与率","咨询需求","平均健康分数","系统在线率","退出率"],
+        liveActivity:"近期学生打卡活动（实时）",
+        liveLabel:"实时",
+        liveNote:"仅显示匿名汇总。私人消息内容和身份受到保护。",
+        liveHeaders:["最近打卡","心情","压力","睡眠","学业负担","社交","身体活动","健康分数"],
+        trendTitle:"校园健康趋势",
+        supportCategories:"支持类别",
+        supportLegend:["学业压力","社交孤立","睡眠紊乱","参与度下降","健康关注"],
+        aiWorks:"SCWIS AI 如何工作",
+        dataUses:"AI 使用哪些数据",
+        dataNotUse:"AI 不使用哪些数据",
+        aiUseItems:["校园访问模式，例如图书馆进入和健身房使用","学生自愿提交的自我打卡数据","LMS 参与信号，例如提交时间和平台使用","历史趋势数据，用于与个人基线进行比较"],
+        aiNotItems:["学业成绩或 GPA","纪律记录","私人消息或社交媒体","人口特征画像"],
+        aiFlow:[
+          ["数据收集","只使用已同意且必要的健康信号。"],
+          ["模式分析","统计模型识别有意义的变化。"],
+          ["人工审阅","每条提醒都由咨询师审阅后再行动。"],
+          ["支持性联系","学生收到自愿、支持性的联系。"]
+        ],
+        limitations:"AI 局限与免责声明",
+        limitationItems:["SCWIS AI 是决策支持工具，不是决策者。所有最终决定都由合格的人类咨询师作出。","AI 可能错过一些需要支持的学生。自我求助和同伴转介仍然重要。","模式代表相关性，而不是因果关系。具体背景始终需要人工审阅。","学生可以随时退出。AI 预测绝不会用于学业评价或纪律处分。"],
+        privacyReporting:"隐私安全报告",
+        privacyReportingText:"匿名化校园洞察。管理员不能查看个体学生记录，所有数据均为聚合结果。",
+        threshold:"隐私阈值：少于 10 名学生的小组会被隐藏，防止重新识别。",
+        budget:"预算价值面板",
+        oneTime:"一次性实施总成本",
+        annual:"年度维护总成本",
+        served:"服务学生人数",
+        costPer:"每名学生每年成本",
+        auditSummary:"数据访问审计摘要",
+        auditRows:["咨询师访问","同意设置变更","数据删除请求","隐私事件"],
+        whyTitleAdmin:"为什么校园应选择 SCWIS？",
+        whySubtitle:"面向真实大学环境设计的隐私优先、人本健康系统。",
+        whyCards:[
+          ["隐私优先设计","学生控制每个数据源。不访问成绩、纪律记录或私人消息。"],
+          ["人机协同 AI","AI 标记模式，人类作出决定。每条提醒都经过合格咨询师审阅。"],
+          ["无污名退出","学生可以退出，而不会失去服务、奖学金或校园访问权限。"],
+          ["可扩展至 15,000+ 学生","架构支持增长，无需重做核心系统。"],
+          ["网络中断下仍可工作","离线打卡可在连接恢复后同步。"],
+          ["预算友好且可持续","实施保持在预算内，并支持学生就业岗位。"]
+        ],
+        whyTags:["内置能力","以人为本"],
+        close:"关闭",
+        appointmentTitle:"预约自愿咨询",
+        appointmentSub:"未来七天可选的咨询师预约时段。",
+        morning:"早上",
+        afternoon:"下午",
+        available:"可预约",
+        full:"已约满",
+        selectedSlot:"已选择时段",
+        confirmAppointment:"确认预约",
+        appointmentSuccess:"预约成功。",
+        chatWithCounselor:"与咨询师聊天",
+        chatWithStudent:"与学生聊天",
+        chatPrivate:"私密支持对话",
+        studentChatPlaceholder:"输入你的消息……",
+        chatPlaceholder:"输入支持性消息……",
+        aiConcernSummary:"AI 关注摘要",
+        confidence:"置信度",
+        aiFeedback:"AI 反馈",
+        aiFeedbackOptions:["准确","误报","需要更多背景"],
+        openChatWithStudent:"打开与学生的聊天",
+        supportiveMessageTitle:"发送支持性消息",
+        supportiveMessageIntro:"AI 辅助，而不是 AI 决定：以下草稿仅为建议，咨询师会在发送前审阅并编辑最终消息。",
+        aiSuggestedReplies:"AI 建议的支持性回复",
+        refreshSuggestions:"刷新建议",
+        finalMessage:"发送给学生的最终消息",
+        sendMessage:"发送消息",
+        messageSent:"支持性消息已发送成功。",
+        feedbackSaved:"AI 反馈已保存。",
+        cancel:"取消",
+        studentActionTitles:["打开聊天","全部标记为已读","预约咨询","回复"],
+        studentActionBodies:[
+          "安全聊天窗口已打开。学生健康服务人员可在服务时间内回复，沟通内容保持私密。",
+          "所有支持消息已标记为已读。除非你主动回应，否则系统不会采取进一步行动。",
+          "预约界面已打开。可选自愿咨询时段：5月16日 10:00、5月17日 14:30、5月20日 11:15。",
+          "回复框已打开。你可以提问、索取资源，或说明当前暂不需要支持。"
+        ],
+        counselorActionBodies:[
+          "该案例已标记为咨询师审阅，并记录到审计轨迹中。",
+          "支持性消息草稿已生成，发送前仍需人工确认。",
+          "预约安排面板已打开，可选择自愿会谈时段。",
+          "关闭提醒需要填写简短审阅备注，并会记录到审计轨迹中。"
+        ],
+        exportHeaders:["日期","分数","心情","压力","睡眠","社交","身体活动","学业负担"],
+        toastSaved:"已保存",
+        toastSubmitted:"打卡已提交",
+        toastDeleted:"可选健康历史已删除",
+        toastDownloaded:"Excel 文件已下载"
+      }
+    };
+
+    I18N.ko = {
+      ...I18N.en,
+      language:"Language",
+      loginSubtitle:"개인정보 우선 캠퍼스 웰니스 지원",
+      badgePrivacy:"개인정보 우선",
+      badgeFerpa:"FERPA 준수",
+      badgeAi:"AI 보조",
+      loginUser:"학번 / 직원 ID",
+      password:"비밀번호",
+      loginButton:"로그인",
+      loginError:"아래 데모 계정을 사용해 주세요.",
+      demoTitle:"데모 계정",
+      demoSub:"데모 역할을 선택하면 해당 인터페이스로 바로 들어갑니다.",
+      logout:"로그아웃",
+      roles:{student:"학생 웰니스 앱", counselor:"상담사 대시보드", admin:"관리자 분석 패널"},
+      roleSub:{student:"체크인, 동의 제어, 지원 자료를 제공하는 개인 공간입니다.", counselor:"사람이 검토하는 웰니스 알림과 사례 검토 화면입니다.", admin:"계획과 거버넌스를 위한 익명화된 캠퍼스 인사이트입니다."},
+      demo:{logan:"학생 1: Logan", liam:"학생 2: Liam", counselor:"상담사: Dr. Sangwook HA", admin:"관리자: Michael"},
+      navStudent:["웰니스","개인정보 및 데이터","지원"],
+      navCounselor:["알림 대시보드","사례 검토","학생 여정"],
+      navAdmin:["분석","AI 투명성","거버넌스","SCWIS 선택 이유"],
+      welcomeBack:"다시 오신 것을 환영합니다",
+      studentWelcome:"웰니스 체크인은 필요할 때 더 나은 지원을 제공하는 데 도움이 됩니다.",
+      currentStatus:"현재 상태",
+      statusGood:"균형적",
+      suggestion:"제안",
+      suggestionText:"건강한 루틴을 유지하고 학습 후 짧은 휴식을 취하세요.",
+      whyTitle:"왜 이 제안이 보이나요?",
+      basedOn:"기준",
+      basedOnText:"제출한 웰니스 기록과 최근 체크인 점수입니다.",
+      notUsed:"사용하지 않음",
+      notUsedText:"위치, 개인 메시지, 브라우징 기록, 금융 데이터",
+      localNote:"이 제안은 웰니스 지원에만 사용됩니다. 지원 요청 전에는 원시 개인 데이터가 직원에게 표시되지 않습니다.",
+      privacyGuarantees:"개인정보 보호 보장",
+      privacyItems:["개인 웰니스 동반자이며 감시가 아닙니다","데이터는 성적이나 징계에 사용되지 않습니다","언제든지 옵트아웃 가능하며 서비스 접근은 유지됩니다","AI는 패턴을 식별하고 사람은 결정을 내립니다"],
+      usedDataTitle:"어떤 데이터를 사용하나요?",
+      usedDataItems:["웰니스 지원에 필요한 데이터만 사용","암호화 및 역할 기반 보호","실시간 위치 추적 없음"],
+      checkinTitle:"주간 웰니스 체크인",
+      checkinMeta:"자발적 | 비공개 | 약 2분",
+      mood:"기분", stress:"스트레스", sleep:"수면", workload:"학업 부담", social:"사회적 연결", activity:"신체 활동",
+      low:"낮음", medium:"보통", high:"높음", poor:"나쁨", average:"보통", great:"매우 좋음",
+      light:"가벼움", manageable:"감당 가능", heavy:"무거움", isolated:"고립", connected:"연결됨", active:"활동적", inactive:"비활동", veryActive:"매우 활동적",
+      submit:"제출", last:"지난 기록", historyTitle:"웰니스 기록", downloadData:"Excel 다운로드", deleteData:"선택 데이터 삭제", deleteOne:"삭제", score:"점수", emptyHistory:"아직 기록이 없습니다.",
+      dataControl:"내 데이터 제어 센터", controlText:"SCWIS가 접근할 수 있는 모든 데이터 소스를 직접 제어하고 언제든지 변경할 수 있습니다.", consentBased:"동의 기반",
+      lms:"LMS 참여 데이터", lmsDesc:"강의 접근 및 제출 패턴만 사용", campus:"캠퍼스 활동 데이터", campusDesc:"체육관, 행사 및 시설 이용", dining:"식당 및 도서관 데이터", diningDesc:"식사 규칙성, 도서관 방문 및 학습 패턴", wellnessData:"웰니스 체크인 데이터", wellnessDesc:"자발적인 기분, 스트레스, 수면 응답",
+      predictive:"예측 분석", predictiveWarn:"옵트아웃해도 성적, 서비스, 장학금 또는 캠퍼스 접근에 영향이 없습니다.", optOut:"예측 분석 옵트아웃", enablePredictive:"예측 분석 활성화",
+      consentHistory:"동의 기록", enabled:"활성화됨", disabled:"비활성화됨", savedState:"저장됨",
+      supportPreferences:"지원 선호도", contactMethod:"선호 연락 방법", supportType:"선호 지원 유형", peerBefore:"상담사 연락 전 또래 지원 선호", savePreferences:"선호도 저장",
+      contactOptions:["앱 알림","이메일","SMS"], supportOptions:["1:1 상담","또래 지원 그룹","자기주도 자료","조합"],
+      supportResources:"지원 자료", bookAppointment:"상담 예약", confidential:"비공개 1:1 지원", peerGroup:"또래 지원 그룹 참여", connectStudents:"다른 학생과 연결", stressResources:"스트레스 관리 자료", guides:"가이드, 영상 및 워크숍", contactWellness:"웰니스 서비스 연락", weekday:"평일 8:00-18:00", emergency:"긴급 지원", hotline:"24/7 비공개 위기 전화",
+      messageCenter:"메시지 센터", private:"비공개", openChat:"채팅 열기", markRead:"모두 읽음", supportMessage:"{name}님, 최근 체크인에서 스트레스 신호가 보였습니다. 이는 징계가 아닌 지원 메시지입니다. 자발적 상담이나 자료를 원하시나요?", book:"예약", reply:"답장",
+      understanding:"지원 이해하기", whyMessage:"왜 메시지를 받았나요?", whyMessageText:"메시지는 웰니스 패턴을 검토한 인간 상담사가 보냅니다.", whatDataWasUsed:"어떤 데이터가 사용되었나요?", whatDataWasUsedText:"체크인 응답과 동의한 데이터만 사용하며 성적이나 개인 메시지는 접근하지 않습니다.", confidentialTitle:"비밀이 보장되나요?", confidentialText:"예. 역할 기반 권한으로 보호되며 지정 직원만 접근할 수 있습니다.",
+      counselorMetrics:["검토 필요 학생","높은 우선순위","평균 응답 시간","이번 주 후속 조치"], filter:"필터", filterOptions:["전체","학업 스트레스","사회적 고립","수면 문제","대기 중만"], riskList:"위험 알림 목록", humanPanel:"인간 검토 패널", caseId:"사례 ID", riskCategory:"위험 범주", aiConfidence:"AI 신뢰 패턴", status:"상태", identity:"신원",
+      counselorMetricHints:["열린 사례","검토 필요","인간 응답","완료됨"],
+      categories:["학업 스트레스","사회적 고립","수면 문제","참여 감소","웰니스 우려"], statuses:["대기 중","검토 중","예약됨","해결됨"], confidencePatterns:["야간 LMS 활동과 학업 부담 증가","2주간 캠퍼스 참여 감소","반복적인 낮은 수면 체크인","식당 및 도서관 활동 감소","스트레스 추세 증가"], identities:["익명화","익명화","익명화","익명화","학생 동의"],
+      recommendedAction:"권장 조치", actionText:"지원 메시지를 보내고 자발적 상담을 초대합니다.", counselorButtons:["상담사 검토 표시","지원 메시지 보내기","예약 잡기","검토 후 닫기"], caseDetails:"사례 세부 정보", emptyCase:"아직 업로드된 사례 세부 정보가 없습니다.", auditTrail:"감사 기록", auditItems:["AI 패턴 플래그로 알림 생성","상담사가 사례 패널 열람","필요 검토 전 신원 제한 유지"], rbacTitle:"역할 기반 접근 제어", rbacNote:"역할 기반 접근 제어: 웰니스 지원에 필요한 데이터만 표시되고 민감 정보는 제한됩니다.",
+      studentJourneyTitle:"사례 생애주기 — 학생 여정", studentJourneySub:"체크인부터 해결까지의 전체 워크플로입니다. 모든 단계는 개인정보를 보호하고 사람이 검토합니다.",
+      privacyStepTitle:"모든 단계의 개인정보 보장", privacyStepText:"학생 데이터는 학업 평가, 징계 또는 웰니스 지원 외 목적으로 사용되지 않습니다. AI는 패턴만 표시하고 결정은 사람이 내립니다. 모든 작업은 감사 기록에 남습니다.",
+      adminTitle:"관리자 분석 패널", adminSubtitle:"계획, 자원 배분, 보고를 위한 익명화된 캠퍼스 인사이트입니다.", adminMetrics:["참여율","상담 수요","평균 웰니스 점수","시스템 가동률","옵트아웃 비율"], liveActivity:"최근 학생 체크인 활동 (실시간)", liveLabel:"실시간", liveNote:"익명 요약만 표시됩니다. 개인 메시지와 신원은 보호됩니다.", liveHeaders:["최근 체크인","기분","스트레스","수면","학업 부담","사회","신체 활동","웰니스 점수"], trendTitle:"캠퍼스 웰니스 추세", supportCategories:"지원 범주", supportLegend:["학업 스트레스","사회적 고립","수면 문제","참여 감소","웰니스 우려"],
+      aiWorks:"SCWIS AI 작동 방식", dataUses:"AI가 사용하는 데이터", dataNotUse:"AI가 사용하지 않는 데이터", aiUseItems:["도서관과 체육관 이용 같은 캠퍼스 접근 패턴","학생이 자발적으로 제출한 체크인 데이터","제출 시간과 플랫폼 사용 같은 LMS 참여 신호","개인 기준선과 비교하는 과거 추세 데이터"], aiNotItems:["성적 또는 GPA","징계 기록","개인 메시지 또는 소셜 미디어","인구통계 프로파일링"], aiFlow:[["데이터 수집","동의되고 필요한 웰니스 신호만 사용합니다."],["패턴 분석","통계 모델이 의미 있는 변화를 감지합니다."],["인간 검토","상담사가 모든 알림을 검토합니다."],["지원 연락","학생은 자발적이고 지원적인 연락을 받습니다."]],
+      limitations:"AI 한계 및 고지", limitationItems:["SCWIS AI는 의사결정 지원 도구이며 최종 결정자는 아닙니다.","AI가 일부 학생을 놓칠 수 있어 자기 의뢰와 또래 의뢰가 중요합니다.","패턴은 상관관계이지 인과관계가 아닙니다.","학생은 언제든지 옵트아웃할 수 있으며 예측은 학업 평가나 징계에 사용되지 않습니다."],
+      privacyReporting:"개인정보 보호 보고", privacyReportingText:"익명화된 캠퍼스 인사이트입니다. 관리자는 개별 학생 기록을 볼 수 없습니다.", threshold:"개인정보 임계값: 10명 미만 그룹은 재식별 방지를 위해 숨겨집니다.", budget:"예산 가치 대시보드", oneTime:"일회성 구현 총비용", annual:"연간 유지보수 총비용", served:"지원 학생 수", costPer:"학생 1인당 연간 비용", auditSummary:"데이터 접근 감사 요약", auditRows:["상담사 접근","동의 변경","데이터 삭제 요청","개인정보 사건"],
+      whyTitleAdmin:"왜 캠퍼스가 SCWIS를 선택해야 하나요?", whySubtitle:"실제 대학 환경을 위한 개인정보 우선, 인간 중심 웰니스 시스템입니다.", whyCards:[["개인정보 우선 설계","학생이 모든 데이터 소스를 제어합니다."],["인간 참여형 AI","AI는 패턴을 표시하고 인간이 결정합니다."],["낙인 없는 옵트아웃","서비스 손실 없이 옵트아웃할 수 있습니다."],["15,000명 이상 확장","핵심 시스템 재설계 없이 성장할 수 있습니다."],["네트워크 장애에도 작동","오프라인 체크인은 복구 후 동기화됩니다."],["예산 친화적 지속 가능성","예산 내 구현과 학생 고용 기회를 지원합니다."]], whyTags:["내장 기능","인간 중심"],
+      exportHeaders:["날짜","점수","기분","스트레스","수면","사회","신체 활동","학업 부담"], toastSaved:"저장됨", toastSubmitted:"체크인 제출됨", toastDeleted:"선택 데이터 삭제됨", toastDownloaded:"Excel 파일 다운로드됨"
+    };
+
+    I18N.ja = {
+      ...I18N.en,
+      language:"Language",
+      loginSubtitle:"プライバシー優先のキャンパス・ウェルネス支援",
+      badgePrivacy:"プライバシー優先", badgeFerpa:"FERPA 準拠", badgeAi:"AI 支援",
+      loginUser:"学生番号 / 職員 ID", password:"パスワード", loginButton:"ログイン", loginError:"下のデモアカウントを使用してください。",
+      demoTitle:"デモアカウント", demoSub:"デモロールを選ぶと該当画面に入ります。", logout:"ログアウト",
+      roles:{student:"学生ウェルネスアプリ", counselor:"カウンセラーダッシュボード", admin:"管理者分析パネル"},
+      roleSub:{student:"チェックイン、同意管理、支援資料の個人スペースです。", counselor:"人間が確認するウェルネス通知とケースレビュー画面です。", admin:"計画と改善のための匿名化キャンパス分析です。"},
+      demo:{logan:"学生 1: Logan", liam:"学生 2: Liam", counselor:"カウンセラー: Dr. Sangwook HA", admin:"管理者: Michael"},
+      navStudent:["ウェルネス","プライバシーとデータ","サポート"],
+      navCounselor:["アラートダッシュボード","ケースレビュー","学生ジャーニー"],
+      navAdmin:["分析","AI 透明性","ガバナンス","SCWIS を選ぶ理由"],
+      welcomeBack:"おかえりなさい", studentWelcome:"ウェルネスチェックインは、必要なときにより良い支援につながります。", currentStatus:"現在の状態", statusGood:"良好", suggestion:"提案", suggestionText:"健康的な習慣を続け、学習後に短い休憩を取りましょう。",
+      whyTitle:"なぜこの提案が表示されますか？", basedOn:"根拠", basedOnText:"提出済みのウェルネス履歴と最近のチェックイン点数。", notUsed:"未使用", notUsedText:"位置情報、個人メッセージ、閲覧履歴、金融データ", localNote:"この提案はウェルネス支援のみに使われます。支援を依頼しない限り、原データは職員に表示されません。",
+      privacyGuarantees:"プライバシー保証", privacyItems:["個人のウェルネス支援であり監視ではありません","データは成績や懲戒に使われません","いつでもオプトアウトでき、サービス利用は維持されます","AI がパターンを見つけ、人間が決定します"], usedDataTitle:"どのデータを使いますか？", usedDataItems:["支援に必要なデータのみ使用","暗号化され、役割権限で保護","リアルタイム位置追跡なし"],
+      checkinTitle:"週間ウェルネスチェックイン", checkinMeta:"任意 | 非公開 | 約2分", mood:"気分", stress:"ストレス", sleep:"睡眠", workload:"学業負担", social:"社会的つながり", activity:"身体活動",
+      low:"低い", medium:"中", high:"高い", poor:"悪い", average:"普通", great:"とても良い", light:"軽い", manageable:"対応可能", heavy:"重い", isolated:"孤立", connected:"つながりあり", active:"活動的", inactive:"非活動的", veryActive:"とても活動的",
+      submit:"送信", last:"前回", historyTitle:"ウェルネス履歴", downloadData:"Excel をダウンロード", deleteData:"任意データを削除", deleteOne:"削除", score:"スコア", emptyHistory:"履歴はまだありません。",
+      dataControl:"データ管理センター", controlText:"SCWISがアクセスできる各データソースを自分で管理し、いつでも変更できます。", consentBased:"同意ベース", lms:"LMS参加データ", lmsDesc:"コースアクセスと提出パターンのみ", campus:"キャンパス活動データ", campusDesc:"ジム、イベント、施設利用", dining:"食堂・図書館データ", diningDesc:"食事規則性、図書館訪問、学習パターン", wellnessData:"ウェルネスチェックインデータ", wellnessDesc:"任意の気分、ストレス、睡眠回答",
+      predictive:"予測分析", predictiveWarn:"オプトアウトしても成績、サービス、奨学金、キャンパスアクセスには影響しません。", optOut:"予測分析をオプトアウト", enablePredictive:"予測分析を有効化", consentHistory:"同意履歴", enabled:"有効", disabled:"無効", savedState:"保存済み",
+      supportPreferences:"サポート設定", contactMethod:"希望連絡方法", supportType:"希望サポートタイプ", peerBefore:"カウンセラー連絡前にピアサポートを希望", savePreferences:"設定を保存", contactOptions:["アプリ通知","メール","SMS"], supportOptions:["1対1カウンセリング","ピアサポートグループ","セルフガイド資料","組み合わせ"],
+      supportResources:"サポート資料", bookAppointment:"カウンセリング予約", confidential:"非公開の1対1支援", peerGroup:"ピアサポートに参加", connectStudents:"他の学生とつながる", stressResources:"ストレス管理資料", guides:"ガイド、動画、ワークショップ", contactWellness:"ウェルネスサービスへ連絡", weekday:"平日 8:00-18:00", emergency:"緊急サポート", hotline:"24時間 非公開危機相談",
+      messageCenter:"メッセージセンター", private:"非公開", openChat:"チャットを開く", markRead:"すべて既読", supportMessage:"{name}さん、最近のチェックインにストレスの兆候が見られました。これは懲戒ではなく支援の連絡です。任意の面談や資料を希望しますか？", book:"予約", reply:"返信",
+      understanding:"サポートについて", whyMessage:"なぜメッセージを受け取りましたか？", whyMessageText:"メッセージは人間のカウンセラーがパターンを確認して送ります。", whatDataWasUsed:"使用されたデータは？", whatDataWasUsedText:"チェックイン回答と同意済みデータのみ使用します。成績や個人メッセージにはアクセスしません。", confidentialTitle:"秘密は守られますか？", confidentialText:"はい。役割権限で保護され、担当職員のみアクセスできます。",
+      counselorMetrics:["確認が必要な学生","高優先度","平均応答時間","今週のフォローアップ"], filter:"フィルター", filterOptions:["すべて","学業ストレス","社会的孤立","睡眠障害","未対応のみ"], riskList:"リスクアラート一覧", humanPanel:"人間レビュー パネル", caseId:"ケース ID", riskCategory:"リスクカテゴリ", aiConfidence:"AI 信頼パターン", status:"状態", identity:"本人情報", categories:["学業ストレス","社会的孤立","睡眠障害","参加低下","ウェルネス懸念"], statuses:["未対応","レビュー中","予約済み","解決済み"], confidencePatterns:["夜間LMS活動と学業負担上昇","2週間のキャンパス参加低下","低い睡眠チェックインの反復","食堂・図書館活動低下","ストレス傾向上昇"], identities:["匿名化","匿名化","匿名化","匿名化","学生同意済み"],
+      counselorMetricHints:["未対応ケース","確認が必要","人間の応答","完了"],
+      recommendedAction:"推奨アクション", actionText:"支援メッセージを送り、任意の予約に招待します。", counselorButtons:["カウンセラー確認にする","支援メッセージ送信","予約を設定","確認後に閉じる"], caseDetails:"ケース詳細", emptyCase:"アップロードされたケース詳細はまだありません。", auditTrail:"監査履歴", auditItems:["AI パターンフラグでアラート作成","カウンセラーがケースパネルを開いた","必要な確認まで本人情報は制限"], rbacTitle:"ロールベースアクセス制御", rbacNote:"ロールベースアクセス制御: 支援に必要なデータのみ表示され、機密情報は制限されます。",
+      studentJourneyTitle:"ケースライフサイクル — 学生ジャーニー", studentJourneySub:"チェックインから解決までの流れです。すべての段階でプライバシーが保護され、人間が確認します。", privacyStepTitle:"すべての段階のプライバシー保証", privacyStepText:"学生データは学業評価、懲戒、ウェルネス支援以外の目的には使われません。AI はパターンを示し、決定は人間が行います。すべての操作は監査履歴に記録されます。",
+      adminTitle:"管理者分析パネル", adminSubtitle:"計画、資源配分、報告のための匿名化されたキャンパス分析です。", adminMetrics:["参加率","相談需要","平均ウェルネス点","システム稼働率","オプトアウト率"], liveActivity:"最近の学生チェックイン活動（ライブ）", liveLabel:"ライブ", liveNote:"匿名化された要約のみ。個人メッセージと本人情報は保護されます。", liveHeaders:["最終チェックイン","気分","ストレス","睡眠","学業負担","社会","身体活動","ウェルネス点"], trendTitle:"キャンパスウェルネス傾向", supportCategories:"サポートカテゴリ", supportLegend:["学業ストレス","社会的孤立","睡眠障害","参加低下","ウェルネス懸念"],
+      aiWorks:"SCWIS AI の仕組み", dataUses:"AI が使用するデータ", dataNotUse:"AI が使用しないデータ", aiUseItems:["図書館やジム利用などのキャンパスアクセスパターン","学生が任意で提出したチェックインデータ","提出時刻や利用状況などのLMS参加信号","個人ベースラインと比較する履歴トレンド"], aiNotItems:["成績または GPA","懲戒記録","個人メッセージまたはSNS","属性プロファイリング"], aiFlow:[["データ収集","同意済みで必要な信号のみ使用します。"],["パターン分析","統計モデルが意味ある変化を検出します。"],["人間レビュー","カウンセラーがすべての通知を確認します。"],["支援的連絡","学生は任意で支援的な連絡を受けます。"]],
+      limitations:"AI の制限と免責事項", limitationItems:["SCWIS AI は意思決定支援ツールであり、決定者ではありません。","AI は支援が必要な学生を見逃す場合があります。","パターンは相関であり因果ではありません。","学生はいつでもオプトアウトでき、予測は学業評価や懲戒に使われません。"],
+      privacyReporting:"プライバシー安全レポート", privacyReportingText:"匿名化されたキャンパス分析です。管理者は個別学生記録を閲覧できません。", threshold:"プライバシーしきい値: 10人未満のグループは再識別防止のため非表示です。", budget:"予算価値ダッシュボード", oneTime:"一回限りの実装総費用", annual:"年間保守総費用", served:"支援学生数", costPer:"学生1人あたり年間費用", auditSummary:"データアクセス監査概要", auditRows:["カウンセラーアクセス","同意変更","データ削除要求","プライバシー事案"],
+      whyTitleAdmin:"なぜキャンパスに SCWIS を選ぶのか？", whySubtitle:"実際の大学環境向けのプライバシー優先・人間中心のウェルネスシステムです。", whyCards:[["プライバシー優先設計","学生がすべてのデータソースを管理します。"],["人間参加型 AI","AI がパターンを示し、人間が決定します。"],["スティグマのないオプトアウト","サービスを失わずに退出できます。"],["15,000人以上に拡張可能","コアを作り直さず成長できます。"],["ネットワーク停止時も動作","オフラインチェックインは復旧後に同期します。"],["予算に配慮し持続可能","予算内実装と学生雇用機会を支援します。"]], whyTags:["内蔵機能","人間中心"],
+      exportHeaders:["日付","スコア","気分","ストレス","睡眠","社会","身体活動","学業負担"], toastSaved:"保存しました", toastSubmitted:"チェックインを送信しました", toastDeleted:"任意データを削除しました", toastDownloaded:"Excel ファイルをダウンロードしました"
+    };
+
+    Object.assign(I18N.ko, {
+      close:"닫기",
+      appointmentTitle:"자발적 상담 예약",
+      appointmentSub:"앞으로 7일간 선택 가능한 상담 시간입니다.",
+      morning:"오전",
+      afternoon:"오후",
+      available:"예약 가능",
+      full:"예약 마감",
+      chatWithCounselor:"상담사와 채팅",
+      chatWithStudent:"학생과 채팅",
+      chatPrivate:"비공개 지원 대화",
+      chatPlaceholder:"지원 메시지를 입력하세요...",
+      aiConcernSummary:"AI 우려 요약",
+      confidence:"신뢰도",
+      aiFeedback:"AI 피드백",
+      aiFeedbackOptions:["정확함","오탐","추가 맥락 필요"],
+      openChatWithStudent:"학생과 채팅 열기",
+      supportiveMessageTitle:"지원 메시지 보내기",
+      supportiveMessageIntro:"AI 보조, AI 결정 아님: 아래 초안은 제안일 뿐이며 상담사가 최종 메시지를 검토하고 수정합니다.",
+      aiSuggestedReplies:"AI 제안 지원 답변",
+      finalMessage:"학생에게 보낼 최종 메시지",
+      sendMessage:"메시지 보내기",
+      cancel:"취소",
+      studentActionTitles:["채팅 열기","모두 읽음","상담 예약","답장"],
+      studentActionBodies:[
+        "보안 채팅이 열렸습니다. 웰니스 직원이 서비스 시간에 응답할 수 있으며 대화는 비공개로 유지됩니다.",
+        "모든 지원 메시지가 읽음으로 표시되었습니다. 학생이 응답하지 않으면 추가 조치는 없습니다.",
+        "예약 패널이 열렸습니다. 가능한 자발적 상담 시간: 5월 16일 10:00, 5월 17일 14:30, 5월 20일 11:15.",
+        "답장 상자가 열렸습니다. 질문, 자료 요청 또는 지금은 지원이 필요 없다는 답장을 작성할 수 있습니다."
+      ],
+      counselorActionBodies:[
+        "이 사례는 상담사 검토로 표시되었고 감사 기록에 추가되었습니다.",
+        "지원 메시지 초안이 준비되었으며 전송 전 사람이 확인합니다.",
+        "자발적 면담 시간을 선택할 수 있는 예약 패널이 열렸습니다.",
+        "닫기 전 짧은 검토 메모가 필요하며 감사 기록에 남습니다."
+      ]
+    });
+    Object.assign(I18N.ja, {
+      close:"閉じる",
+      appointmentTitle:"任意相談を予約",
+      appointmentSub:"今後7日間のカウンセラー予約枠です。",
+      morning:"午前",
+      afternoon:"午後",
+      available:"予約可能",
+      full:"満席",
+      chatWithCounselor:"カウンセラーとチャット",
+      chatWithStudent:"学生とチャット",
+      chatPrivate:"非公開の支援会話",
+      chatPlaceholder:"支援メッセージを入力...",
+      aiConcernSummary:"AI 懸念サマリー",
+      confidence:"信頼度",
+      aiFeedback:"AI フィードバック",
+      aiFeedbackOptions:["正確","誤検知","追加情報が必要"],
+      openChatWithStudent:"学生とのチャットを開く",
+      supportiveMessageTitle:"支援メッセージを送信",
+      supportiveMessageIntro:"AI支援でありAI決定ではありません。以下の草案は提案のみで、送信前にカウンセラーが確認・編集します。",
+      aiSuggestedReplies:"AI 提案の支援返信",
+      finalMessage:"学生への最終メッセージ",
+      sendMessage:"メッセージ送信",
+      cancel:"キャンセル",
+      studentActionTitles:["チャットを開く","すべて既読","予約する","返信"],
+      studentActionBodies:[
+        "安全なチャットを開きました。ウェルネス担当者が対応時間内に返信でき、会話は非公開です。",
+        "すべての支援メッセージを既読にしました。あなたが返信しない限り追加対応は行われません。",
+        "予約パネルを開きました。任意相談の空き枠: 5月16日 10:00、5月17日 14:30、5月20日 11:15。",
+        "返信欄を開きました。質問、資料依頼、または今は支援不要であることを伝えられます。"
+      ],
+      counselorActionBodies:[
+        "このケースはカウンセラー確認として記録され、監査履歴に追加されました。",
+        "支援メッセージ案を作成しました。送信前に人間が確認します。",
+        "任意面談の予約パネルを開きました。",
+        "終了には短い確認メモが必要で、監査履歴に記録されます。"
+      ]
+    });
+
+    const accounts = {
+      logan: { name:"Logan", role:"student", initials:"L", user:"2330024099", pass:"123456" },
+      liam: { name:"Liam", role:"student", initials:"Li", user:"2330024121", pass:"123456" },
+      counselor: { name:"Dr. Sangwook HA", role:"counselor", initials:"SH", user:"Counselor001", pass:"654321" },
+      admin: { name:"Michael", role:"admin", initials:"M", user:"Amin001", pass:"666666" }
+    };
+    const navKeys = {
+      student:["wellness","privacy","support"],
+      counselor:["alerts","case","journey"],
+      admin:["analytics","ai","governance","why"]
+    };
+    const navLabelKey = { student:"navStudent", counselor:"navCounselor", admin:"navAdmin" };
+    const navIcons = {
+      wellness:"♡", privacy:"◎", support:"✚", alerts:"☷", case:"▣", journey:"🧭", analytics:"📈", ai:"AI", governance:"♢", why:"✓"
+    };
+    let lang = "en";
+    let currentKey = "logan";
+    let current = accounts.logan;
+    let activeTab = "wellness";
+    let selectedMood = "🙂";
+    let predictiveEnabled = true;
+    const studentConsentHistories = {
+      logan: [
+        { date:"2026-03-02 08:45", key:"lms", state:"enabled" },
+        { date:"2026-03-08 12:10", key:"campus", state:"enabled" },
+        { date:"2026-03-17 17:25", key:"dining", state:"disabled" },
+        { date:"2026-03-30 09:40", key:"wellnessData", state:"enabled" },
+        { date:"2026-04-09 14:18", key:"predictive", state:"enabled" },
+        { date:"2026-04-21 11:05", key:"supportPreferences", state:"savedState" },
+        { date:"2026-05-06 16:32", key:"campus", state:"disabled" },
+        { date:"2026-05-14 20:12", key:"campus", state:"enabled" }
+      ],
+      liam: [
+        { date:"2026-03-05 10:15", key:"lms", state:"enabled" },
+        { date:"2026-03-11 13:44", key:"wellnessData", state:"enabled" },
+        { date:"2026-03-22 18:05", key:"campus", state:"disabled" },
+        { date:"2026-04-02 09:30", key:"campus", state:"enabled" },
+        { date:"2026-04-13 15:55", key:"dining", state:"enabled" },
+        { date:"2026-04-26 19:20", key:"predictive", state:"enabled" },
+        { date:"2026-05-01 08:50", key:"supportPreferences", state:"savedState" },
+        { date:"2026-05-09 12:36", key:"dining", state:"disabled" },
+        { date:"2026-05-13 17:48", key:"wellnessData", state:"enabled" }
+      ]
+    };
+    const studentWellnessHistories = {
+      logan: [
+        { date:"2026-03-04 09:20", score:64, mood:"🙂", stress:5, sleep:6, social:6, activity:5, workload:7 },
+        { date:"2026-03-16 18:10", score:58, mood:"😐", stress:6, sleep:5, social:5, activity:4, workload:8 },
+        { date:"2026-03-29 14:35", score:72, mood:"😊", stress:4, sleep:7, social:7, activity:6, workload:6 },
+        { date:"2026-04-08 11:25", score:67, mood:"🙂", stress:5, sleep:6, social:7, activity:5, workload:7 },
+        { date:"2026-04-20 14:30", score:70, mood:"🙂", stress:3, sleep:7, social:7, activity:6, workload:7 },
+        { date:"2026-05-03 16:45", score:62, mood:"😐", stress:6, sleep:6, social:5, activity:5, workload:8 },
+        { date:"2026-05-14 22:13", score:76, mood:"😊", stress:3, sleep:7, social:8, activity:7, workload:6 }
+      ],
+      liam: [
+        { date:"2026-03-06 10:05", score:69, mood:"🙂", stress:4, sleep:7, social:6, activity:6, workload:6 },
+        { date:"2026-03-24 17:40", score:61, mood:"😐", stress:6, sleep:6, social:5, activity:5, workload:8 },
+        { date:"2026-04-12 09:50", score:73, mood:"😊", stress:3, sleep:7, social:7, activity:7, workload:6 },
+        { date:"2026-05-02 19:15", score:57, mood:"🙁", stress:7, sleep:5, social:4, activity:4, workload:8 },
+        { date:"2026-05-13 13:20", score:66, mood:"🙂", stress:5, sleep:6, social:6, activity:6, workload:7 }
+      ]
+    };
+    let consentHistory = studentConsentHistories.logan;
+    let wellnessHistory = studentWellnessHistories.logan;
+    let selectedCase = 0;
+    let supportiveSuggestionVersion = 0;
+
+    const $ = id => document.getElementById(id);
+    const t = key => (I18N[lang] && I18N[lang][key]) || I18N.en[key] || key;
+    const escapeHtml = value => String(value).replace(/[&<>"']/g, ch => ({
+      "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"
+    }[ch]));
+
+    const cases = [
+      { id:"CASE-4091", student:"STU-2847", category:0, confidence:87, status:0, identity:4, summary:"Student STU-2847 shows significant academic stress patterns. Library visits increased 160%, assignments were delayed twice, and recent check-ins suggest rising workload pressure." },
+      { id:"CASE-4104", student:"STU-5612", category:1, confidence:78, status:0, identity:1, summary:"Campus engagement and social connection indicators dropped over the last two weeks. AI recommends counselor review before outreach." },
+      { id:"CASE-4188", student:"STU-3901", category:2, confidence:72, status:1, identity:2, summary:"Late-night LMS activity occurred for three consecutive nights with lower sleep check-ins. Supportive sleep resources may help." },
+      { id:"CASE-4210", student:"STU-1753", category:3, confidence:68, status:1, identity:3, summary:"Campus activity decreased sharply while academic workload stayed high. AI recommends monitoring and a supportive message." },
+      { id:"CASE-4227", student:"STU-8034", category:4, confidence:65, status:2, identity:4, summary:"Wellbeing check-in score dropped across three weeks. Counselor context review is recommended before any intervention." }
+    ];
+    const hiddenCaseIds = new Set();
+
+    function renderStaticText() {
+      document.documentElement.lang = lang;
+      document.querySelectorAll("[data-t]").forEach(node => { node.textContent = t(node.dataset.t); });
+      $("loginLang").value = lang;
+      $("systemLang").value = lang;
+      $("demoList").innerHTML = Object.entries(accounts).map(([key, account]) => `
+        <button class="demo-account" data-demo="${key}">
+          <strong>${t("demo")[key]}</strong>
+          <small>${account.user} / ${account.pass}</small>
+        </button>`).join("");
+      document.querySelectorAll("[data-demo]").forEach(btn => btn.addEventListener("click", () => loginAs(btn.dataset.demo)));
+    }
+
+    function renderShell() {
+      $("currentName").textContent = current.name;
+      $("avatarText").textContent = current.initials;
+      $("currentRole").textContent = t("roles")[current.role];
+      $("roleLine").textContent = t("roles")[current.role];
+      $("pageTitle").innerHTML = `${roleIcon(current.role)} ${t("roles")[current.role]}`;
+      $("pageSubtitle").textContent = t("roleSub")[current.role];
+      const labels = t(navLabelKey[current.role]);
+      $("roleNav").innerHTML = navKeys[current.role].map((key, index) => `
+        <button class="nav-btn ${activeTab === key ? "active" : ""}" data-tab="${key}">
+          <span class="nav-icon">${navIcons[key]}</span><span>${labels[index]}</span>
+        </button>`).join("");
+      document.querySelectorAll("[data-tab]").forEach(btn => btn.addEventListener("click", () => {
+        activeTab = btn.dataset.tab;
+        renderAll();
+      }));
+    }
+
+    function roleIcon(role) {
+      if (role === "student") return '<span class="title-icon i-green">♡</span>';
+      if (role === "counselor") return '<span class="title-icon i-purple">☷</span>';
+      return '<span class="title-icon i-blue">📊</span>';
+    }
+
+    function renderAll() {
+      renderStaticText();
+      renderShell();
+      if (current.role === "student") renderStudent();
+      if (current.role === "counselor") renderCounselor();
+      if (current.role === "admin") renderAdmin();
+    }
+
+    function privacyAside() {
+      return `<aside class="privacy-mini">
+        <div class="card tint-green">
+          <h4>${t("privacyGuarantees")}</h4>
+          <ul class="check-list">${t("privacyItems").map(item => `<li><span class="check">✓</span><span>${item}</span></li>`).join("")}</ul>
+        </div>
+        <div class="card">
+          <h4>${t("usedDataTitle")}</h4>
+          <ul class="check-list">${t("usedDataItems").map(item => `<li><span class="check">✓</span><span>${item}</span></li>`).join("")}</ul>
+        </div>
+      </aside>`;
+    }
+
+    function renderStudent() {
+      const inner = activeTab === "wellness" ? studentWellness() : activeTab === "privacy" ? studentPrivacy() : studentSupport();
+      $("content").innerHTML = `<div class="grid student-layout"><div>${inner}</div>${privacyAside()}</div>`;
+      bindStudentControls();
+    }
+
+    function studentWellness() {
+      return `<div class="grid">
+        <div class="card">
+          <div class="welcome-panel">
+            <div>
+              <h3>${t("welcomeBack")}, ${current.name}</h3>
+              <p class="page-kicker">${t("studentWelcome")}</p>
+            </div>
+            <div class="status-pill"><span class="muted">${t("currentStatus")}</span><strong>${t("statusGood")}</strong></div>
+            <div class="status-pill"><span class="muted">${t("suggestion")}</span><p style="color:var(--blue);font-weight:850;line-height:1.45;">${t("suggestionText")}</p></div>
+          </div>
+        </div>
+        <div class="why-box">
+          <h3 class="section-title"><span class="title-icon i-purple">?</span>${t("whyTitle")}</h3>
+          <div class="why-grid">
+            <div class="why-pill"><strong>${t("basedOn")}:</strong> ${t("basedOnText")}</div>
+            <div class="why-pill"><strong>${t("notUsed")}:</strong> ${t("notUsedText")}</div>
+          </div>
+          <p class="muted">${t("localNote")}</p>
+        </div>
+        <div class="card">
+          <div class="section-head">
+            <div class="section-title"><span class="title-icon i-blue">✓</span><div><h3>${t("checkinTitle")}</h3><p class="page-kicker">${t("checkinMeta")}</p></div></div>
+          </div>
+          <div class="checkin-grid">
+            <div class="checkin-card"><h4>${t("mood")}</h4><div class="mood-grid">${["😊","🙂","😐","🙁","😟"].map(m => `<button class="mood-btn ${selectedMood === m ? "active" : ""}" data-mood="${m}">${m}</button>`).join("")}</div></div>
+            ${rangeCard("stress", t("stress"), 3, [t("high"),t("medium"),t("low")])}
+            ${rangeCard("sleep", t("sleep"), 7, [t("poor"),t("average"),t("great")])}
+            ${rangeCard("workload", t("workload"), 7, [t("heavy"),t("manageable"),t("light")])}
+            ${rangeCard("social", t("social"), 7, [t("isolated"),t("connected"),t("active")])}
+            ${rangeCard("activity", t("activity"), 6, [t("inactive"),t("active"),t("veryActive")])}
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;margin-top:18px;">
+            <span class="muted"><strong>${t("last")}:</strong> ${wellnessHistory[wellnessHistory.length - 1]?.date || "-"}</span>
+            <button class="primary-btn" id="submitCheckin">➤ ${t("submit")}</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="section-head">
+            <div class="section-title"><span class="title-icon i-green">⌁</span><h3>${t("historyTitle")}</h3></div>
+            <div><button class="soft-btn" id="downloadHistory">⇩ ${t("downloadData")}</button> <button class="danger-btn" id="deleteHistory">⌫ ${t("deleteData")}</button></div>
+          </div>
+          ${historyChart()}
+          <div class="history-list">${historyList()}</div>
+        </div>
+      </div>`;
+    }
+
+    function rangeCard(id, label, val, labels) {
+      return `<div class="checkin-card"><h4>${label}</h4><div class="range-row"><input type="range" min="0" max="10" value="${val}" id="${id}Range"><div style="display:flex;justify-content:flex-end;"><span class="value-pill" id="${id}Value">${val}/10</span></div><div class="range-labels"><span>${labels[0]}</span><span>${labels[1]}</span><span>${labels[2]}</span></div></div></div>`;
+    }
+
+    function historyChart() {
+      if (!wellnessHistory.length) return `<p class="muted">${t("emptyHistory")}</p>`;
+      const pts = wellnessHistory.map((r, i) => ({ x: 52 + i * (480 / Math.max(1, wellnessHistory.length - 1)), y: 185 - (r.score / 100) * 140, r }));
+      const d = pts.map((p, i) => `${i ? "L" : "M"}${p.x},${p.y}`).join(" ");
+      return `<svg class="history-chart" viewBox="0 0 590 240">
+        <line x1="52" y1="45" x2="552" y2="45" stroke="#e7eef6"/><line x1="52" y1="115" x2="552" y2="115" stroke="#e7eef6"/><line x1="52" y1="185" x2="552" y2="185" stroke="#e7eef6"/>
+        <path d="${d}" fill="none" stroke="#3f6fe5" stroke-width="4" stroke-linecap="round"/>
+        ${pts.map(p => `<circle cx="${p.x}" cy="${p.y}" r="6" fill="#3f6fe5"></circle>`).join("")}
+        <text x="24" y="49" fill="#68798d" font-size="12">100</text><text x="31" y="119" fill="#68798d" font-size="12">60</text><text x="31" y="189" fill="#68798d" font-size="12">20</text>
+        <text x="258" y="224" fill="#68798d" font-size="12">${t("exportHeaders")[0]}</text>
+      </svg>`;
+    }
+
+    function historyList() {
+      if (!wellnessHistory.length) return `<p class="muted">${t("emptyHistory")}</p>`;
+      return wellnessHistory.slice().reverse().map((r, idx) => {
+        const actualIndex = wellnessHistory.length - 1 - idx;
+        return `<div class="history-item"><div><strong>${r.date}</strong><p>${t("mood")}: ${r.mood} &nbsp; ${t("stress")}: ${r.stress}/10 &nbsp; ${t("sleep")}: ${r.sleep}/10 &nbsp; ${t("social")}: ${r.social}/10 &nbsp; ${t("activity")}: ${r.activity}/10</p></div><div><span class="history-score">${t("score")}: ${r.score}/100</span><br><button class="danger-btn" data-delete-record="${actualIndex}" style="margin-top:8px">${t("deleteOne")}</button></div></div>`;
+      }).join("");
+    }
+
+    function studentPrivacy() {
+      const toggles = [
+        ["lms", t("lms"), t("lmsDesc"), true],
+        ["campus", t("campus"), t("campusDesc"), true],
+        ["dining", t("dining"), t("diningDesc"), false],
+        ["wellnessData", t("wellnessData"), t("wellnessDesc"), true]
+      ];
+      return `<div class="grid">
+        <div class="card">
+          <div class="section-title"><span class="title-icon i-blue">◎</span><div><h3>${t("dataControl")} <span class="badge">${t("consentBased")}</span></h3><p class="page-kicker">${t("controlText")}</p></div></div>
+          <div style="margin-top:14px;">${toggles.map(row => toggleRow(...row)).join("")}</div>
+          <div class="card tint-amber" style="margin-top:18px;box-shadow:none;">
+            <h4>${t("predictive")}</h4><p class="page-kicker">${t("predictiveWarn")}</p>
+            <button class="${predictiveEnabled ? "danger-btn" : "soft-btn"}" id="predictiveBtn" style="margin-top:12px;">${predictiveEnabled ? t("optOut") : t("enablePredictive")}</button>
+          </div>
+        </div>
+        <div class="grid two">
+          <div class="card"><h3>${t("consentHistory")}</h3><ul class="consent-log" id="consentLog">${renderConsentLog()}</ul></div>
+          <div class="card">
+            <h3>${t("supportPreferences")}</h3>
+            <div class="grid two" style="margin-top:14px;">
+              <label class="field"><span>${t("contactMethod")}</span><select class="soft-select">${t("contactOptions").map(x => `<option>${x}</option>`).join("")}</select></label>
+              <label class="field"><span>${t("supportType")}</span><select class="soft-select">${t("supportOptions").map(x => `<option>${x}</option>`).join("")}</select></label>
+            </div>
+            <label class="toggle-row"><span><strong>${t("peerBefore")}</strong></span><span class="switch"><input type="checkbox" checked><span class="slider"></span></span></label>
+            <button class="soft-btn" id="savePrefs">${t("savePreferences")}</button>
+          </div>
+        </div>
+      </div>`;
+    }
+
+    function toggleRow(id, title, desc, checked) {
+      return `<label class="toggle-row"><span><strong>${title}</strong><span>${desc}</span></span><span class="switch"><input type="checkbox" data-consent-key="${id}" ${checked ? "checked" : ""}><span class="slider"></span></span></label>`;
+    }
+
+    function renderConsentLog() {
+      return consentHistory.slice().reverse().map(item => `<li><span class="dot"></span><span>${item.date} — ${t(item.key)}: ${t(item.state)}</span></li>`).join("");
+    }
+
+    function studentSupport() {
+      const resources = [
+        ["i-blue","▣", t("bookAppointment"), t("confidential")],
+        ["i-green","☘", t("peerGroup"), t("connectStudents")],
+        ["i-purple","▤", t("stressResources"), t("guides")],
+        ["i-teal","☎", t("contactWellness"), t("weekday")],
+        ["i-amber","⚑", t("emergency"), t("hotline")]
+      ];
+      return `<div class="grid">
+        <div class="card">
+          <div class="section-title"><span class="title-icon i-green">✚</span><h3>${t("supportResources")}</h3></div>
+          <div class="resource-grid" style="margin-top:16px;">${resources.map(r => `<div class="resource"><span class="resource-icon ${r[0]}">${r[1]}</span><span><strong>${r[2]}</strong><br><span class="muted">${r[3]}</span></span></div>`).join("")}</div>
+        </div>
+        <div class="grid aside">
+          <div class="card tint-blue">
+            <div class="section-head"><h3>${t("messageCenter")} <span class="tag high">1</span> <span class="tag low">${t("private")}</span></h3><div><button class="soft-btn" data-student-action="0">${t("openChat")}</button> <button class="ghost-btn" data-student-action="1">${t("markRead")}</button></div></div>
+            <p style="line-height:1.65;color:#344b64;">${t("supportMessage").replace("{name}", current.name)}</p>
+            <div style="display:flex;gap:10px;margin-top:14px;"><button class="soft-btn" data-student-action="2">${t("book")}</button><button class="ghost-btn" data-student-action="3">${t("reply")}</button></div>
+          </div>
+          <div class="card">
+            <h3>${t("understanding")}</h3>
+            <div class="why-pill color-note purple" style="margin-top:12px;"><strong>${t("whyMessage")}</strong><br>${t("whyMessageText")}</div>
+            <div class="why-pill color-note green" style="margin-top:12px;"><strong>${t("whatDataWasUsed")}</strong><br>${t("whatDataWasUsedText")}</div>
+            <div class="why-pill color-note amber" style="margin-top:12px;"><strong>${t("confidentialTitle")}</strong><br>${t("confidentialText")}</div>
+          </div>
+        </div>
+      </div>`;
+    }
+
+    function bindStudentControls() {
+      document.querySelectorAll("[data-mood]").forEach(btn => btn.addEventListener("click", () => { selectedMood = btn.dataset.mood; renderStudent(); }));
+      ["stress","sleep","workload","social","activity"].forEach(id => {
+        const range = $(id + "Range");
+        const value = $(id + "Value");
+        if (range && value) range.addEventListener("input", () => value.textContent = range.value + "/10");
+      });
+      const submit = $("submitCheckin");
+      if (submit) submit.addEventListener("click", submitCheckin);
+      const download = $("downloadHistory");
+      if (download) download.addEventListener("click", downloadHistory);
+      const del = $("deleteHistory");
+      if (del) del.addEventListener("click", () => {
+        studentWellnessHistories[currentKey] = [];
+        wellnessHistory = studentWellnessHistories[currentKey];
+        showToast(t("toastDeleted"));
+        renderStudent();
+      });
+      document.querySelectorAll("[data-delete-record]").forEach(btn => btn.addEventListener("click", () => { wellnessHistory.splice(Number(btn.dataset.deleteRecord), 1); renderStudent(); }));
+      document.querySelectorAll("[data-consent-key]").forEach(input => input.addEventListener("change", () => {
+        consentHistory.push({ date: now(), key: input.dataset.consentKey, state: input.checked ? "enabled" : "disabled" });
+        $("consentLog").innerHTML = renderConsentLog();
+      }));
+      const predictive = $("predictiveBtn");
+      if (predictive) predictive.addEventListener("click", () => {
+        predictiveEnabled = !predictiveEnabled;
+        consentHistory.push({ date: now(), key:"predictive", state: predictiveEnabled ? "enabled" : "disabled" });
+        renderStudent();
+      });
+      const save = $("savePrefs");
+      if (save) save.addEventListener("click", () => { consentHistory.push({ date: now(), key:"supportPreferences", state:"savedState" }); showToast(t("toastSaved")); renderStudent(); activeTab = "privacy"; });
+      document.querySelectorAll("[data-student-action]").forEach(btn => btn.addEventListener("click", () => {
+        const index = Number(btn.dataset.studentAction);
+        if (index === 0) showChat("student");
+        else if (index === 2) showScheduleModal("student");
+        else showModal(t("studentActionTitles")[index], t("studentActionBodies")[index], ["i-green","i-amber"][index - 1] || "i-blue");
+      }));
+    }
+
+    function submitCheckin() {
+      const stress = Number($("stressRange").value);
+      const sleep = Number($("sleepRange").value);
+      const workload = Number($("workloadRange").value);
+      const social = Number($("socialRange").value);
+      const activity = Number($("activityRange").value);
+      const score = Math.round((sleep + social + activity + (10 - stress) + (10 - Math.max(0, workload - 5))) / 5 * 10);
+      wellnessHistory.push({ date: now(), score, mood: selectedMood, stress, sleep, social, activity, workload });
+      showToast(t("toastSubmitted"));
+      renderStudent();
+    }
+
+    function downloadHistory() {
+      const rows = [t("exportHeaders"), ...wellnessHistory.map(r => [r.date, r.score, r.mood, r.stress, r.sleep, r.social, r.activity, r.workload])];
+      const html = `<html><meta charset="utf-8"><table>${rows.map(row => `<tr>${row.map(cell => `<td>${cell}</td>`).join("")}</tr>`).join("")}</table></html>`;
+      const blob = new Blob([html], { type:"application/vnd.ms-excel;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "SCWIS-wellness-history.xls";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      showToast(t("toastDownloaded"));
+    }
+
+    function renderCounselor() {
+      const body = activeTab === "alerts" ? counselorAlerts() : activeTab === "case" ? counselorCaseReview() : counselorJourney();
+      $("content").innerHTML = `<div class="tab-strip">${navKeys.counselor.map((key, i) => `<button class="${activeTab === key ? "active" : ""}" data-tab="${key}">${t("navCounselor")[i]}</button>`).join("")}</div>${body}${privacyGuarantee()}`;
+      document.querySelectorAll("[data-tab]").forEach(btn => btn.addEventListener("click", () => { activeTab = btn.dataset.tab; renderAll(); }));
+      document.querySelectorAll("[data-case]").forEach(row => row.addEventListener("click", () => { selectedCase = Number(row.dataset.case); renderAll(); }));
+      document.querySelectorAll("[data-counselor-action]").forEach(btn => btn.addEventListener("click", () => {
+        const index = Number(btn.dataset.counselorAction);
+        handleCounselorAction(index);
+      }));
+      document.querySelectorAll("[data-ai-feedback]").forEach(btn => btn.addEventListener("click", () => {
+        document.querySelectorAll("[data-ai-feedback]").forEach(item => item.classList.remove("active"));
+        btn.classList.add("active");
+        const label = t("aiFeedbackOptions")[Number(btn.dataset.aiFeedback)];
+        showToast(`${label}: ${t("feedbackSaved")}`);
+      }));
+      document.querySelectorAll("[data-counselor-chat]").forEach(btn => btn.addEventListener("click", () => showChat("counselor")));
+      const filter = $("riskFilter");
+      if (filter) filter.addEventListener("change", () => renderRiskTable(filter.value));
+    }
+
+    function counselorMetricCards() {
+      const visibleCases = cases.filter(c => !hiddenCaseIds.has(c.id));
+      const highPriority = visibleCases.filter(c => c.category < 2).length;
+      return `<div class="grid four">${t("counselorMetrics").map((m, i) => `<div class="metric ${["","rose","green","purple"][i]}"><span class="label">${m}</span><span class="value">${[visibleCases.length, highPriority, "18h", "27"][i]}</span><span class="hint">${t("counselorMetricHints")[i]}</span></div>`).join("")}</div>`;
+    }
+
+    function counselorAlerts() {
+      return `<div class="grid">
+        ${counselorMetricCards()}
+        <div class="grid aside">
+          <div class="card">
+            <div class="filter-row"><div class="section-title"><span class="title-icon i-rose">!</span><h3>${t("riskList")}</h3></div><label>${t("filter")} <select class="soft-select" id="riskFilter">${t("filterOptions").map((x,i) => `<option value="${i}">${x}</option>`).join("")}</select></label></div>
+            <div id="riskTable">${riskTable("0")}</div>
+          </div>
+          <div class="card tint-green">${humanReviewPanel()}</div>
+        </div>
+      </div>`;
+    }
+
+    function renderRiskTable(filterValue) {
+      $("riskTable").innerHTML = riskTable(filterValue);
+      document.querySelectorAll("[data-case]").forEach(row => row.addEventListener("click", () => { selectedCase = Number(row.dataset.case); renderAll(); }));
+    }
+
+    function riskTable(filterValue) {
+      let rows = cases.map((c, idx) => ({...c, idx})).filter(c => !hiddenCaseIds.has(c.id));
+      if (filterValue === "1") rows = rows.filter(r => r.category === 0);
+      if (filterValue === "2") rows = rows.filter(r => r.category === 1);
+      if (filterValue === "3") rows = rows.filter(r => r.category === 2);
+      if (filterValue === "4") rows = rows.filter(r => r.status === 0);
+      if (!rows.length) return `<div class="empty-state">${t("emptyCase")}</div>`;
+      if (hiddenCaseIds.has(cases[selectedCase]?.id)) selectedCase = rows[0].idx;
+      return `<div style="overflow:auto;"><table><thead><tr><th>${t("caseId")}</th><th>${t("riskCategory")}</th><th>${t("aiConfidence")}</th><th>${t("status")}</th><th>${t("identity")}</th></tr></thead><tbody>${rows.map(c => `<tr class="case-row ${selectedCase === c.idx ? "active" : ""}" data-case="${c.idx}"><td><strong>${c.id}</strong></td><td><span class="tag ${c.category < 2 ? "high" : c.category < 4 ? "medium" : "low"}">${t("categories")[c.category]}</span></td><td>${c.confidence}%<br><small class="muted">${t("confidencePatterns")[c.category]}</small></td><td><span class="tag ${c.status === 0 ? "high" : c.status === 1 ? "medium" : "low"}">${t("statuses")[c.status]}</span></td><td>${c.identity === 4 ? c.student : t("identities")[c.identity]}</td></tr>`).join("")}</tbody></table></div>`;
+    }
+
+    function humanReviewPanel() {
+      if (hiddenCaseIds.has(cases[selectedCase]?.id)) {
+        const next = cases.findIndex(c => !hiddenCaseIds.has(c.id));
+        selectedCase = next >= 0 ? next : 0;
+      }
+      const c = cases[selectedCase];
+      if (!c || hiddenCaseIds.has(c.id)) return `<div class="empty-state">${t("emptyCase")}</div>`;
+      return `<div class="review-panel">
+        <div class="section-title"><span class="title-icon i-green">✓</span><h3>${t("humanPanel")}</h3></div>
+        <p class="muted">${c.id}</p>
+        <div class="why-pill color-note amber"><strong>${t("aiConcernSummary")}</strong><br>${c.summary}</div>
+        <div><strong>${t("riskCategory")}</strong><br><span class="tag high">${t("categories")[c.category]}</span></div>
+        <div><strong>${t("confidence")}</strong><div class="confidence-bar" style="margin-top:8px;"><span style="width:${c.confidence}%"></span></div><p class="muted" style="margin-top:7px;">${c.confidence}% · ${t("confidencePatterns")[c.category]}</p></div>
+        <div><strong>${t("aiFeedback")}</strong><div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:8px;">${t("aiFeedbackOptions").map((x, i) => `<button class="ghost-btn" style="padding:8px 6px;" data-ai-feedback="${i}">${x}</button>`).join("")}</div></div>
+        <div class="why-pill"><strong>${t("recommendedAction")}</strong><br>${t("actionText")}</div>
+        <div class="grid">${t("counselorButtons").map((b,i) => `<button class="${i === 0 ? "primary-btn" : "ghost-btn"}" data-counselor-action="${i}">${b}</button>`).join("")}<button class="primary-btn" style="background:var(--purple);" data-counselor-chat>${t("openChatWithStudent")}</button></div>
+      </div>`;
+    }
+
+    function counselorCaseReview() {
+      return `<div class="grid">
+        ${counselorMetricCards()}
+        <div class="grid aside">
+          <div class="card">
+            <div class="section-title"><span class="title-icon i-blue">▣</span><h3>${t("caseDetails")}</h3></div>
+            <div class="empty-state" style="margin-top:16px;">${t("emptyCase")}</div>
+          </div>
+          <div class="grid">
+            <div class="card tint-purple"><h3>${t("auditTrail")}</h3><ul class="audit-list">${t("auditItems").map(x => `<li>${x}</li>`).join("")}</ul></div>
+            <div class="card tint-blue"><h3>${t("rbacTitle")}</h3><p class="page-kicker">${t("rbacNote")}</p></div>
+          </div>
+        </div>
+      </div>`;
+    }
+
+    function counselorJourney() {
+      return `<div class="card">
+        <div class="section-head"><div class="section-title"><span class="title-icon i-green">🧭</span><div><h3>${t("studentJourneyTitle")}</h3><p class="page-kicker">${t("studentJourneySub")}</p></div></div></div>
+        <div class="journey-track">${t("journeySteps").map((s, i) => `<div class="journey-step"><div class="bubble">${i+1}</div><strong>${s[0]}</strong><p class="muted">${s[1]}</p><span class="tag low">${s[2]}</span></div>`).join("")}</div>
+      </div>`;
+    }
+
+    function privacyGuarantee() {
+      return `<div class="section privacy-guarantee"><span class="title-icon i-green">◇</span><div><h3>${t("privacyStepTitle")}</h3><p>${t("privacyStepText")}</p></div></div>`;
+    }
+
+    function renderAdmin() {
+      const body = activeTab === "analytics" ? adminAnalytics() : activeTab === "ai" ? adminAI() : activeTab === "governance" ? adminGovernance() : adminWhy();
+      $("content").innerHTML = `<div class="tab-strip">${navKeys.admin.map((key, i) => `<button class="${activeTab === key ? "active" : ""}" data-tab="${key}">${t("navAdmin")[i]}</button>`).join("")}</div>${body}`;
+      document.querySelectorAll("[data-tab]").forEach(btn => btn.addEventListener("click", () => { activeTab = btn.dataset.tab; renderAll(); }));
+    }
+
+    function adminAnalytics() {
+      const liveRows = [
+        ["2026-05-14 12:04","🙂","4/10","7/10","6/10","8/10","7/10","76/100"],
+        ["2026-05-14 09:20","😊","3/10","8/10","5/10","8/10","6/10","82/100"],
+        ["2026-05-13 18:35","😐","6/10","6/10","8/10","5/10","5/10","61/100"],
+        ["2026-05-13 13:20","🙂","5/10","6/10","7/10","6/10","6/10","66/100"],
+        ["2026-05-12 21:10","🙁","7/10","5/10","8/10","4/10","4/10","52/100"],
+        ["2026-05-12 10:45","😊","2/10","8/10","5/10","9/10","7/10","86/100"],
+        ["2026-05-11 19:05","😐","6/10","6/10","7/10","6/10","5/10","63/100"],
+        ["2026-05-11 14:30","🙂","4/10","7/10","6/10","7/10","6/10","74/100"],
+        ["2026-05-11 08:50","😟","8/10","4/10","9/10","3/10","3/10","43/100"],
+        ["2026-05-10 20:25","🙂","5/10","7/10","7/10","6/10","6/10","68/100"],
+        ["2026-05-10 16:40","😊","3/10","8/10","6/10","8/10","8/10","84/100"],
+        ["2026-05-10 12:15","😐","6/10","5/10","8/10","5/10","5/10","58/100"],
+        ["2026-05-10 09:05","🙂","4/10","7/10","6/10","7/10","6/10","72/100"]
+      ];
+      return `<div class="grid">
+        <div class="section-title"><span class="title-icon i-blue">📈</span><div><h3>${t("adminTitle")}</h3><p class="page-kicker">${t("adminSubtitle")}</p></div></div>
+        <div class="grid five">${t("adminMetrics").map((m,i) => `<div class="metric ${["","amber","green","purple",""][i]}"><span class="label">${m}</span><span class="value">${["68%","+14%","74/100","99.7%","8%"][i]}</span></div>`).join("")}</div>
+        <div class="card live-table">
+          <div class="section-title"><span class="title-icon i-teal">☷</span><h3>${t("liveActivity")}</h3></div>
+          <div style="overflow:auto;margin-top:12px;"><table><thead><tr>${t("liveHeaders").map(h => `<th>${h}</th>`).join("")}</tr></thead><tbody>${liveRows.map(r => `<tr>${r.map(c => `<td>${c}</td>`).join("")}</tr>`).join("")}</tbody></table></div>
+          <p class="page-kicker">${t("liveNote")}</p>
+        </div>
+        <div class="grid two">
+          <div class="card chart-card"><div class="section-title"><span class="title-icon i-blue">⌁</span><h3>${t("trendTitle")}</h3></div>${campusTrend()}</div>
+          <div class="card chart-card"><div class="section-title"><span class="title-icon i-purple">◔</span><h3>${t("supportCategories")}</h3></div><div class="donut-wrap" style="margin-top:22px;"><div class="donut"></div>${legend()}</div></div>
+        </div>
+      </div>`;
+    }
+
+    function campusTrend() {
+      const values = [66,69,73,60,50,84,78,74,50];
+      const months = ["Sep","Oct","Nov","Dec","Jan","Feb","Mar","Apr","May"];
+      const pts = values.map((v,i) => ({ x: 54 + i * 56, y: 220 - (v - 45) * 4.2, v, m: months[i] }));
+      const d = pts.map((p,i) => `${i ? "L" : "M"}${p.x},${p.y}`).join(" ");
+      return `<svg class="trend-chart" viewBox="0 0 560 280">
+        ${[50,60,70,80,90,100].map((v,i) => `<line x1="54" x2="520" y1="${220 - (v - 45) * 4.2}" y2="${220 - (v - 45) * 4.2}" stroke="#e8eef6"/><text x="22" y="${224 - (v - 45) * 4.2}" fill="#68798d" font-size="11">${v}</text>`).join("")}
+        <path d="${d}" fill="none" stroke="#3f6fe5" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="${d} L${pts[pts.length-1].x},230 L54,230 Z" fill="rgba(63,111,229,0.1)"/>
+        ${pts.map(p => `<circle cx="${p.x}" cy="${p.y}" r="5" fill="${p.m === "Jan" || p.m === "May" ? "#d94f5f" : "#3f6fe5"}"></circle>`).join("")}
+        ${pts.map(p => `<text x="${p.x-12}" y="255" fill="#68798d" font-size="12">${p.m}</text>`).join("")}
+      </svg>`;
+    }
+
+    function legend() {
+      const colors = ["var(--blue)","var(--purple)","var(--amber)","var(--green)","var(--teal)"];
+      return `<div class="legend">${t("supportLegend").map((x,i) => `<div class="legend-item"><span class="legend-swatch" style="background:${colors[i]}"></span>${x}</div>`).join("")}</div>`;
+    }
+
+    function adminAI() {
+      return `<div class="grid">
+        <div class="card tint-blue">
+          <div class="section-title"><span class="title-icon i-blue">AI</span><h3>${t("aiWorks")}</h3></div>
+          <div class="ai-flow" style="margin-top:16px;">${t("aiFlow").map((x,i) => `<div class="flow-card"><span class="bubble">${i+1}</span><strong>${x[0]}</strong><p class="muted">${x[1]}</p></div>`).join("")}</div>
+        </div>
+        <div class="grid two">
+          <div class="card tint-green"><div class="section-title"><span class="title-icon i-green">✓</span><h3>${t("dataUses")}</h3></div><ul class="check-list">${t("aiUseItems").map(x => `<li><span class="check">✓</span><span>${x}</span></li>`).join("")}</ul></div>
+          <div class="card tint-amber" style="border-left-color:var(--rose);"><div class="section-title"><span class="title-icon i-rose">⊘</span><h3>${t("dataNotUse")}</h3></div><ul class="check-list">${t("aiNotItems").map(x => `<li><span style="color:var(--rose);font-weight:950;">×</span><span>${x}</span></li>`).join("")}</ul></div>
+        </div>
+        <div class="warning-box"><div class="section-title"><span class="title-icon i-amber">!</span><h3>${t("limitations")}</h3></div><ul class="bullet-list">${t("limitationItems").map(x => `<li>${x}</li>`).join("")}</ul></div>
+      </div>`;
+    }
+
+    function adminGovernance() {
+      return `<div class="grid three">
+        <div class="card tint-purple"><div class="section-title"><span class="title-icon i-purple">◇</span><h3>${t("privacyReporting")}</h3></div><p class="page-kicker" style="margin-top:12px;">${t("privacyReportingText")}</p><div class="why-pill" style="margin-top:14px;"><strong>${t("threshold")}</strong></div></div>
+        <div class="card"><div class="section-title"><span class="title-icon i-amber">$</span><h3>${t("budget")}</h3></div><div class="cost-grid"><div class="cost-card">${t("oneTime")}<strong>USD 750,000</strong></div><div class="cost-card">${t("annual")}<strong>USD 180,000</strong></div><div class="cost-card">${t("served")}<strong>1,200</strong></div><div class="cost-card">${t("costPer")}<strong>≈USD 150</strong></div></div></div>
+        <div class="card"><div class="section-title"><span class="title-icon i-teal">▤</span><h3>${t("auditSummary")}</h3></div><table style="margin-top:12px;"><tbody>${t("auditRows").map((r,i) => `<tr><td>${r}</td><td style="text-align:right;font-weight:950;color:${i>1 ? "var(--green)" : "var(--ink)"}">${["247","31","4","0"][i]}</td></tr>`).join("")}</tbody></table></div>
+      </div>`;
+    }
+
+    function adminWhy() {
+      const colors = ["i-blue","i-green","i-purple","i-teal","i-amber","i-rose"];
+      return `<div class="grid">
+        <div class="section-title"><span class="title-icon i-green">✓</span><div><h3>${t("whyTitleAdmin")}</h3><p class="page-kicker">${t("whySubtitle")}</p></div></div>
+        <div class="grid two">${t("whyCards").map((c,i) => `<div class="card why-card tint-${["blue","green","purple","blue","amber","green"][i]}"><div class="section-title"><span class="title-icon ${colors[i]}">${["◇","✓","◎","15k","↻","$"][i]}</span><h3>${c[0]}</h3></div><p class="page-kicker">${c[1]}</p><span class="badge">${t("whyTags")[i % 2]}</span></div>`).join("")}</div>
+      </div>`;
+    }
+
+    function now() {
+      const d = new Date();
+      const pad = n => String(n).padStart(2, "0");
+      return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+    }
+
+    function showToast(message) {
+      document.querySelectorAll(".toast").forEach(x => x.remove());
+      const div = document.createElement("div");
+      div.className = "toast";
+      div.textContent = message;
+      document.body.appendChild(div);
+      setTimeout(() => div.remove(), 2200);
+    }
+
+    function showModal(title, body, iconClass = "i-blue") {
+      $("modalTitle").textContent = title;
+      $("modalBody").textContent = body;
+      $("modalIcon").className = `title-icon ${iconClass}`;
+      $("modalClose").textContent = t("close");
+      $("actionModal").classList.add("show");
+      $("actionModal").setAttribute("aria-hidden", "false");
+    }
+
+    function showRichModal(title, html, iconClass = "i-blue") {
+      $("modalTitle").textContent = title;
+      $("modalBody").innerHTML = html;
+      $("modalIcon").className = `title-icon ${iconClass}`;
+      $("modalClose").textContent = t("close");
+      $("actionModal").classList.add("show");
+      $("actionModal").setAttribute("aria-hidden", "false");
+    }
+
+    function appointmentSlots() {
+      const base = new Date(2026, 4, 15);
+      const pad = n => String(n).padStart(2, "0");
+      return Array.from({ length: 7 }, (_, i) => {
+        const d = new Date(base);
+        d.setDate(base.getDate() + i);
+        return {
+          date: `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`,
+          morningFull: i === 2,
+          afternoonFull: i === 0
+        };
+      });
+    }
+
+    function showScheduleModal(mode = "student") {
+      const rows = appointmentSlots().map(day => {
+        const morningLabel = `${day.date} ${t("morning")}`;
+        const afternoonLabel = `${day.date} ${t("afternoon")}`;
+        return `
+        <div class="schedule-row">
+          <div class="schedule-date">${day.date}</div>
+          <button type="button" class="slot ${day.morningFull ? "full" : "open"}" ${day.morningFull ? "disabled" : ""} data-slot="${escapeHtml(morningLabel)}">${t("morning")} · ${day.morningFull ? t("full") : t("available")}</button>
+          <button type="button" class="slot ${day.afternoonFull ? "full" : "open"}" ${day.afternoonFull ? "disabled" : ""} data-slot="${escapeHtml(afternoonLabel)}">${t("afternoon")} · ${day.afternoonFull ? t("full") : t("available")}</button>
+        </div>`;
+      }).join("");
+      showRichModal(t("appointmentTitle"), `
+        <p>${t("appointmentSub")}</p>
+        <div class="schedule-grid">${rows}</div>
+        <div class="slot-confirm" id="slotConfirm">
+          <span><strong>${t("selectedSlot")}:</strong> <span id="selectedSlotLabel"></span></span>
+          <button class="primary-btn" id="confirmAppointment">${t("confirmAppointment")}</button>
+        </div>
+      `, mode === "student" ? "i-purple" : "i-green");
+      let selectedSlot = "";
+      document.querySelectorAll("[data-slot]").forEach(btn => btn.addEventListener("click", () => {
+        selectedSlot = btn.dataset.slot;
+        document.querySelectorAll("[data-slot]").forEach(item => item.classList.remove("selected"));
+        btn.classList.add("selected");
+        $("selectedSlotLabel").textContent = selectedSlot;
+        $("slotConfirm").classList.add("show");
+      }));
+      $("confirmAppointment").addEventListener("click", () => {
+        showRichModal(t("appointmentTitle"), `
+          <div class="why-pill color-note green"><strong>${t("appointmentSuccess")}</strong><br>${escapeHtml(selectedSlot)}</div>
+        `, mode === "student" ? "i-purple" : "i-green");
+        showToast(t("appointmentSuccess"));
+      });
+    }
+
+    function supportiveSuggestionSets(c) {
+      const category = t("categories")[c.category].toLowerCase();
+      if (lang === "zh") {
+        return [
+          [
+            `你好，这里是 Dr. Sangwook HA，来自学生健康服务。SCWIS 注意到你本周可能存在${category}相关压力。这只是一次支持性问候，不会影响成绩或记录。你愿意了解一些资源，或预约一次自愿咨询吗？`,
+            "你好，我想确认你最近是否还好。系统只显示出一些可能需要关注的健康模式，并不代表任何判断。你可以选择回复、预约，或只接收资源。",
+            "你好，我注意到最近可能是学习压力较高的阶段。这里不会涉及成绩、纪律或任何惩罚性记录。如果你愿意，我们可以先从压力管理资源开始。"
+          ],
+          [
+            `你好，我是 Dr. Sangwook HA。你的近期模式显示可能有${category}方面的变化。你不需要立即回复，但如果想聊聊或获取资源，我们可以提供支持。`,
+            "你好，这是一条自愿的支持性联系。你可以选择预约、接收资源，或告诉我们当前不需要帮助。所有回复都会按照隐私规则处理。",
+            "你好，我想轻轻确认一下你的近况。SCWIS 只帮助我们更早发现可能的支持需求，最终沟通始终由咨询人员负责。"
+          ]
+        ];
+      }
+      return [
+        [
+          `Hi, this is Dr. Sangwook HA from Student Wellness. SCWIS noticed signs that ${category} may be high this week. This is a supportive check-in only. Would you like help finding resources or booking a voluntary appointment?`,
+          "Hi, I am checking in because this may be a stressful academic period. Nothing here affects grades or records. Support is available if you would like to talk or receive resources.",
+          "Hi, I wanted to reach out because SCWIS flagged some wellness patterns that may indicate stress. You are not required to respond, but support is available if you would like it."
+        ],
+        [
+          `Hi, this is Dr. Sangwook HA. Your recent wellness pattern suggests ${category} may be affecting your week. This message is supportive and voluntary. Would you like resources or a short appointment?`,
+          "Hi, I hope you are doing okay. SCWIS highlighted a possible change in your wellness pattern, so I am reaching out with support options you can choose from.",
+          "Hi, I am checking in from Student Wellness. You can ignore this, reply with a question, or book a voluntary chat if that would be useful."
+        ]
+      ];
+    }
+
+    function supportiveMessageModal() {
+      const c = cases[selectedCase];
+      const suggestionSets = supportiveSuggestionSets(c);
+      let version = supportiveSuggestionVersion % suggestionSets.length;
+      showRichModal(t("supportiveMessageTitle"), `
+        <div class="why-pill color-note purple">${t("supportiveMessageIntro")}</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:14px;">
+          <h4 style="margin:0;">${t("aiSuggestedReplies")}</h4>
+          <button class="soft-btn" id="refreshSuggestions" type="button">↻ ${t("refreshSuggestions")}</button>
+        </div>
+        <div class="suggestion-list" id="suggestionList"></div>
+        <h4 style="margin-top:14px;">${t("finalMessage")}</h4>
+        <textarea class="message-draft" id="finalMessageDraft"></textarea>
+        <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:12px;"><button class="ghost-btn" id="cancelSupportiveMessage" type="button">${t("cancel")}</button><button class="primary-btn" id="sendSupportiveMessage" type="button">➤ ${t("sendMessage")}</button></div>
+      `, "i-blue");
+
+      function paintSuggestions(selectedIndex = 0) {
+        const suggestions = suggestionSets[version];
+        $("suggestionList").innerHTML = suggestions.map((s, i) => `<button type="button" class="suggestion-card ${i === selectedIndex ? "active" : ""}" data-suggestion="${i}">${escapeHtml(s)}</button>`).join("");
+        $("finalMessageDraft").value = suggestions[selectedIndex];
+        document.querySelectorAll("[data-suggestion]").forEach(btn => btn.addEventListener("click", () => {
+          const index = Number(btn.dataset.suggestion);
+          document.querySelectorAll("[data-suggestion]").forEach(item => item.classList.remove("active"));
+          btn.classList.add("active");
+          $("finalMessageDraft").value = suggestions[index];
+        }));
+      }
+
+      paintSuggestions();
+      $("refreshSuggestions").addEventListener("click", () => {
+        supportiveSuggestionVersion += 1;
+        version = supportiveSuggestionVersion % suggestionSets.length;
+        paintSuggestions();
+      });
+      $("cancelSupportiveMessage").addEventListener("click", closeModal);
+      $("sendSupportiveMessage").addEventListener("click", () => {
+        closeModal();
+        showToast(t("messageSent"));
+      });
+    }
+
+    function handleCounselorAction(index) {
+      const c = cases[selectedCase];
+      if (index === 0) {
+        hiddenCaseIds.add(c.id);
+        const next = cases.findIndex(item => !hiddenCaseIds.has(item.id));
+        selectedCase = next >= 0 ? next : 0;
+        showToast(t("counselorActionBodies")[0]);
+        renderCounselor();
+        return;
+      }
+      if (index === 1) {
+        supportiveMessageModal();
+        return;
+      }
+      if (index === 2) {
+        showScheduleModal("counselor");
+        return;
+      }
+      showModal(t("counselorButtons")[index], t("counselorActionBodies")[index], "i-amber");
+    }
+
+    function showChat(mode = "student") {
+      const isStudent = mode === "student";
+      $("chatTitle").textContent = isStudent ? t("chatWithCounselor") : t("chatWithStudent");
+      $("chatSubtitle").textContent = t("chatPrivate");
+      $("chatInput").placeholder = isStudent ? t("studentChatPlaceholder") : t("chatPlaceholder");
+      $("chatThread").innerHTML = isStudent ? `
+        <div class="chat-bubble counselor">Hi ${current.name}, this is Dr. Sangwook HA. I noticed your recent check-in showed some stress. This is just a supportive check-in.</div>
+        <div class="chat-bubble student">Thank you. I have been busy with assignments and may want some stress resources.</div>
+      ` : `
+        <div class="chat-bubble student">Hi Dr. Sangwook HA, I have been busy with assignments and may want some stress resources.</div>
+        <div class="chat-bubble counselor">Thanks for telling me. We can start with resources, and you can choose a voluntary appointment if helpful.</div>
+      `;
+      $("chatDrawer").classList.add("show");
+      $("chatDrawer").setAttribute("aria-hidden", "false");
+    }
+
+    function closeChat() {
+      $("chatDrawer").classList.remove("show");
+      $("chatDrawer").setAttribute("aria-hidden", "true");
+    }
+
+    function closeModal() {
+      $("actionModal").classList.remove("show");
+      $("actionModal").setAttribute("aria-hidden", "true");
+    }
+
+    function loginAs(key) {
+      currentKey = key || "logan";
+      current = accounts[key] || accounts.logan;
+      if (current.role === "student") {
+        wellnessHistory = studentWellnessHistories[currentKey];
+        consentHistory = studentConsentHistories[currentKey];
+      }
+      activeTab = navKeys[current.role][0];
+      $("loginUser").value = current.user;
+      $("loginPass").value = current.pass;
+      $("loginError").classList.remove("show");
+      document.body.classList.remove("locked");
+      renderAll();
+    }
+
+    function doLogin() {
+      const user = $("loginUser").value.trim().toLowerCase();
+      const pass = $("loginPass").value.trim();
+      let key = null;
+      if (user === "2330024099" && pass === "123456") key = "logan";
+      if (user === "2330024121" && pass === "123456") key = "liam";
+      if (user === "counselor001" && pass === "654321") key = "counselor";
+      if ((user === "amin001" || user === "admin001") && pass === "666666") key = "admin";
+      if (key) loginAs(key); else $("loginError").classList.add("show");
+    }
+
+    function setLanguage(nextLang) {
+      lang = nextLang;
+      renderAll();
+    }
+
+    $("loginBtn").addEventListener("click", doLogin);
+    $("loginUser").addEventListener("keydown", e => { if (e.key === "Enter") doLogin(); });
+    $("loginPass").addEventListener("keydown", e => { if (e.key === "Enter") doLogin(); });
+    $("logoutBtn").addEventListener("click", () => document.body.classList.add("locked"));
+    $("loginLang").addEventListener("change", e => setLanguage(e.target.value));
+    $("systemLang").addEventListener("change", e => setLanguage(e.target.value));
+    $("modalClose").addEventListener("click", closeModal);
+    $("actionModal").addEventListener("click", e => { if (e.target.id === "actionModal") closeModal(); });
+    $("chatClose").addEventListener("click", closeChat);
+    $("chatSend").addEventListener("click", () => {
+      const value = $("chatInput").value.trim();
+      if (!value) return;
+      const div = document.createElement("div");
+      div.className = current.role === "student" ? "chat-bubble student" : "chat-bubble counselor";
+      div.textContent = value;
+      $("chatThread").appendChild(div);
+      $("chatInput").value = "";
+      $("chatThread").scrollTop = $("chatThread").scrollHeight;
+    });
+    $("chatInput").addEventListener("keydown", e => { if (e.key === "Enter") $("chatSend").click(); });
+
+    const params = new URLSearchParams(location.search);
+    if (["en","zh","ko","ja"].includes(params.get("lang"))) lang = params.get("lang");
+    const hash = location.hash.replace("#", "");
+    if (["student","counselor","admin"].includes(hash)) {
+      const key = hash === "student" ? "logan" : hash;
+      currentKey = key;
+      current = accounts[key];
+      if (current.role === "student") {
+        wellnessHistory = studentWellnessHistories[currentKey];
+        consentHistory = studentConsentHistories[currentKey];
+      }
+      activeTab = navKeys[current.role][0];
+      document.body.classList.remove("locked");
+    }
+    renderAll();
+  </script>
+</body>
+</html>
