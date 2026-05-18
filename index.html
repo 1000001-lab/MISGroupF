@@ -411,6 +411,7 @@
     .slot.full { background: var(--rose-soft); border-color: #f0b7c0; color: var(--rose); }
     .slot.open { background: #eefaf4; border-color: #c7ebd5; color: var(--green); }
     .slot.open:hover, .slot.selected { border-color: var(--green); box-shadow: 0 0 0 3px rgba(58,159,106,0.12); }
+    .schedule-note { color: #526a83; font-weight: 850; margin-top: 12px; font-size: 14px; }
     .slot-confirm { display: none; margin-top: 14px; padding: 14px; border-radius: 12px; background: #f4fbf7; border: 1px solid #c9ebd6; }
     .slot-confirm.show { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
     .suggestion-list { display: grid; gap: 10px; margin-top: 12px; }
@@ -738,7 +739,7 @@
         limitationItems:["SCWIS AI is a decision-support tool, not a decision-maker. All final decisions are made by qualified human counselors.","AI may miss some students who need support. Self-referral and peer referral remain essential.","Patterns reflect correlation, not causation. Context is always reviewed by a human.","Students can opt out at any time. AI predictions are never used for academic evaluation or disciplinary action."],
         privacyReporting:"Privacy-Safe Reporting",
         privacyReportingText:"Anonymized campus insights. Administrators cannot view individual student records. All data is aggregated.",
-        threshold:"Privacy threshold: Groups smaller than 10 students are hidden to prevent re-identification.",
+        threshold:"Administrator reports are shown only after consent, de-identification, and role-based access checks. Individual records, counseling cases, grades, and identifiable behavior logs are never displayed.",
         budget:"Budget Value Dashboard",
         oneTime:"Total One-Time Implementation Cost",
         annual:"Total Annual Maintenance Cost",
@@ -764,6 +765,7 @@
         afternoon:"Afternoon",
         available:"Available",
         full:"Fully booked",
+        scheduleHours:"Morning: 9:00-11:30, Afternoon: 14:00-17:30",
         selectedSlot:"Selected slot",
         confirmAppointment:"Confirm Appointment",
         appointmentSuccess:"Appointment booked successfully.",
@@ -971,7 +973,7 @@
         limitationItems:["SCWIS AI 是决策支持工具，不是决策者。所有最终决定都由合格的人类咨询师作出。","AI 可能错过一些需要支持的学生。自我求助和同伴转介仍然重要。","模式代表相关性，而不是因果关系。具体背景始终需要人工审阅。","学生可以随时退出。AI 预测绝不会用于学业评价或纪律处分。"],
         privacyReporting:"隐私安全报告",
         privacyReportingText:"匿名化校园洞察。管理员不能查看个体学生记录，所有数据均为聚合结果。",
-        threshold:"隐私阈值：少于 10 名学生的小组会被隐藏，防止重新识别。",
+        threshold:"管理员报告仅在完成同意、去标识化和基于角色的访问检查后显示。个体记录、咨询案例、成绩以及可识别行为日志绝不会显示。",
         budget:"预算价值面板",
         oneTime:"一次性实施总成本",
         annual:"年度维护总成本",
@@ -997,6 +999,7 @@
         afternoon:"下午",
         available:"可预约",
         full:"已约满",
+        scheduleHours:"早上：9:00-11:30，下午：14:00-17:30",
         selectedSlot:"已选择时段",
         confirmAppointment:"确认预约",
         appointmentSuccess:"预约成功。",
@@ -1100,7 +1103,7 @@
       adminTitle:"관리자 분석 패널", adminSubtitle:"계획, 자원 배분, 보고를 위한 익명화된 캠퍼스 인사이트입니다.", adminMetrics:["참여율","상담 수요","평균 웰니스 점수","시스템 가동률","옵트아웃 비율"], liveActivity:"최근 학생 체크인 활동 (실시간)", liveLabel:"실시간", liveNote:"익명 요약만 표시됩니다. 개인 메시지와 신원은 보호됩니다.", liveHeaders:["최근 체크인","기분","스트레스","수면","학업 부담","사회","신체 활동","웰니스 점수"], trendTitle:"캠퍼스 웰니스 추세", supportCategories:"지원 범주", supportLegend:["학업 스트레스","사회적 고립","수면 문제","참여 감소","웰니스 우려"],
       aiWorks:"SCWIS AI 작동 방식", dataUses:"AI가 사용하는 데이터", dataNotUse:"AI가 사용하지 않는 데이터", aiUseItems:["도서관과 체육관 이용 같은 캠퍼스 접근 패턴","학생이 자발적으로 제출한 체크인 데이터","제출 시간과 플랫폼 사용 같은 LMS 참여 신호","개인 기준선과 비교하는 과거 추세 데이터"], aiNotItems:["성적 또는 GPA","징계 기록","개인 메시지 또는 소셜 미디어","인구통계 프로파일링"], aiFlow:[["데이터 수집","동의되고 필요한 웰니스 신호만 사용합니다."],["패턴 분석","통계 모델이 의미 있는 변화를 감지합니다."],["인간 검토","상담사가 모든 알림을 검토합니다."],["지원 연락","학생은 자발적이고 지원적인 연락을 받습니다."]],
       limitations:"AI 한계 및 고지", limitationItems:["SCWIS AI는 의사결정 지원 도구이며 최종 결정자는 아닙니다.","AI가 일부 학생을 놓칠 수 있어 자기 의뢰와 또래 의뢰가 중요합니다.","패턴은 상관관계이지 인과관계가 아닙니다.","학생은 언제든지 옵트아웃할 수 있으며 예측은 학업 평가나 징계에 사용되지 않습니다."],
-      privacyReporting:"개인정보 보호 보고", privacyReportingText:"익명화된 캠퍼스 인사이트입니다. 관리자는 개별 학생 기록을 볼 수 없습니다.", threshold:"개인정보 임계값: 10명 미만 그룹은 재식별 방지를 위해 숨겨집니다.", budget:"예산 가치 대시보드", oneTime:"일회성 구현 총비용", annual:"연간 유지보수 총비용", served:"지원 학생 수", costPer:"학생 1인당 연간 비용", auditSummary:"데이터 접근 감사 요약", auditRows:["상담사 접근","동의 변경","데이터 삭제 요청","개인정보 사건"],
+      privacyReporting:"개인정보 보호 보고", privacyReportingText:"익명화된 캠퍼스 인사이트입니다. 관리자는 개별 학생 기록을 볼 수 없습니다.", threshold:"관리자 보고서는 동의, 비식별화, 역할 기반 접근 확인 후에만 표시됩니다. 개인 기록, 상담 사례, 성적, 식별 가능한 행동 로그는 표시되지 않습니다.", budget:"예산 가치 대시보드", oneTime:"일회성 구현 총비용", annual:"연간 유지보수 총비용", served:"지원 학생 수", costPer:"학생 1인당 연간 비용", auditSummary:"데이터 접근 감사 요약", auditRows:["상담사 접근","동의 변경","데이터 삭제 요청","개인정보 사건"],
       whyTitleAdmin:"왜 캠퍼스가 SCWIS를 선택해야 하나요?", whySubtitle:"실제 대학 환경을 위한 개인정보 우선, 인간 중심 웰니스 시스템입니다.", whyCards:[["개인정보 우선 설계","학생이 모든 데이터 소스를 제어합니다."],["인간 참여형 AI","AI는 패턴을 표시하고 인간이 결정합니다."],["낙인 없는 옵트아웃","서비스 손실 없이 옵트아웃할 수 있습니다."],["15,000명 이상 확장","핵심 시스템 재설계 없이 성장할 수 있습니다."],["네트워크 장애에도 작동","오프라인 체크인은 복구 후 동기화됩니다."],["예산 친화적 지속 가능성","예산 내 구현과 학생 고용 기회를 지원합니다."]], whyTags:["내장 기능","인간 중심"],
       exportHeaders:["날짜","점수","기분","스트레스","수면","사회","신체 활동","학업 부담"], toastSaved:"저장됨", toastSubmitted:"체크인 제출됨", toastDeleted:"선택 데이터 삭제됨", toastDownloaded:"Excel 파일 다운로드됨"
     };
@@ -1137,7 +1140,7 @@
       adminTitle:"管理者分析パネル", adminSubtitle:"計画、資源配分、報告のための匿名化されたキャンパス分析です。", adminMetrics:["参加率","相談需要","平均ウェルネス点","システム稼働率","オプトアウト率"], liveActivity:"最近の学生チェックイン活動（ライブ）", liveLabel:"ライブ", liveNote:"匿名化された要約のみ。個人メッセージと本人情報は保護されます。", liveHeaders:["最終チェックイン","気分","ストレス","睡眠","学業負担","社会","身体活動","ウェルネス点"], trendTitle:"キャンパスウェルネス傾向", supportCategories:"サポートカテゴリ", supportLegend:["学業ストレス","社会的孤立","睡眠障害","参加低下","ウェルネス懸念"],
       aiWorks:"SCWIS AI の仕組み", dataUses:"AI が使用するデータ", dataNotUse:"AI が使用しないデータ", aiUseItems:["図書館やジム利用などのキャンパスアクセスパターン","学生が任意で提出したチェックインデータ","提出時刻や利用状況などのLMS参加信号","個人ベースラインと比較する履歴トレンド"], aiNotItems:["成績または GPA","懲戒記録","個人メッセージまたはSNS","属性プロファイリング"], aiFlow:[["データ収集","同意済みで必要な信号のみ使用します。"],["パターン分析","統計モデルが意味ある変化を検出します。"],["人間レビュー","カウンセラーがすべての通知を確認します。"],["支援的連絡","学生は任意で支援的な連絡を受けます。"]],
       limitations:"AI の制限と免責事項", limitationItems:["SCWIS AI は意思決定支援ツールであり、決定者ではありません。","AI は支援が必要な学生を見逃す場合があります。","パターンは相関であり因果ではありません。","学生はいつでもオプトアウトでき、予測は学業評価や懲戒に使われません。"],
-      privacyReporting:"プライバシー安全レポート", privacyReportingText:"匿名化されたキャンパス分析です。管理者は個別学生記録を閲覧できません。", threshold:"プライバシーしきい値: 10人未満のグループは再識別防止のため非表示です。", budget:"予算価値ダッシュボード", oneTime:"一回限りの実装総費用", annual:"年間保守総費用", served:"支援学生数", costPer:"学生1人あたり年間費用", auditSummary:"データアクセス監査概要", auditRows:["カウンセラーアクセス","同意変更","データ削除要求","プライバシー事案"],
+      privacyReporting:"プライバシー安全レポート", privacyReportingText:"匿名化されたキャンパス分析です。管理者は個別学生記録を閲覧できません。", threshold:"管理者レポートは、同意、非識別化、役割ベースのアクセス確認後にのみ表示されます。個人記録、相談ケース、成績、識別可能な行動ログは表示されません。", budget:"予算価値ダッシュボード", oneTime:"一回限りの実装総費用", annual:"年間保守総費用", served:"支援学生数", costPer:"学生1人あたり年間費用", auditSummary:"データアクセス監査概要", auditRows:["カウンセラーアクセス","同意変更","データ削除要求","プライバシー事案"],
       whyTitleAdmin:"なぜキャンパスに SCWIS を選ぶのか？", whySubtitle:"実際の大学環境向けのプライバシー優先・人間中心のウェルネスシステムです。", whyCards:[["プライバシー優先設計","学生がすべてのデータソースを管理します。"],["人間参加型 AI","AI がパターンを示し、人間が決定します。"],["スティグマのないオプトアウト","サービスを失わずに退出できます。"],["15,000人以上に拡張可能","コアを作り直さず成長できます。"],["ネットワーク停止時も動作","オフラインチェックインは復旧後に同期します。"],["予算に配慮し持続可能","予算内実装と学生雇用機会を支援します。"]], whyTags:["内蔵機能","人間中心"],
       exportHeaders:["日付","スコア","気分","ストレス","睡眠","社会","身体活動","学業負担"], toastSaved:"保存しました", toastSubmitted:"チェックインを送信しました", toastDeleted:"任意データを削除しました", toastDownloaded:"Excel ファイルをダウンロードしました"
     };
@@ -1791,7 +1794,7 @@
     }
 
     function appointmentSlots() {
-      const base = new Date(2026, 4, 15);
+      const base = new Date(2026, 4, 21);
       const pad = n => String(n).padStart(2, "0");
       return Array.from({ length: 7 }, (_, i) => {
         const d = new Date(base);
@@ -1818,6 +1821,7 @@
       showRichModal(t("appointmentTitle"), `
         <p>${t("appointmentSub")}</p>
         <div class="schedule-grid">${rows}</div>
+        <div class="schedule-note">${t("scheduleHours")}</div>
         <div class="slot-confirm" id="slotConfirm">
           <span><strong>${t("selectedSlot")}:</strong> <span id="selectedSlotLabel"></span></span>
           <button class="primary-btn" id="confirmAppointment">${t("confirmAppointment")}</button>
@@ -1940,8 +1944,8 @@
         <div class="chat-bubble counselor">Hi ${current.name}, this is Dr. Sangwook HA. I noticed your recent check-in showed some stress. This is just a supportive check-in.</div>
         <div class="chat-bubble student">Thank you. I have been busy with assignments and may want some stress resources.</div>
       ` : `
-        <div class="chat-bubble student">Hi Dr. Sangwook HA, I have been busy with assignments and may want some stress resources.</div>
-        <div class="chat-bubble counselor">Thanks for telling me. We can start with resources, and you can choose a voluntary appointment if helpful.</div>
+        <div class="chat-bubble counselor">Hi Dr. Sangwook HA, I have been busy with assignments and may want some stress resources.</div>
+        <div class="chat-bubble student">Thanks for telling me. We can start with resources, and you can choose a voluntary appointment if helpful.</div>
       `;
       $("chatDrawer").classList.add("show");
       $("chatDrawer").setAttribute("aria-hidden", "false");
@@ -2001,7 +2005,7 @@
       const value = $("chatInput").value.trim();
       if (!value) return;
       const div = document.createElement("div");
-      div.className = current.role === "student" ? "chat-bubble student" : "chat-bubble counselor";
+      div.className = "chat-bubble student";
       div.textContent = value;
       $("chatThread").appendChild(div);
       $("chatInput").value = "";
