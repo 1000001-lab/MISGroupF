@@ -119,7 +119,34 @@
     .demo-account small { color: var(--muted); line-height: 1.5; }
     .language-row { display: flex; justify-content: space-between; align-items: center; gap: 14px; margin-bottom: 18px; }
 
-    .app-shell { min-height: 100vh; display: grid; grid-template-columns: 270px minmax(0, 1fr); background: white; }
+    .app-shell { min-height: 100vh; display: grid; grid-template-rows: auto minmax(0, 1fr); background: white; }
+    .app-topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      display: grid;
+      grid-template-columns: auto minmax(360px, 1fr) auto;
+      align-items: center;
+      gap: 18px;
+      padding: 12px 24px;
+      background: rgba(255,255,255,0.94);
+      border-bottom: 1px solid #e1ebf5;
+      backdrop-filter: blur(14px);
+    }
+    .top-brand { display: flex; align-items: center; gap: 12px; min-width: 230px; }
+    .top-brand img {
+      width: 138px; height: 52px; object-fit: contain; object-position: center;
+      border: 1px solid #d7e5f4; border-radius: 12px; background: #f7fbff; padding: 4px 8px;
+    }
+    .top-brand h3 { font-size: 18px; line-height: 1.1; }
+    .top-nav-list {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      overflow-x: auto;
+      padding: 4px;
+    }
     .sidebar {
       background: linear-gradient(180deg, #dff0ff 0%, #edf7ff 55%, #f6fbff 100%);
       border-right: 1px solid #d5e8f8;
@@ -160,6 +187,7 @@
       border-radius: 12px; padding: 12px; display: flex; align-items: center; gap: 10px;
       text-align: left; font-weight: 850;
     }
+    .top-nav-list .nav-btn { padding: 10px 14px; white-space: nowrap; background: #f4f8fc; border-color: #e1ebf5; }
     .nav-btn:hover { background: rgba(255,255,255,0.56); }
     .nav-btn.active { background: #fff; color: var(--blue); border-color: #cddff7; box-shadow: 0 10px 20px rgba(63,111,229,0.08); }
     .nav-icon {
@@ -172,7 +200,9 @@
     .main {
       background: #fff;
       min-width: 0;
-      padding: 26px 34px 50px;
+      padding: 28px 34px 50px;
+      width: min(1240px, 100%);
+      justify-self: center;
     }
     .topbar {
       display: flex; justify-content: space-between; align-items: flex-start; gap: 20px;
@@ -188,6 +218,46 @@
       color: #31506f; font-weight: 900;
     }
     .top-logo img { width: 178px; height: 58px; object-fit: contain; object-position: center; border-radius: 10px; }
+    .profile-menu { position: relative; }
+    .profile-trigger {
+      border: 1px solid #d7e5f4;
+      background: #fff;
+      border-radius: 999px;
+      padding: 6px 10px 6px 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 8px 18px rgba(28,57,95,0.06);
+    }
+    .profile-copy { display: grid; line-height: 1.1; text-align: left; }
+    .profile-copy strong { font-size: 12px; }
+    .profile-copy small { font-size: 11px; color: var(--muted); font-weight: 800; }
+    .profile-dropdown {
+      position: absolute;
+      right: 0;
+      top: calc(100% + 10px);
+      width: 280px;
+      display: none;
+      gap: 8px;
+      padding: 12px;
+      background: #fff;
+      border: 1px solid #d7e5f4;
+      border-radius: 14px;
+      box-shadow: 0 20px 55px rgba(12,39,70,0.18);
+    }
+    .profile-dropdown.show { display: grid; }
+    .switch-account {
+      width: 100%;
+      border: 1px solid #e1ebf5;
+      background: #f8fbff;
+      border-radius: 10px;
+      padding: 10px;
+      display: grid;
+      gap: 3px;
+      text-align: left;
+      color: #31506f;
+    }
+    .switch-account strong { color: var(--ink); }
 
     .screen { display: none; }
     .screen.active { display: block; }
@@ -211,15 +281,69 @@
       background: var(--panel); border: 1px solid #e0eaf4; border-radius: var(--radius);
       box-shadow: var(--shadow); padding: 20px;
     }
-    .card.tint-blue { background: linear-gradient(180deg, #f6fbff, #fff); border-left: 4px solid var(--blue); }
-    .card.tint-green { background: linear-gradient(180deg, #f1fbf5, #fff); border-left: 4px solid var(--green); }
-    .card.tint-purple { background: linear-gradient(180deg, #f6f2ff, #fff); border-left: 4px solid var(--purple); }
-    .card.tint-amber { background: linear-gradient(180deg, #fff9ed, #fff); border-left: 4px solid var(--amber); }
+    .card.tint-blue { background: linear-gradient(180deg, #f6fbff, #fff); border: 1px solid rgba(63,111,229,0.26); }
+    .card.tint-green { background: linear-gradient(180deg, #f1fbf5, #fff); border: 1px solid rgba(58,159,106,0.28); }
+    .card.tint-purple { background: linear-gradient(180deg, #f6f2ff, #fff); border: 1px solid rgba(123,97,223,0.28); }
+    .card.tint-amber { background: linear-gradient(180deg, #fff9ed, #fff); border: 1px solid rgba(215,139,34,0.3); }
     .grid { display: grid; gap: 18px; }
     .two { grid-template-columns: repeat(2, minmax(0,1fr)); }
     .three { grid-template-columns: repeat(3, minmax(0,1fr)); }
     .four { grid-template-columns: repeat(4, minmax(0,1fr)); }
     .five { grid-template-columns: repeat(5, minmax(0,1fr)); }
+    .proposal-hero {
+      display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(280px, .8fr);
+      gap: 18px; align-items: stretch;
+    }
+    .hero-copy {
+      border-radius: 16px; padding: 22px;
+      background: linear-gradient(135deg, #f5fbff 0%, #ffffff 100%);
+      border: 1px solid #dce8f5;
+    }
+    .hero-copy h3 { font-size: 26px; line-height: 1.18; }
+    .principle-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 12px; margin-top: 16px; }
+    .principle-card {
+      border: 1px solid #deebf6; border-radius: 14px; padding: 14px;
+      background: #fff; display: grid; gap: 7px;
+    }
+    .principle-card strong { color: #17365d; }
+    .mini-stat-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 10px; }
+    .mini-stat {
+      border: 1px solid #dce8f5; border-radius: 14px; padding: 14px;
+      background: rgba(255,255,255,0.78);
+    }
+    .mini-stat strong { display: block; font-size: 24px; color: var(--blue); margin-bottom: 3px; }
+    .source-passports { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; }
+    .source-card {
+      border: 1px solid #deebf6; border-radius: 14px; padding: 14px;
+      background: #fff; border-left: 4px solid var(--blue);
+    }
+    .source-card.green { border-left-color: var(--green); }
+    .source-card.purple { border-left-color: var(--purple); }
+    .source-card.amber { border-left-color: var(--amber); }
+    .source-card.teal { border-left-color: var(--teal); }
+    .layer-stack { display: grid; gap: 10px; }
+    .layer-card {
+      display: grid; grid-template-columns: 42px minmax(0,1fr); gap: 12px; align-items: start;
+      border: 1px solid #deebf6; border-radius: 14px; padding: 14px; background: #fff;
+    }
+    .layer-no {
+      width: 42px; height: 42px; border-radius: 13px; display: grid; place-items: center;
+      background: #edf4ff; color: var(--blue); font-weight: 950;
+    }
+    .timeline-grid { display: grid; grid-template-columns: repeat(5,minmax(160px,1fr)); gap: 12px; overflow: auto; padding-bottom: 4px; }
+    .timeline-card {
+      border: 1px solid #deebf6; border-radius: 14px; padding: 15px; background: #fff;
+      min-height: 160px; display: grid; align-content: start; gap: 8px;
+    }
+    .architecture-map { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 14px; }
+    .arch-block {
+      border-radius: 16px; border: 1px solid #dce8f5; background: #fff;
+      padding: 18px; min-height: 170px; display: grid; gap: 9px;
+    }
+    .budget-row { display: grid; gap: 10px; margin-top: 12px; }
+    .budget-line { display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: center; }
+    .bar-track { height: 9px; border-radius: 999px; background: #e8f0f8; overflow: hidden; margin-top: 6px; }
+    .bar-fill { height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--blue), var(--green)); }
     .aside { grid-template-columns: minmax(0,1.55fr) minmax(300px,0.65fr); align-items: start; }
     .metric {
       min-height: 104px; border-radius: 12px; padding: 17px; border: 1px solid #e1ebf5;
@@ -238,6 +362,13 @@
     .student-layout { grid-template-columns: minmax(0, 1fr) 270px; align-items: start; }
     .privacy-mini { display: grid; gap: 14px; position: sticky; top: 24px; }
     .privacy-mini .card { padding: 16px; box-shadow: 0 10px 20px rgba(28,57,95,0.06); }
+    .student-guardrail-footer {
+      border-top: 1px solid #dfeaf5;
+      padding-top: 18px;
+      margin-top: 2px;
+    }
+    .guardrail-cards { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 14px; }
+    .guardrail-cards .card { box-shadow: 0 10px 20px rgba(28,57,95,0.05); }
     .check-list { list-style: none; padding: 0; margin: 12px 0 0; display: grid; gap: 9px; }
     .check-list li { display: flex; align-items: flex-start; gap: 9px; color: #344b64; line-height: 1.45; }
     .check { color: var(--green); font-weight: 950; }
@@ -256,12 +387,74 @@
     }
     .why-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; }
     .why-pill { background: rgba(255,255,255,0.76); border-radius: 10px; padding: 12px; color: #415872; line-height: 1.45; }
-    .color-note { border-left: 4px solid var(--blue); background: #f6fbff; }
-    .color-note.green { border-left-color: var(--green); background: #f3fbf6; }
-    .color-note.purple { border-left-color: var(--purple); background: #f7f3ff; }
-    .color-note.amber { border-left-color: var(--amber); background: #fff9ed; }
+    .color-note { border: 1px solid rgba(63,111,229,0.26); background: #f6fbff; }
+    .color-note.green { border-color: rgba(58,159,106,0.28); background: #f3fbf6; }
+    .color-note.purple { border-color: rgba(123,97,223,0.28); background: #f7f3ff; }
+    .color-note.amber { border-color: rgba(215,139,34,0.3); background: #fff9ed; }
     .checkin-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 16px; }
     .checkin-card { background: #f8fbff; border: 1px solid #e2ebf5; border-radius: 14px; padding: 17px; min-height: 150px; }
+    .wellness-builder {
+      display: grid;
+      grid-template-columns: repeat(2,minmax(0,1fr));
+      gap: 18px;
+      align-items: start;
+      background: #f8fbff;
+      border: 1px solid #dfeaf5;
+      border-radius: 16px;
+      padding: 18px;
+    }
+    .wellness-panel {
+      background: #fff;
+      border: 1px solid #e2ebf5;
+      border-radius: 14px;
+      padding: 16px;
+      display: grid;
+      gap: 12px;
+      align-content: start;
+      grid-auto-rows: min-content;
+    }
+    .mood-choice-list { display: grid; gap: 12px; align-content: start; }
+    .mood-choice {
+      width: 100%;
+      border: 1px solid #d7e5f4;
+      border-radius: 12px;
+      background: #fff;
+      padding: 12px 14px;
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      color: #31506f;
+      font-weight: 900;
+      text-align: left;
+      min-height: 76px;
+      align-items: center;
+      font-size: 18px;
+    }
+    .mood-choice.active {
+      border-color: var(--blue);
+      background: #eef4ff;
+      box-shadow: 0 0 0 3px rgba(63,111,229,0.1);
+    }
+    .status-scale-list { display: grid; gap: 12px; }
+    .status-scale {
+      background: #f7fbff;
+      border: 1px solid #e2ebf5;
+      border-radius: 12px;
+      padding: 12px;
+    }
+    .status-scale-head { display: flex; justify-content: space-between; gap: 12px; align-items: center; font-weight: 900; }
+    .reflection-box {
+      width: 100%;
+      min-height: 92px;
+      resize: vertical;
+      border: 1px solid #d7e5f4;
+      border-radius: 12px;
+      padding: 12px;
+      color: var(--ink);
+      line-height: 1.55;
+      margin-top: 14px;
+      font: inherit;
+    }
     .mood-grid { display: grid; grid-template-columns: repeat(3, 68px); gap: 10px; margin-top: 12px; }
     .mood-btn {
       height: 60px; border-radius: 14px; border: 2px solid #d9e6f4; background: white; font-size: 28px;
@@ -276,7 +469,7 @@
     .history-list { display: grid; gap: 12px; margin-top: 12px; }
     .history-item {
       display: flex; justify-content: space-between; gap: 18px; align-items: flex-start;
-      border-left: 3px solid var(--blue); padding: 10px 0 10px 14px;
+      border-left: 3px solid var(--green); padding: 10px 0 10px 14px;
     }
     .history-item p { color: #5d7189; margin-top: 7px; line-height: 1.6; }
     .history-score { color: var(--green); font-weight: 950; }
@@ -320,10 +513,27 @@
     .review-panel { display: grid; gap: 13px; }
     .confidence-bar { height: 9px; border-radius: 999px; background: #e6edf5; overflow: hidden; }
     .confidence-bar span { display: block; height: 100%; background: linear-gradient(90deg, var(--blue), var(--green)); }
+    .case-alert-layout { grid-template-columns: minmax(0,1.45fr) minmax(330px,.75fr); align-items: start; }
+    .review-metric-stack { display: grid; gap: 14px; max-width: 760px; }
+    .review-metric-card {
+      width: 100%;
+      text-align: left;
+      border: 1px solid #e1ebf5;
+      border-radius: 14px;
+      background: #fff;
+      box-shadow: 0 12px 24px rgba(28,57,95,0.06);
+      padding: 20px;
+      display: grid;
+      gap: 8px;
+    }
+    .review-metric-card .value { font-size: 32px; font-weight: 950; color: var(--blue); }
+    .review-metric-card.purple .value { color: var(--purple); }
+    .review-metric-card.green .value { color: var(--green); }
+    .review-metric-card.rose .value { color: var(--rose); }
     .privacy-guarantee {
       background: linear-gradient(90deg, #e8f9f1, #f7fffb);
       border: 1px solid #bdebd4;
-      border-left: 5px solid var(--green);
+      border: 1px solid #bdebd4;
       border-radius: 12px;
       padding: 18px 20px;
       display: flex;
@@ -357,6 +567,16 @@
     .live-table small { color: var(--muted); }
     .chart-card { min-height: 360px; }
     .trend-chart { width: 100%; height: 270px; }
+    .admin-trend-layout { grid-template-columns: minmax(0,1.05fr) minmax(340px,.95fr); align-items: stretch; }
+    .insight-list { display: grid; gap: 10px; margin-top: 12px; }
+    .insight-line {
+      border: 1px solid rgba(58,159,106,0.24);
+      background: #f7fbff;
+      border-radius: 10px;
+      padding: 11px 12px;
+      color: #415872;
+      line-height: 1.45;
+    }
     .donut-wrap { display: grid; grid-template-columns: 230px minmax(0,1fr); gap: 16px; align-items: center; }
     .donut {
       width: 210px; height: 210px; border-radius: 50%;
@@ -436,7 +656,8 @@
     @media (max-width: 1180px) {
       .five { grid-template-columns: repeat(3,minmax(0,1fr)); }
       .four { grid-template-columns: repeat(2,minmax(0,1fr)); }
-      .three, .two, .aside, .student-layout, .welcome-panel, .donut-wrap { grid-template-columns: 1fr; }
+      .three, .two, .aside, .student-layout, .welcome-panel, .donut-wrap, .proposal-hero, .architecture-map, .guardrail-cards, .wellness-builder, .case-alert-layout, .admin-trend-layout { grid-template-columns: 1fr; }
+      .principle-grid, .source-passports { grid-template-columns: 1fr; }
       .privacy-mini { position: static; }
       .ai-flow { grid-template-columns: repeat(2,minmax(0,1fr)); }
     }
@@ -444,11 +665,13 @@
       .login-screen { grid-template-columns: 1fr; padding: 22px; }
       .login-card { justify-self: stretch; max-width: none; }
       .demo-grid { grid-template-columns: 1fr; }
-      .app-shell { grid-template-columns: 1fr; }
+      .app-shell { grid-template-rows: auto minmax(0,1fr); }
+      .app-topbar { grid-template-columns: 1fr; }
+      .top-nav-list { justify-content: flex-start; }
       .sidebar { position: static; height: auto; }
       .main { padding: 22px 18px 42px; }
       .topbar { flex-direction: column; }
-      .checkin-grid, .resource-grid, .cost-grid, .ai-flow { grid-template-columns: 1fr; }
+      .checkin-grid, .resource-grid, .cost-grid, .ai-flow, .guardrail-cards, .wellness-builder { grid-template-columns: 1fr; }
       .five, .four, .three, .two { grid-template-columns: 1fr; }
     }
   </style>
@@ -498,47 +721,38 @@
   </main>
 
   <div class="app-shell">
-    <aside class="sidebar">
-      <div class="side-brand">
+    <header class="app-topbar">
+      <div class="top-brand">
+        <img src="scwis-care360-logo-display.png" alt="SCWIS Care360 logo">
         <div>
           <h3>SCWIS Care360</h3>
-          <p class="muted" id="roleLine"></p>
+          <p class="muted" id="pageSubtitle"></p>
         </div>
       </div>
-      <img class="side-logo-strip" src="scwis-care360-logo-display.png" alt="SCWIS Care360 logo">
-      <div class="user-card">
-        <div style="display:flex;gap:10px;align-items:center;">
-          <div class="avatar" id="avatarText">L</div>
-          <div>
-            <strong id="currentName">Logan</strong>
-            <p class="muted" id="currentRole"></p>
-          </div>
+      <nav class="top-nav-list" id="roleNav"></nav>
+      <div class="top-actions">
+        <label class="lang-control">
+          <span data-t="language"></span>
+          <select id="systemLang" class="soft-select" aria-label="Language">
+            <option value="en">English</option>
+            <option value="zh">中文</option>
+            <option value="ko">한국어</option>
+            <option value="ja">日本語</option>
+          </select>
+        </label>
+        <div class="profile-menu">
+          <button class="profile-trigger" id="profileBtn" type="button">
+            <span class="avatar" id="avatarText">L</span>
+            <span class="profile-copy">
+              <strong id="currentName">Logan</strong>
+              <small id="currentRole"></small>
+            </span>
+          </button>
+          <div class="profile-dropdown" id="profileDropdown"></div>
         </div>
       </div>
-      <nav class="nav-list" id="roleNav"></nav>
-      <div class="sidebar-spacer"></div>
-      <button class="ghost-btn logout" id="logoutBtn" data-t="logout"></button>
-    </aside>
-
+    </header>
     <main class="main">
-      <header class="topbar">
-        <div>
-          <h2 id="pageTitle"></h2>
-          <p class="page-kicker" id="pageSubtitle"></p>
-        </div>
-        <div class="top-actions">
-          <div class="top-logo"><img src="scwis-care360-logo-display.png" alt="SCWIS Care360 logo"></div>
-          <label class="lang-control">
-            <span data-t="language"></span>
-            <select id="systemLang" class="soft-select" aria-label="Language">
-              <option value="en">English</option>
-              <option value="zh">中文</option>
-              <option value="ko">한국어</option>
-              <option value="ja">日本語</option>
-            </select>
-          </label>
-        </div>
-      </header>
       <section id="content"></section>
     </main>
   </div>
@@ -604,7 +818,7 @@
         notUsed:"Not used",
         notUsedText:"Location, personal messages, browsing history, financial data",
         localNote:"This suggestion is generated for wellness support only. Raw private data is not shown to staff unless you ask for support.",
-        privacyGuarantees:"Your Privacy Guarantees",
+        privacyGuarantees:"Privacy-by-Design Guardrails",
         privacyItems:["Personal wellness companion, not surveillance","Your data is never used for grades or discipline","Opt out anytime with no loss of service access","AI identifies patterns and humans make decisions"],
         usedDataTitle:"What data is used?",
         usedDataItems:["Only necessary data for wellness support","Encrypted and role-protected","No real-time location tracking"],
@@ -670,7 +884,7 @@
         supportMessage:"Hi {name}, your recent check-in showed some signs of stress. This is a supportive check-in, not a disciplinary notice. Would you like to book a voluntary chat or receive wellness resources?",
         book:"Book",
         reply:"Reply",
-        understanding:"Understanding Your Support",
+        understanding:"Support Transparency Notes",
         whyMessage:"Why did I receive a message?",
         whyMessageText:"Messages are sent by human counselors after reviewing wellness patterns.",
         whatDataWasUsed:"What data was used?",
@@ -701,8 +915,8 @@
         auditItems:["Alert created by AI pattern flag","Counselor opened case panel","Identity remains restricted until need-to-know review"],
         rbacNote:"Role-Based Access Control: Only data necessary for wellness support is displayed. Sensitive details are restricted.",
         rbacTitle:"Role-Based Access Control",
-        studentJourneyTitle:"Case Lifecycle — End-to-End Student Journey",
-        studentJourneySub:"Complete workflow from check-in to resolution. Every step is privacy-preserving and human-reviewed.",
+        studentJourneyTitle:"Operational Workflow: From Signal to Support",
+        studentJourneySub:"Privacy-preserving workflow from consented signal review to human-led support and feedback improvement.",
         journeySteps:[
           ["Check-In","Student voluntarily records wellness data.","Student controlled"],
           ["AI Detects","System identifies possible risk patterns.","AI-assisted only"],
@@ -712,12 +926,12 @@
           ["Student Responds","Student can ask questions or share concerns.","Consent-based"],
           ["Support Plan","Resources or follow-up are scheduled.","Care-focused"]
         ],
-        privacyStepTitle:"Privacy Guarantee Across Every Step",
+        privacyStepTitle:"Privacy and Human Judgment Across Every Step",
         privacyStepText:"At no point is student data used for academic evaluation, discipline, or any purpose beyond wellness support. AI flags patterns. Only humans make decisions. Every action is logged in the audit trail.",
         adminTitle:"Admin Analytics Panel",
         adminSubtitle:"Anonymized campus-level insights for planning, resource allocation, and reporting.",
         adminMetrics:["Participation Rate","Counseling Demand","Avg Wellness Score","System Uptime","Opt-Out Rate"],
-        liveActivity:"Recent Student Check-In Activity (Live)",
+        liveActivity:"Operational Readiness Snapshot",
         liveLabel:"Live",
         liveNote:"Anonymized summary only. Private message contents and identities are protected.",
         liveHeaders:["Last Check-In","Mood","Stress","Sleep","Workload","Social","Physical","Wellness Score"],
@@ -747,7 +961,7 @@
         costPer:"Cost Per Student/Year",
         auditSummary:"Data Access Audit Summary",
         auditRows:["Counselor Accesses","Consent Changes","Data Deletion Requests","Privacy Incidents"],
-        whyTitleAdmin:"Why Choose SCWIS for Your Campus?",
+        whyTitleAdmin:"Why SCWIS Care360 Is Competitive",
         whySubtitle:"A privacy-first, human-centered wellness system designed for real university environments.",
         whyCards:[
           ["Privacy-First Design","Students control every data source. No grades, discipline records, or private messages are accessed."],
@@ -935,8 +1149,8 @@
         auditItems:["AI 模式标记创建提醒","咨询师打开案例面板","在必要审阅前，身份仍保持受限"],
         rbacNote:"基于角色的访问控制：只显示健康支持所需的数据，敏感细节受到限制。",
         rbacTitle:"基于角色的访问控制",
-        studentJourneyTitle:"案例生命周期：端到端学生旅程",
-        studentJourneySub:"从打卡到解决的完整流程。每一步都保护隐私，并由人工审阅。",
+        studentJourneyTitle:"运营流程：从信号到支持",
+        studentJourneySub:"从已同意信号审阅到人工支持和反馈改进的隐私保护流程。",
         journeySteps:[
           ["打卡","学生自愿记录健康数据。","学生控制"],
           ["AI 检测","系统识别可能的风险模式。","仅 AI 辅助"],
@@ -951,7 +1165,7 @@
         adminTitle:"管理员分析面板",
         adminSubtitle:"用于规划、资源分配和报告的匿名化校园层面洞察。",
         adminMetrics:["参与率","咨询需求","平均健康分数","系统在线率","退出率"],
-        liveActivity:"近期学生打卡活动（实时）",
+        liveActivity:"运营准备状态快照",
         liveLabel:"实时",
         liveNote:"仅显示匿名汇总。私人消息内容和身份受到保护。",
         liveHeaders:["最近打卡","心情","压力","睡眠","学业负担","社交","身体活动","健康分数"],
@@ -981,7 +1195,7 @@
         costPer:"每名学生每年成本",
         auditSummary:"数据访问审计摘要",
         auditRows:["咨询师访问","同意设置变更","数据删除请求","隐私事件"],
-        whyTitleAdmin:"为什么校园应选择 SCWIS？",
+        whyTitleAdmin:"为什么 SCWIS Care360 具有竞争力？",
         whySubtitle:"面向真实大学环境设计的隐私优先、人本健康系统。",
         whyCards:[
           ["隐私优先设计","学生控制每个数据源。不访问成绩、纪律记录或私人消息。"],
@@ -1229,17 +1443,17 @@
     const navKeys = {
       student:["wellness","privacy","support"],
       counselor:["alerts","case","journey"],
-      admin:["analytics","ai","governance","why"]
+      admin:["analytics","ai","governance"]
     };
     const navLabelKey = { student:"navStudent", counselor:"navCounselor", admin:"navAdmin" };
     const navIcons = {
-      wellness:"♡", privacy:"◎", support:"✚", alerts:"☷", case:"▣", journey:"🧭", analytics:"📈", ai:"AI", governance:"♢", why:"✓"
+      wellness:"♡", privacy:"◎", support:"✚", alerts:"☷", case:"▣", journey:"🧭", analytics:"📊", ai:"AI", governance:"♢"
     };
     let lang = "en";
     let currentKey = "logan";
     let current = accounts.logan;
     let activeTab = "wellness";
-    let selectedMood = "🙂";
+    let selectedMood = "Neutral (30)";
     let predictiveEnabled = true;
     const studentConsentHistories = {
       logan: [
@@ -1289,6 +1503,7 @@
 
     const $ = id => document.getElementById(id);
     const t = key => (I18N[lang] && I18N[lang][key]) || I18N.en[key] || key;
+    const copy = (en, zh) => lang === "zh" ? zh : en;
     const escapeHtml = value => String(value).replace(/[&<>"']/g, ch => ({
       "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"
     }[ch]));
@@ -1348,14 +1563,25 @@
     }
 
     function privacyAside() {
+      const items = [
+        copy("Consent gate before analytics", "分析前必须先经过同意闸门"),
+        copy("No grades, discipline records, or private messages", "不使用成绩、纪律记录或私人消息"),
+        copy("Opt out without losing support services", "退出预测分析不影响支持服务"),
+        copy("Counselors, not AI, decide every outreach", "每次联系都由咨询师决定，而不是 AI 决定")
+      ];
+      const data = [
+        copy("LMS timing signals, not grades", "LMS 时间信号，不含成绩"),
+        copy("Gym, dining, and library patterns only in aggregate context", "健身、餐饮、图书馆模式仅用于背景判断"),
+        copy("Voluntary check-ins remain student-controlled", "自愿打卡始终由学生控制")
+      ];
       return `<aside class="privacy-mini">
         <div class="card tint-green">
-          <h4>${t("privacyGuarantees")}</h4>
-          <ul class="check-list">${t("privacyItems").map(item => `<li><span class="check">✓</span><span>${item}</span></li>`).join("")}</ul>
+          <h4>${copy("Privacy-by-design guardrails", "隐私优先防护")}</h4>
+          <ul class="check-list">${items.map(item => `<li><span class="check">✓</span><span>${item}</span></li>`).join("")}</ul>
         </div>
         <div class="card">
-          <h4>${t("usedDataTitle")}</h4>
-          <ul class="check-list">${t("usedDataItems").map(item => `<li><span class="check">✓</span><span>${item}</span></li>`).join("")}</ul>
+          <h4>${copy("Approved data boundaries", "已批准的数据边界")}</h4>
+          <ul class="check-list">${data.map(item => `<li><span class="check">✓</span><span>${item}</span></li>`).join("")}</ul>
         </div>
       </aside>`;
     }
@@ -1367,28 +1593,30 @@
     }
 
     function studentWellness() {
+      const principles = [
+        [copy("14-day pattern window", "14 天模式窗口"), copy("No single data point can trigger a risk signal. SCWIS looks for sustained, multi-source changes.", "单个数据点不会触发风险信号；系统只识别持续、多来源的变化。")],
+        [copy("Services stay available", "服务始终可用"), copy("Appointment booking, resources, and crisis support remain available even if analytics is off.", "即使关闭预测分析，预约、资源和危机支持仍可使用。")],
+        [copy("Edge-supported access", "边缘节点支持访问"), copy("Core wellness resources can be cached through campus edge nodes for weak Wi-Fi areas.", "核心健康资源可通过校园边缘节点缓存，支持弱网区域访问。")]
+      ];
       return `<div class="grid">
-        <div class="card">
-          <div class="welcome-panel">
-            <div>
-              <h3>${t("welcomeBack")}, ${current.name}</h3>
-              <p class="page-kicker">${t("studentWelcome")}</p>
+        <div class="proposal-hero">
+          <div class="hero-copy">
+            <div class="section-title"><span class="title-icon i-green">♡</span><div><h3>${copy("Welcome back", "欢迎回来")}, ${current.name}</h3><p class="page-kicker">${copy("This space turns your voluntary wellness input into private, student-controlled support options.", "这里会把你的自愿健康输入转化为私密、由学生控制的支持选择。")}</p></div></div>
+            <div class="principle-grid">${principles.map((p,i) => `<div class="principle-card"><span class="tag ${i === 0 ? "low" : i === 1 ? "medium" : "high"}">${copy("Design rule", "设计规则")}</span><strong>${p[0]}</strong><p class="muted">${p[1]}</p></div>`).join("")}</div>
+          </div>
+          <div class="card tint-blue">
+            <h3>${copy("Personal care status", "个人支持状态")}</h3>
+            <div class="mini-stat-grid" style="margin-top:14px;">
+              <div class="mini-stat"><strong>${t("statusGood")}</strong><span>${copy("Current wellness state", "当前健康状态")}</span></div>
+              <div class="mini-stat"><strong>${predictiveEnabled ? copy("On", "开启") : copy("Off", "关闭")}</strong><span>${copy("Predictive analytics", "预测分析")}</span></div>
+              <div class="mini-stat"><strong>24h</strong><span>${copy("Revoked raw data purge", "撤回同意后的原始数据清除")}</span></div>
+              <div class="mini-stat"><strong>0</strong><span>${copy("Academic records used", "使用的学业记录")}</span></div>
             </div>
-            <div class="status-pill"><span class="muted">${t("currentStatus")}</span><strong>${t("statusGood")}</strong></div>
-            <div class="status-pill"><span class="muted">${t("suggestion")}</span><p style="color:var(--blue);font-weight:850;line-height:1.45;">${t("suggestionText")}</p></div>
           </div>
-        </div>
-        <div class="why-box">
-          <h3 class="section-title"><span class="title-icon i-purple">?</span>${t("whyTitle")}</h3>
-          <div class="why-grid">
-            <div class="why-pill"><strong>${t("basedOn")}:</strong> ${t("basedOnText")}</div>
-            <div class="why-pill"><strong>${t("notUsed")}:</strong> ${t("notUsedText")}</div>
-          </div>
-          <p class="muted">${t("localNote")}</p>
         </div>
         <div class="card">
           <div class="section-head">
-            <div class="section-title"><span class="title-icon i-blue">✓</span><div><h3>${t("checkinTitle")}</h3><p class="page-kicker">${t("checkinMeta")}</p></div></div>
+            <div class="section-title"><span class="title-icon i-blue">✓</span><div><h3>${copy("Voluntary Wellness Check-In", "自愿健康打卡")}</h3><p class="page-kicker">${copy("Private input for your own support plan; not a disciplinary or grading tool.", "仅用于你的支持计划，不用于纪律或评分。")}</p></div></div>
           </div>
           <div class="checkin-grid">
             <div class="checkin-card"><h4>${t("mood")}</h4><div class="mood-grid">${["😊","🙂","😐","🙁","😟"].map(m => `<button class="mood-btn ${selectedMood === m ? "active" : ""}" data-mood="${m}">${m}</button>`).join("")}</div></div>
@@ -1405,7 +1633,7 @@
         </div>
         <div class="card">
           <div class="section-head">
-            <div class="section-title"><span class="title-icon i-green">⌁</span><h3>${t("historyTitle")}</h3></div>
+            <div class="section-title"><span class="title-icon i-green">⌁</span><h3>${copy("My Wellness Timeline", "我的健康时间线")}</h3></div>
             <div><button class="soft-btn" id="downloadHistory">⇩ ${t("downloadData")}</button> <button class="danger-btn" id="deleteHistory">⌫ ${t("deleteData")}</button></div>
           </div>
           ${historyChart()}
@@ -1441,18 +1669,31 @@
 
     function studentPrivacy() {
       const toggles = [
-        ["lms", t("lms"), t("lmsDesc"), true],
-        ["campus", t("campus"), t("campusDesc"), true],
-        ["dining", t("dining"), t("diningDesc"), false],
-        ["wellnessData", t("wellnessData"), t("wellnessDesc"), true]
+        ["lms", copy("LMS activity timing", "LMS 活动时间"), copy("Submission timing and course access frequency only; no grades.", "仅含提交时间和课程访问频率，不含成绩。"), true],
+        ["gym", copy("Gym access patterns", "健身房访问模式"), copy("Check-in/check-out rhythm used only as a wellness context signal.", "进出节奏仅作为健康背景信号。"), true],
+        ["dining", copy("Dining regularity", "餐饮规律性"), copy("Frequency patterns only; no individual purchase details.", "只看频率模式，不看具体购买内容。"), false],
+        ["library", copy("Library building access", "图书馆楼宇访问"), copy("Study-location pattern, never browsing history.", "学习场所模式，不含浏览历史。"), true],
+        ["wellnessData", copy("Self check-in responses", "自我打卡回复"), copy("Voluntary mood, stress, sleep, workload, social, and activity inputs.", "自愿填写的心情、压力、睡眠、负担、社交和活动数据。"), true]
+      ];
+      const lifecycle = [
+        [copy("Consent validation", "同意验证"), copy("Every data source is checked before analytics can run.", "每个数据源都必须先完成同意检查。")],
+        [copy("De-identification at ingestion", "进入系统即去标识化"), copy("Personal identifiers are separated before BI or AI processing.", "在 BI 或 AI 处理前先分离个人身份信息。")],
+        [copy("24-hour revocation purge", "24 小时撤回清除"), copy("Raw data linked to revoked consent is automatically purged.", "撤回同意相关的原始数据会自动清除。")],
+        [copy("Role-separated data marts", "按角色隔离数据集市"), copy("Students, counselors, and administrators see different protected views.", "学生、咨询师、管理员看到不同的受保护视图。")]
       ];
       return `<div class="grid">
-        <div class="card">
-          <div class="section-title"><span class="title-icon i-blue">◎</span><div><h3>${t("dataControl")} <span class="badge">${t("consentBased")}</span></h3><p class="page-kicker">${t("controlText")}</p></div></div>
-          <div style="margin-top:14px;">${toggles.map(row => toggleRow(...row)).join("")}</div>
-          <div class="card tint-amber" style="margin-top:18px;box-shadow:none;">
-            <h4>${t("predictive")}</h4><p class="page-kicker">${t("predictiveWarn")}</p>
-            <button class="${predictiveEnabled ? "danger-btn" : "soft-btn"}" id="predictiveBtn" style="margin-top:12px;">${predictiveEnabled ? t("optOut") : t("enablePredictive")}</button>
+        <div class="proposal-hero">
+          <div class="card">
+            <div class="section-title"><span class="title-icon i-blue">◎</span><div><h3>${copy("Consent Gate", "同意闸门")} <span class="badge">${t("consentBased")}</span></h3><p class="page-kicker">${copy("Privacy governance is a non-bypassable pre-processing layer. You decide which signals may enter SCWIS Care360.", "隐私治理是不可绕过的预处理层。你决定哪些信号可以进入 SCWIS Care360。")}</p></div></div>
+            <div style="margin-top:14px;">${toggles.map(row => toggleRow(...row)).join("")}</div>
+            <div class="card tint-amber" style="margin-top:18px;box-shadow:none;">
+              <h4>${t("predictive")}</h4><p class="page-kicker">${t("predictiveWarn")}</p>
+              <button class="${predictiveEnabled ? "danger-btn" : "soft-btn"}" id="predictiveBtn" style="margin-top:12px;">${predictiveEnabled ? t("optOut") : t("enablePredictive")}</button>
+            </div>
+          </div>
+          <div class="card tint-green">
+            <h3>${copy("Data Lifecycle", "数据生命周期")}</h3>
+            <div class="layer-stack" style="margin-top:14px;">${lifecycle.map((l,i) => `<div class="layer-card"><span class="layer-no">${i+1}</span><div><strong>${l[0]}</strong><p class="muted">${l[1]}</p></div></div>`).join("")}</div>
           </div>
         </div>
         <div class="grid two">
@@ -1479,17 +1720,17 @@
     }
 
     function studentSupport() {
-      const resources = [
-        ["i-blue","▣", t("bookAppointment"), t("confidential")],
-        ["i-green","☘", t("peerGroup"), t("connectStudents")],
-        ["i-purple","▤", t("stressResources"), t("guides")],
-        ["i-teal","☎", t("contactWellness"), t("weekday")],
-        ["i-amber","⚑", t("emergency"), t("hotline")]
+      const routes = [
+        ["i-blue","1", copy("Self-guided resource library", "自助资源库"), copy("Cached through edge nodes for access in weak Wi-Fi areas.", "通过边缘节点缓存，弱网区域也可访问。")],
+        ["i-green","2", copy("Peer and student-led support", "同伴与学生主导支持"), copy("A lower-pressure route before professional contact if preferred.", "如学生偏好，可先使用低压力的同伴支持路径。")],
+        ["i-purple","3", copy("Voluntary counseling appointment", "自愿咨询预约"), copy("Students choose available slots; no appointment is forced by AI.", "学生自主选择时段，AI 不会强制安排。")],
+        ["i-teal","4", copy("Counselor follow-up", "咨询师跟进"), copy("Only trained staff decide whether outreach is appropriate.", "是否联系由受训人员决定。")],
+        ["i-amber","5", copy("Crisis support access", "危机支持入口"), copy("Always visible and available regardless of analytics opt-out.", "无论是否退出预测分析，该入口始终可见可用。")]
       ];
       return `<div class="grid">
         <div class="card">
-          <div class="section-title"><span class="title-icon i-green">✚</span><h3>${t("supportResources")}</h3></div>
-          <div class="resource-grid" style="margin-top:16px;">${resources.map(r => `<div class="resource"><span class="resource-icon ${r[0]}">${r[1]}</span><span><strong>${r[2]}</strong><br><span class="muted">${r[3]}</span></span></div>`).join("")}</div>
+          <div class="section-title"><span class="title-icon i-green">✚</span><div><h3>${copy("Support Pathways", "支持路径")}</h3><p class="page-kicker">${copy("SCWIS Care360 separates supportive services from predictive analytics so students can seek help without stigma.", "SCWIS Care360 将支持服务与预测分析分开，让学生可以无污名地寻求帮助。")}</p></div></div>
+          <div class="timeline-grid" style="margin-top:16px;">${routes.map(r => `<div class="timeline-card"><span class="title-icon ${r[0]}">${r[1]}</span><strong>${r[2]}</strong><p class="muted">${r[3]}</p></div>`).join("")}</div>
         </div>
         <div class="grid aside">
           <div class="card tint-blue">
@@ -1498,10 +1739,10 @@
             <div style="display:flex;gap:10px;margin-top:14px;"><button class="soft-btn" data-student-action="2">${t("book")}</button><button class="ghost-btn" data-student-action="3">${t("reply")}</button></div>
           </div>
           <div class="card">
-            <h3>${t("understanding")}</h3>
-            <div class="why-pill color-note purple" style="margin-top:12px;"><strong>${t("whyMessage")}</strong><br>${t("whyMessageText")}</div>
-            <div class="why-pill color-note green" style="margin-top:12px;"><strong>${t("whatDataWasUsed")}</strong><br>${t("whatDataWasUsedText")}</div>
-            <div class="why-pill color-note amber" style="margin-top:12px;"><strong>${t("confidentialTitle")}</strong><br>${t("confidentialText")}</div>
+            <h3>${copy("Why this is not surveillance", "为什么这不是监控")}</h3>
+            <div class="why-pill color-note purple" style="margin-top:12px;"><strong>${copy("AI produces signals, not orders", "AI 只产生信号，不下达命令")}</strong><br>${copy("The system may highlight sustained patterns, but no automatic outreach or diagnosis is generated.", "系统可以提示持续模式，但不会自动联系学生或生成诊断。")}</div>
+            <div class="why-pill color-note green" style="margin-top:12px;"><strong>${copy("Counselors review context", "咨询师审阅背景")}</strong><br>${copy("Every support action is reviewed by a human professional and recorded in the audit trail.", "每个支持行动都由专业人员审阅，并记录在审计轨迹中。")}</div>
+            <div class="why-pill color-note amber" style="margin-top:12px;"><strong>${copy("Purpose limitation", "目的限制")}</strong><br>${copy("Data is used only for wellness support, never for grades, discipline, scholarships, or campus access.", "数据只用于健康支持，绝不用于成绩、纪律、奖学金或校园准入。")}</div>
           </div>
         </div>
       </div>`;
@@ -1596,18 +1837,32 @@
     function counselorMetricCards() {
       const visibleCases = cases.filter(c => !hiddenCaseIds.has(c.id));
       const highPriority = visibleCases.filter(c => c.category < 2).length;
-      return `<div class="grid four">${t("counselorMetrics").map((m, i) => `<div class="metric ${["","rose","green","purple"][i]}"><span class="label">${m}</span><span class="value">${[visibleCases.length, highPriority, "18h", "27"][i]}</span><span class="hint">${t("counselorMetricHints")[i]}</span></div>`).join("")}</div>`;
+      const metrics = [
+        [copy("Decision-support signals", "决策支持信号"), visibleCases.length, copy("Open, non-diagnostic pattern flags", "开放的非诊断性模式提示"), ""],
+        [copy("Priority reviews", "优先审阅"), highPriority, copy("Counselor validation required", "需要咨询师验证"), "rose"],
+        [copy("Admin work reduced", "行政工作减少"), "≈35%", copy("Estimated triage workload reduction", "预计分诊工作量下降"), "green"],
+        [copy("Auto interventions", "自动干预"), "0", copy("No automated outreach or diagnosis", "无自动联系或诊断"), "purple"]
+      ];
+      return `<div class="grid four">${metrics.map(m => `<div class="metric ${m[3]}"><span class="label">${m[0]}</span><span class="value">${m[1]}</span><span class="hint">${m[2]}</span></div>`).join("")}</div>`;
     }
 
     function counselorAlerts() {
       return `<div class="grid">
-        ${counselorMetricCards()}
-        <div class="grid aside">
-          <div class="card">
-            <div class="filter-row"><div class="section-title"><span class="title-icon i-rose">!</span><h3>${t("riskList")}</h3></div><label>${t("filter")} <select class="soft-select" id="riskFilter">${t("filterOptions").map((x,i) => `<option value="${i}">${x}</option>`).join("")}</select></label></div>
-            <div id="riskTable">${riskTable("0")}</div>
+        <div class="proposal-hero">
+          <div class="hero-copy">
+            <div class="section-title"><span class="title-icon i-purple">☷</span><div><h3>${copy("Counselor Decision Support Workbench", "咨询师决策支持工作台")}</h3><p class="page-kicker">${copy("SCWIS Care360 summarizes sustained, consented patterns so licensed counselors can review context faster. It does not make clinical decisions.", "SCWIS Care360 汇总持续且已同意的数据模式，帮助持证咨询师更快审阅背景；系统不做临床决定。")}</p></div></div>
+            <div class="principle-grid">
+              <div class="principle-card"><strong>${copy("Explainable signal", "可解释信号")}</strong><p class="muted">${copy("Each alert includes plain-language evidence and excluded data.", "每条提醒都包含清晰证据和未使用数据说明。")}</p></div>
+              <div class="principle-card"><strong>${copy("Minimum two-week window", "至少两周窗口")}</strong><p class="muted">${copy("Patterns must be sustained; single incidents are not enough.", "必须是持续模式，单次事件不足以触发。")}</p></div>
+              <div class="principle-card"><strong>${copy("Human authority", "人工最终决定")}</strong><p class="muted">${copy("Counselors validate, dismiss, message, or schedule support.", "咨询师负责验证、驳回、发送消息或安排支持。")}</p></div>
+            </div>
           </div>
           <div class="card tint-green">${humanReviewPanel()}</div>
+        </div>
+        ${counselorMetricCards()}
+        <div class="card">
+          <div class="filter-row"><div class="section-title"><span class="title-icon i-rose">!</span><h3>${copy("Decision-Support Signal Queue", "决策支持信号队列")}</h3></div><label>${t("filter")} <select class="soft-select" id="riskFilter">${t("filterOptions").map((x,i) => `<option value="${i}">${x}</option>`).join("")}</select></label></div>
+          <div id="riskTable">${riskTable("0")}</div>
         </div>
       </div>`;
     }
@@ -1625,7 +1880,7 @@
       if (filterValue === "4") rows = rows.filter(r => r.status === 0);
       if (!rows.length) return `<div class="empty-state">${t("emptyCase")}</div>`;
       if (hiddenCaseIds.has(cases[selectedCase]?.id)) selectedCase = rows[0].idx;
-      return `<div style="overflow:auto;"><table><thead><tr><th>${t("caseId")}</th><th>${t("riskCategory")}</th><th>${t("aiConfidence")}</th><th>${t("status")}</th><th>${t("identity")}</th></tr></thead><tbody>${rows.map(c => `<tr class="case-row ${selectedCase === c.idx ? "active" : ""}" data-case="${c.idx}"><td><strong>${c.id}</strong></td><td><span class="tag ${c.category < 2 ? "high" : c.category < 4 ? "medium" : "low"}">${t("categories")[c.category]}</span></td><td>${c.confidence}%<br><small class="muted">${t("confidencePatterns")[c.category]}</small></td><td><span class="tag ${c.status === 0 ? "high" : c.status === 1 ? "medium" : "low"}">${t("statuses")[c.status]}</span></td><td>${c.identity === 4 ? c.student : t("identities")[c.identity]}</td></tr>`).join("")}</tbody></table></div>`;
+      return `<div style="overflow:auto;"><table><thead><tr><th>${t("caseId")}</th><th>${copy("Signal theme", "信号主题")}</th><th>${copy("Explainable pattern", "可解释模式")}</th><th>${copy("Review state", "审阅状态")}</th><th>${copy("Identity view", "身份视图")}</th></tr></thead><tbody>${rows.map(c => `<tr class="case-row ${selectedCase === c.idx ? "active" : ""}" data-case="${c.idx}"><td><strong>${c.id}</strong></td><td><span class="tag ${c.category < 2 ? "high" : c.category < 4 ? "medium" : "low"}">${t("categories")[c.category]}</span></td><td>${c.confidence}% ${copy("signal confidence", "信号置信度")}<br><small class="muted">${t("confidencePatterns")[c.category]} · ${copy("two-week minimum", "至少两周窗口")}</small></td><td><span class="tag ${c.status === 0 ? "high" : c.status === 1 ? "medium" : "low"}">${t("statuses")[c.status]}</span></td><td>${c.identity === 4 ? c.student : t("identities")[c.identity]}</td></tr>`).join("")}</tbody></table></div>`;
     }
 
     function humanReviewPanel() {
@@ -1636,42 +1891,64 @@
       const c = cases[selectedCase];
       if (!c || hiddenCaseIds.has(c.id)) return `<div class="empty-state">${t("emptyCase")}</div>`;
       return `<div class="review-panel">
-        <div class="section-title"><span class="title-icon i-green">✓</span><h3>${t("humanPanel")}</h3></div>
-        <p class="muted">${c.id}</p>
-        <div class="why-pill color-note amber"><strong>${t("aiConcernSummary")}</strong><br>${c.summary}</div>
-        <div><strong>${t("riskCategory")}</strong><br><span class="tag high">${t("categories")[c.category]}</span></div>
+        <div class="section-title"><span class="title-icon i-green">✓</span><h3>${copy("One-Page Human Review Brief", "一页式人工审阅摘要")}</h3></div>
+        <p class="muted">${c.id} · ${copy("DSS signal, not diagnosis", "DSS 信号，不是诊断")}</p>
+        <div class="why-pill color-note amber"><strong>${copy("Plain-language concern", "清晰风险说明")}</strong><br>${c.summary}</div>
+        <div class="grid two">
+          <div><strong>${copy("Signal theme", "信号主题")}</strong><br><span class="tag high">${t("categories")[c.category]}</span></div>
+          <div><strong>${copy("Identity control", "身份控制")}</strong><br><span class="tag low">${c.identity === 4 ? copy("Consented case", "已同意案例") : copy("De-identified", "已去标识化")}</span></div>
+        </div>
         <div><strong>${t("confidence")}</strong><div class="confidence-bar" style="margin-top:8px;"><span style="width:${c.confidence}%"></span></div><p class="muted" style="margin-top:7px;">${c.confidence}% · ${t("confidencePatterns")[c.category]}</p></div>
         <div><strong>${t("aiFeedback")}</strong><div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:8px;">${t("aiFeedbackOptions").map((x, i) => `<button class="ghost-btn" style="padding:8px 6px;" data-ai-feedback="${i}">${x}</button>`).join("")}</div></div>
-        <div class="why-pill"><strong>${t("recommendedAction")}</strong><br>${t("actionText")}</div>
+        <div class="why-pill"><strong>${copy("Counselor decision options", "咨询师决策选项")}</strong><br>${copy("Validate the signal, send a supportive message, schedule a voluntary appointment, or dismiss with a review note.", "可验证信号、发送支持性消息、安排自愿预约，或填写审阅备注后关闭。")}</div>
         <div class="grid">${t("counselorButtons").map((b,i) => `<button class="${i === 0 ? "primary-btn" : "ghost-btn"}" data-counselor-action="${i}">${b}</button>`).join("")}<button class="primary-btn" style="background:var(--purple);" data-counselor-chat>${t("openChatWithStudent")}</button></div>
       </div>`;
     }
 
     function counselorCaseReview() {
+      const c = cases[selectedCase] || cases[0];
+      const packet = [
+        [copy("Pattern scope", "模式范围"), copy("Sustained multi-source changes over at least two weeks.", "至少两周的多来源持续变化。")],
+        [copy("Excluded evidence", "排除证据"), copy("Grades, discipline records, personal messages, browsing history, and finances are not used.", "不使用成绩、纪律记录、私人消息、浏览历史或财务信息。")],
+        [copy("Professional action", "专业行动"), copy("Counselor records validation, context notes, and selected support route.", "咨询师记录验证结果、背景备注和支持路径。")]
+      ];
       return `<div class="grid">
         ${counselorMetricCards()}
         <div class="grid aside">
           <div class="card">
-            <div class="section-title"><span class="title-icon i-blue">▣</span><h3>${t("caseDetails")}</h3></div>
-            <div class="empty-state" style="margin-top:16px;">${t("emptyCase")}</div>
+            <div class="section-title"><span class="title-icon i-blue">▣</span><div><h3>${copy("Case Packet Builder", "案例资料包")}</h3><p class="page-kicker">${copy("A compact DSS packet designed to reduce administrative triage work while preserving counselor judgment.", "紧凑型 DSS 资料包，减少行政分诊工作，同时保留咨询师判断。")}</p></div></div>
+            <div class="source-passports" style="margin-top:16px;">${packet.map((p,i) => `<div class="source-card ${["","green","purple"][i]}"><strong>${p[0]}</strong><p class="muted">${p[1]}</p></div>`).join("")}</div>
+            <div class="why-pill color-note green" style="margin-top:16px;"><strong>${copy("Selected signal", "当前信号")}: ${c.id}</strong><br>${c.summary}</div>
           </div>
           <div class="grid">
-            <div class="card tint-purple"><h3>${t("auditTrail")}</h3><ul class="audit-list">${t("auditItems").map(x => `<li>${x}</li>`).join("")}</ul></div>
-            <div class="card tint-blue"><h3>${t("rbacTitle")}</h3><p class="page-kicker">${t("rbacNote")}</p></div>
+            <div class="card tint-purple"><h3>${t("auditTrail")}</h3><ul class="audit-list"><li>${copy("Signal created by explainable AI pattern flag.", "可解释 AI 模式标记生成信号。")}</li><li>${copy("Counselor opened case packet.", "咨询师打开案例资料包。")}</li><li>${copy("Every decision is time-stamped for accountability.", "每项决策都带时间戳以支持问责。")}</li></ul></div>
+            <div class="card tint-blue"><h3>${t("rbacTitle")}</h3><p class="page-kicker">${copy("Only data necessary for wellness support is displayed. Re-identification is limited to assigned cases and active review needs.", "仅显示健康支持所需数据。重新识别仅限分配案例和当前审阅需要。")}</p></div>
           </div>
         </div>
       </div>`;
     }
 
     function counselorJourney() {
-      return `<div class="card">
-        <div class="section-head"><div class="section-title"><span class="title-icon i-green">🧭</span><div><h3>${t("studentJourneyTitle")}</h3><p class="page-kicker">${t("studentJourneySub")}</p></div></div></div>
-        <div class="journey-track">${t("journeySteps").map((s, i) => `<div class="journey-step"><div class="bubble">${i+1}</div><strong>${s[0]}</strong><p class="muted">${s[1]}</p><span class="tag low">${s[2]}</span></div>`).join("")}</div>
+      const stages = [
+        [copy("1. Ingest and minimize", "1. 摄取并最小化"), copy("Only pre-approved, consented signals enter the pipeline.", "只有预先批准且已同意的信号进入流程。")],
+        [copy("2. Identify sustained pattern", "2. 识别持续模式"), copy("The DSS grades multi-source changes without using grades or discipline data.", "DSS 对多来源变化分级，不使用成绩或纪律数据。")],
+        [copy("3. Human review", "3. 人工审阅"), copy("Licensed counselors validate context before any outreach.", "持证咨询师在任何联系前验证背景。")],
+        [copy("4. Tiered support", "4. 分层支持"), copy("Support may be self-help, peer support, voluntary appointment, or crisis access.", "支持可包括自助、同伴、自愿预约或危机入口。")],
+        [copy("5. Feedback loop", "5. 反馈闭环"), copy("Outcomes, false positives, and student feedback refine thresholds.", "结果、误报和学生反馈用于优化阈值。")]
+      ];
+      return `<div class="grid">
+        <div class="card">
+          <div class="section-head"><div class="section-title"><span class="title-icon i-green">↻</span><div><h3>${copy("Operational Workflow: From Signal to Support", "运营流程：从信号到支持")}</h3><p class="page-kicker">${copy("This workflow is adapted from the report's end-to-end operating model and emphasizes privacy, review, and continuous improvement.", "该流程来自报告的端到端运营模型，强调隐私、审阅和持续改进。")}</p></div></div></div>
+          <div class="timeline-grid">${stages.map((s,i) => `<div class="timeline-card"><span class="title-icon ${["i-blue","i-purple","i-green","i-teal","i-amber"][i]}">${i+1}</span><strong>${s[0]}</strong><p class="muted">${s[1]}</p></div>`).join("")}</div>
+        </div>
+        <div class="card tint-green">
+          <div class="section-title"><span class="title-icon i-green">✓</span><div><h3>${copy("Counselor-centered design", "以咨询师为中心的设计")}</h3><p class="page-kicker">${copy("The interface is designed to make professional review faster, not to pressure staff into following an algorithm.", "界面用于加快专业审阅，而不是迫使工作人员服从算法。")}</p></div></div>
+        </div>
       </div>`;
     }
 
     function privacyGuarantee() {
-      return `<div class="section privacy-guarantee"><span class="title-icon i-green">◇</span><div><h3>${t("privacyStepTitle")}</h3><p>${t("privacyStepText")}</p></div></div>`;
+      return `<div class="section privacy-guarantee"><span class="title-icon i-green">◇</span><div><h3>${copy("Privacy and human judgment across every step", "每一步都保护隐私并保留人工判断")}</h3><p>${copy("SCWIS Care360 uses AI as decision support only. Student data is never used for academic evaluation, discipline, scholarships, or campus access decisions; every support action is reviewed and logged.", "SCWIS Care360 只把 AI 用作决策支持。学生数据绝不用于学业评价、纪律、奖学金或校园准入决策；每个支持行动都经过人工审阅并记录。")}</p></div></div>`;
     }
 
     function renderAdmin() {
@@ -1681,32 +1958,25 @@
     }
 
     function adminAnalytics() {
-      const liveRows = [
-        ["2026-05-14 12:04","🙂","4/10","7/10","6/10","8/10","7/10","76/100"],
-        ["2026-05-14 09:20","😊","3/10","8/10","5/10","8/10","6/10","82/100"],
-        ["2026-05-13 18:35","😐","6/10","6/10","8/10","5/10","5/10","61/100"],
-        ["2026-05-13 13:20","🙂","5/10","6/10","7/10","6/10","6/10","66/100"],
-        ["2026-05-12 21:10","🙁","7/10","5/10","8/10","4/10","4/10","52/100"],
-        ["2026-05-12 10:45","😊","2/10","8/10","5/10","9/10","7/10","86/100"],
-        ["2026-05-11 19:05","😐","6/10","6/10","7/10","6/10","5/10","63/100"],
-        ["2026-05-11 14:30","🙂","4/10","7/10","6/10","7/10","6/10","74/100"],
-        ["2026-05-11 08:50","😟","8/10","4/10","9/10","3/10","3/10","43/100"],
-        ["2026-05-10 20:25","🙂","5/10","7/10","7/10","6/10","6/10","68/100"],
-        ["2026-05-10 16:40","😊","3/10","8/10","6/10","8/10","8/10","84/100"],
-        ["2026-05-10 12:15","😐","6/10","5/10","8/10","5/10","5/10","58/100"],
-        ["2026-05-10 09:05","🙂","4/10","7/10","6/10","7/10","6/10","72/100"]
+      const metrics = [
+        [copy("Student ecosystem", "学生生态规模"), "15,000", copy("Designed for university-wide deployment", "面向全校部署")],
+        [copy("System uptime target", "系统在线目标"), "99.5%", copy("Private cloud plus edge resilience", "私有云与边缘弹性")],
+        [copy("Edge nodes", "边缘节点"), "12", copy("Four dedicated to Wi-Fi dead zones", "其中 4 个服务 Wi-Fi 弱区")],
+        [copy("Counselor triage relief", "咨询师分诊减负"), "≈35%", copy("Estimated administrative workload reduction", "预计行政工作量下降")],
+        [copy("Student employment roles", "学生就业岗位"), "5–10", copy("Privacy ambassadors, UX testers, support assistants", "隐私大使、UX 测试、支持助理")]
+      ];
+      const architecture = [
+        [copy("Central Private Cloud Core", "中央私有云核心"), copy("Encrypted warehouse, BI analytics, case management, governance tools, disaster recovery within two hours.", "加密数据仓库、BI 分析、案例管理、治理工具，并支持两小时内灾难恢复。"), "i-blue"],
+        [copy("On-Campus Edge Nodes", "校园边缘节点"), copy("Encrypted local cache for resources, consent tools, booking, and crisis support in weak Wi-Fi areas.", "为弱网区域缓存资源、同意工具、预约和危机支持。"), "i-green"],
+        [copy("Decoupled API Gateway", "松耦合 API 网关"), copy("Integrates LMS, gym, dining, and library systems without creating hard dependencies.", "连接 LMS、健身、餐饮、图书馆系统，但不形成硬依赖。"), "i-purple"]
       ];
       return `<div class="grid">
-        <div class="section-title"><span class="title-icon i-blue">📈</span><div><h3>${t("adminTitle")}</h3><p class="page-kicker">${t("adminSubtitle")}</p></div></div>
-        <div class="grid five">${t("adminMetrics").map((m,i) => `<div class="metric ${["","amber","green","purple",""][i]}"><span class="label">${m}</span><span class="value">${["68%","+14%","74/100","99.7%","8%"][i]}</span></div>`).join("")}</div>
-        <div class="card live-table">
-          <div class="section-title"><span class="title-icon i-teal">☷</span><h3>${t("liveActivity")}</h3></div>
-          <div style="overflow:auto;margin-top:12px;"><table><thead><tr>${t("liveHeaders").map(h => `<th>${h}</th>`).join("")}</tr></thead><tbody>${liveRows.map(r => `<tr>${r.map(c => `<td>${c}</td>`).join("")}</tr>`).join("")}</tbody></table></div>
-          <p class="page-kicker">${t("liveNote")}</p>
-        </div>
+        <div class="section-title"><span class="title-icon i-blue">📈</span><div><h3>${copy("Campus Intelligence & Architecture Overview", "校园智能与架构概览")}</h3><p class="page-kicker">${copy("Administrator view shows only anonymized campus-level evidence for planning, resource allocation, and strategic reporting.", "管理员视图仅显示匿名化的校园层面证据，用于规划、资源分配和战略报告。")}</p></div></div>
+        <div class="grid five">${metrics.map((m,i) => `<div class="metric ${["","purple","green","amber",""][i]}"><span class="label">${m[0]}</span><span class="value">${m[1]}</span><span class="hint">${m[2]}</span></div>`).join("")}</div>
+        <div class="architecture-map">${architecture.map((a,i) => `<div class="arch-block"><span class="title-icon ${a[2]}">${i+1}</span><h3>${a[0]}</h3><p class="page-kicker">${a[1]}</p></div>`).join("")}</div>
         <div class="grid two">
-          <div class="card chart-card"><div class="section-title"><span class="title-icon i-blue">⌁</span><h3>${t("trendTitle")}</h3></div>${campusTrend()}</div>
-          <div class="card chart-card"><div class="section-title"><span class="title-icon i-purple">◔</span><h3>${t("supportCategories")}</h3></div><div class="donut-wrap" style="margin-top:22px;"><div class="donut"></div>${legend()}</div></div>
+          <div class="card chart-card"><div class="section-title"><span class="title-icon i-blue">⌁</span><h3>${copy("BI Resource Demand Trend", "BI 资源需求趋势")}</h3></div>${campusTrend()}</div>
+          <div class="card chart-card"><div class="section-title"><span class="title-icon i-purple">◔</span><h3>${copy("Aggregate Planning Categories", "聚合规划类别")}</h3></div><div class="donut-wrap" style="margin-top:22px;"><div class="donut"></div>${legend()}</div></div>
         </div>
       </div>`;
     }
@@ -1731,32 +2001,69 @@
     }
 
     function adminAI() {
+      const tiers = [
+        [copy("Campus Data Environment", "校园数据环境"), copy("Five approved, minimally invasive sources under data minimization.", "五类已批准、最小化的数据来源。")],
+        [copy("Consent, Privacy & Governance", "同意、隐私与治理"), copy("Non-bypassable gate with opt-out, audit logging, and purpose limitation.", "不可绕过的闸门，包含退出、审计和目的限制。")],
+        [copy("Secure BI Infrastructure", "安全 BI 基础设施"), copy("Encrypted warehouse and role-separated data marts.", "加密仓库与角色隔离数据集市。")],
+        [copy("Analytics & AI Risk Detection", "分析与 AI 风险识别"), copy("Rule-based and supervised models generate explainable signals only.", "规则与监督模型只生成可解释信号。")],
+        [copy("Decision Support Platform", "决策支持平台"), copy("One-page summaries prioritize cases for counselor review.", "一页式摘要用于咨询师优先审阅。")],
+        [copy("Human-in-the-Loop Layer", "人在回路层"), copy("Licensed counselors approve, dismiss, or adjust support actions.", "持证咨询师批准、驳回或调整支持行动。")],
+        [copy("Student Support Actions", "学生支持行动"), copy("Resources, peer support, voluntary appointments, and crisis access.", "资源、同伴支持、自愿预约和危机入口。")],
+        [copy("Feedback & Continuous Improvement", "反馈与持续改进"), copy("Monthly governance reviews and quarterly bias audits refine thresholds.", "月度治理审查与季度偏见审计优化阈值。")]
+      ];
       return `<div class="grid">
         <div class="card tint-blue">
-          <div class="section-title"><span class="title-icon i-blue">AI</span><h3>${t("aiWorks")}</h3></div>
-          <div class="ai-flow" style="margin-top:16px;">${t("aiFlow").map((x,i) => `<div class="flow-card"><span class="bubble">${i+1}</span><strong>${x[0]}</strong><p class="muted">${x[1]}</p></div>`).join("")}</div>
+          <div class="section-title"><span class="title-icon i-blue">8</span><div><h3>${copy("8-Tier Privacy-First Logical Architecture", "八层隐私优先逻辑架构")}</h3><p class="page-kicker">${copy("No data moves forward until governance, consent, and purpose checks are complete.", "数据必须完成治理、同意和目的检查后才能继续流转。")}</p></div></div>
+          <div class="layer-stack" style="margin-top:16px;">${tiers.map((tier,i) => `<div class="layer-card"><span class="layer-no">${i+1}</span><div><strong>${tier[0]}</strong><p class="muted">${tier[1]}</p></div></div>`).join("")}</div>
         </div>
         <div class="grid two">
           <div class="card tint-green"><div class="section-title"><span class="title-icon i-green">✓</span><h3>${t("dataUses")}</h3></div><ul class="check-list">${t("aiUseItems").map(x => `<li><span class="check">✓</span><span>${x}</span></li>`).join("")}</ul></div>
           <div class="card tint-amber" style="border-left-color:var(--rose);"><div class="section-title"><span class="title-icon i-rose">⊘</span><h3>${t("dataNotUse")}</h3></div><ul class="check-list">${t("aiNotItems").map(x => `<li><span style="color:var(--rose);font-weight:950;">×</span><span>${x}</span></li>`).join("")}</ul></div>
         </div>
-        <div class="warning-box"><div class="section-title"><span class="title-icon i-amber">!</span><h3>${t("limitations")}</h3></div><ul class="bullet-list">${t("limitationItems").map(x => `<li>${x}</li>`).join("")}</ul></div>
+        <div class="warning-box"><div class="section-title"><span class="title-icon i-amber">!</span><h3>${copy("Decision-support limits", "决策支持边界")}</h3></div><ul class="bullet-list">${t("limitationItems").map(x => `<li>${x}</li>`).join("")}</ul></div>
       </div>`;
     }
 
     function adminGovernance() {
-      return `<div class="grid three">
-        <div class="card tint-purple"><div class="section-title"><span class="title-icon i-purple">◇</span><h3>${t("privacyReporting")}</h3></div><p class="page-kicker" style="margin-top:12px;">${t("privacyReportingText")}</p><div class="why-pill" style="margin-top:14px;"><strong>${t("threshold")}</strong></div></div>
-        <div class="card"><div class="section-title"><span class="title-icon i-amber">$</span><h3>${t("budget")}</h3></div><div class="cost-grid"><div class="cost-card">${t("oneTime")}<strong>USD 750,000</strong></div><div class="cost-card">${t("annual")}<strong>USD 180,000</strong></div><div class="cost-card">${t("served")}<strong>1,200</strong></div><div class="cost-card">${t("costPer")}<strong>≈USD 150</strong></div></div></div>
-        <div class="card"><div class="section-title"><span class="title-icon i-teal">▤</span><h3>${t("auditSummary")}</h3></div><table style="margin-top:12px;"><tbody>${t("auditRows").map((r,i) => `<tr><td>${r}</td><td style="text-align:right;font-weight:950;color:${i>1 ? "var(--green)" : "var(--ink)"}">${["247","31","4","0"][i]}</td></tr>`).join("")}</tbody></table></div>
+      const budget = [
+        [copy("Hybrid edge-cloud & secure BI", "混合边缘云与安全 BI"), 190000, 25],
+        [copy("Integration and API gateway", "集成与 API 网关"), 115000, 15],
+        [copy("AI-assisted risk detection", "AI 辅助风险识别"), 95000, 13],
+        [copy("Consent, privacy, HITL workflow", "同意、隐私与人在回路流程"), 115000, 15],
+        [copy("Pilot, training, security validation", "试点、培训与安全验证"), 145000, 19]
+      ];
+      const risks = [
+        [copy("Privacy anxiety", "隐私焦虑"), copy("Clear opt-out, student-facing transparency, no disciplinary use.", "清晰退出、学生端透明说明、不得纪律使用。")],
+        [copy("AI misjudgment", "AI 误判"), copy("Counselor validation, false-positive review, quarterly bias audits.", "咨询师验证、误报审查、季度偏见审计。")],
+        [copy("System outage", "系统中断"), copy("Private cloud redundancy, edge cache, loose-coupled integrations.", "私有云冗余、边缘缓存、松耦合集成。")]
+      ];
+      return `<div class="grid">
+        <div class="grid three">
+          <div class="card tint-purple"><div class="section-title"><span class="title-icon i-purple">◇</span><h3>${t("privacyReporting")}</h3></div><p class="page-kicker" style="margin-top:12px;">${t("privacyReportingText")}</p><div class="why-pill" style="margin-top:14px;"><strong>${t("threshold")}</strong></div></div>
+          <div class="card"><div class="section-title"><span class="title-icon i-amber">$</span><h3>${t("budget")}</h3></div><div class="cost-grid"><div class="cost-card">${t("oneTime")}<strong>USD 750,000</strong></div><div class="cost-card">${t("annual")}<strong>USD 180,000</strong></div><div class="cost-card">${copy("Payment model", "付款模式")}<strong>30 / 40 / 30</strong></div><div class="cost-card">${copy("Maintenance focus", "维护重点")}<strong>${copy("Bias + security", "偏见与安全")}</strong></div></div></div>
+          <div class="card"><div class="section-title"><span class="title-icon i-teal">▤</span><h3>${copy("Governance cadence", "治理节奏")}</h3></div><table style="margin-top:12px;"><tbody>${[copy("Monthly user-feedback review", "月度用户反馈审查"),copy("Quarterly AI bias audit", "季度 AI 偏见审计"),copy("Annual disaster recovery drill", "年度灾难恢复演练"),copy("24h revoked-data purge", "24 小时撤回数据清除")].map((r,i) => `<tr><td>${r}</td><td style="text-align:right;font-weight:950;color:${i>1 ? "var(--green)" : "var(--ink)"}">✓</td></tr>`).join("")}</tbody></table></div>
+        </div>
+        <div class="card">
+          <div class="section-title"><span class="title-icon i-amber">$</span><h3>${copy("Implementation budget mapped to architecture", "实施预算与架构映射")}</h3></div>
+          <div class="budget-row">${budget.map(b => `<div><div class="budget-line"><span>${b[0]}</span><strong>USD ${b[1].toLocaleString()}</strong></div><div class="bar-track"><div class="bar-fill" style="width:${b[2]}%"></div></div></div>`).join("")}</div>
+        </div>
+        <div class="grid three">${risks.map((r,i) => `<div class="card tint-${["blue","amber","green"][i]}"><div class="section-title"><span class="title-icon ${["i-blue","i-amber","i-green"][i]}">!</span><h3>${r[0]}</h3></div><p class="page-kicker" style="margin-top:10px;">${r[1]}</p></div>`).join("")}</div>
       </div>`;
     }
 
     function adminWhy() {
+      const differentiators = [
+        [copy("Privacy-first gatekeeper architecture", "隐私优先闸门架构"), copy("Analytics cannot begin until consent, de-identification, and purpose checks are complete.", "只有完成同意、去标识化和目的检查后，分析才能开始。")],
+        [copy("Human-centered stakeholder journeys", "以人为本的利益相关者旅程"), copy("Students control data; counselors retain judgment; administrators receive aggregate insight.", "学生控制数据，咨询师保留判断，管理员只看聚合洞察。")],
+        [copy("Resilient edge-cloud infrastructure", "弹性边缘云基础设施"), copy("Core services continue in Wi-Fi dead zones and during partial campus system outages.", "弱网区域和局部系统故障时核心服务仍可运行。")],
+        [copy("Purpose-built for higher education", "专为高校场景设计"), copy("The model respects student autonomy, wellness ethics, and campus operational constraints.", "模型尊重学生自主、健康伦理和校园运营约束。")],
+        [copy("Student employment and co-governance", "学生就业与共同治理"), copy("Paid roles and student representation make the system evolve from real student input.", "付费岗位和学生代表让系统基于真实学生意见演进。")],
+        [copy("Scalable, low-maintenance design", "可扩展、低维护设计"), copy("Cloud-native modules and managed services reduce the need for additional full-time IT staffing.", "云原生模块和托管服务减少新增全职 IT 人员需求。")]
+      ];
       const colors = ["i-blue","i-green","i-purple","i-teal","i-amber","i-rose"];
       return `<div class="grid">
-        <div class="section-title"><span class="title-icon i-green">✓</span><div><h3>${t("whyTitleAdmin")}</h3><p class="page-kicker">${t("whySubtitle")}</p></div></div>
-        <div class="grid two">${t("whyCards").map((c,i) => `<div class="card why-card tint-${["blue","green","purple","blue","amber","green"][i]}"><div class="section-title"><span class="title-icon ${colors[i]}">${["◇","✓","◎","15k","↻","$"][i]}</span><h3>${c[0]}</h3></div><p class="page-kicker">${c[1]}</p><span class="badge">${t("whyTags")[i % 2]}</span></div>`).join("")}</div>
+        <div class="section-title"><span class="title-icon i-green">✓</span><div><h3>${copy("Why SCWIS Care360 is competitive", "为什么 SCWIS Care360 具有竞争力")}</h3><p class="page-kicker">${copy("The prototype expresses the proposal's Section 6 differentiation without copying reference dashboard visuals.", "该原型以原创方式表达报告第 6 节的差异化优势，而不是复制参考 dashboard 视觉。")}</p></div></div>
+        <div class="grid two">${differentiators.map((c,i) => `<div class="card why-card tint-${["blue","green","purple","blue","amber","green"][i]}"><div class="section-title"><span class="title-icon ${colors[i]}">${["◇","✓","◎","15k","↻","$"][i]}</span><h3>${c[0]}</h3></div><p class="page-kicker">${c[1]}</p><span class="badge">${i % 2 ? copy("Human-centered", "以人为本") : copy("Built into architecture", "架构内置")}</span></div>`).join("")}</div>
       </div>`;
     }
 
@@ -1961,6 +2268,872 @@
       $("actionModal").setAttribute("aria-hidden", "true");
     }
 
+    function studentGuardrailFooter() {
+      const guardrails = [
+        copy("Consent gate before analytics", "分析前必须先经过同意闸门"),
+        copy("No grades, discipline records, or private messages", "不使用成绩、纪律记录或私人消息"),
+        copy("Opt out without losing support services", "退出预测分析不影响支持服务"),
+        copy("Counselors, not AI, decide every outreach", "每次联系都由咨询师决定，而不是 AI 决定")
+      ];
+      const boundaries = [
+        copy("LMS timing signals, not grades", "LMS 时间信号，不含成绩"),
+        copy("Gym, dining, and library patterns only in aggregate context", "健身、餐饮和图书馆模式只用于背景判断"),
+        copy("Voluntary check-ins remain student-controlled", "自愿打卡始终由学生控制")
+      ];
+      return `<div class="student-guardrail-footer">
+        <div class="guardrail-cards">
+          <div class="card tint-green">
+            <h3>${copy("Privacy-by-design guardrails", "隐私优先防护")}</h3>
+            <ul class="check-list">${guardrails.map(item => `<li><span class="check">✓</span><span>${item}</span></li>`).join("")}</ul>
+          </div>
+          <div class="card">
+            <h3>${copy("Approved data boundaries", "已批准的数据边界")}</h3>
+            <ul class="check-list">${boundaries.map(item => `<li><span class="check">✓</span><span>${item}</span></li>`).join("")}</ul>
+          </div>
+        </div>
+      </div>`;
+    }
+
+    function privacyAside() {
+      return studentGuardrailFooter();
+    }
+
+    function renderStudent() {
+      const inner = activeTab === "wellness" ? studentWellness() : activeTab === "privacy" ? studentPrivacy() : studentSupport();
+      $("content").innerHTML = `<div class="grid">${inner}${studentGuardrailFooter()}</div>`;
+      bindStudentControls();
+    }
+
+    function studentMoodOptions() {
+      return [
+        [copy("Very low", "很低落"), 10],
+        [copy("Low", "较低落"), 20],
+        [copy("Neutral", "一般"), 30],
+        [copy("Good", "良好"), 40],
+        [copy("Very good", "很好"), 50]
+      ];
+    }
+
+    function statusScale(id, title, value, left, right) {
+      return `<div class="status-scale">
+        <div class="status-scale-head"><span>${title}</span><span class="value-pill" id="${id}Value">${value}/10</span></div>
+        <div class="range-row">
+          <input type="range" min="0" max="10" value="${value}" id="${id}Range">
+          <div class="range-labels"><span>${left}</span><span>${copy("Balanced", "平衡")}</span><span>${right}</span></div>
+        </div>
+      </div>`;
+    }
+
+    function studentWellness() {
+      const principles = [
+        [copy("14-day pattern window", "14 天模式窗口"), copy("One isolated data point cannot trigger a risk signal. SCWIS looks for sustained, multi-source changes.", "单个数据点不会触发风险信号；系统只识别持续、多来源的变化。")],
+        [copy("Services stay available", "服务始终可用"), copy("Booking, resources, peer support, and crisis access remain available even when predictive analytics is off.", "即使关闭预测分析，预约、资源、同伴支持和危机支持仍可使用。")],
+        [copy("Student-written context", "学生自述背景"), copy("Students can add a short reflection so support staff understand the situation before deciding any next step.", "学生可以补充文字状态，让支持人员先理解背景，再决定下一步。")]
+      ];
+      const moodOptions = studentMoodOptions();
+      return `<div class="grid">
+        <div class="proposal-hero">
+          <div class="hero-copy">
+            <div class="section-title"><span class="title-icon i-green">♡</span><div><h3>Welcome Back，${current.name}！👋</h3><p class="page-kicker">${copy("This dashboard turns voluntary wellness input into private, student-controlled support options.", "这个仪表板会把你的自愿健康输入转化为私密、由学生控制的支持选择。")}</p></div></div>
+            <div class="principle-grid">${principles.map((p,i) => `<div class="principle-card"><span class="tag ${i === 0 ? "low" : i === 1 ? "medium" : "high"}">${copy("Design rule", "设计规则")}</span><strong>${p[0]}</strong><p class="muted">${p[1]}</p></div>`).join("")}</div>
+          </div>
+          <div class="card tint-blue">
+            <h3>${copy("Personal care status", "个人支持状态")}</h3>
+            <div class="mini-stat-grid" style="margin-top:14px;">
+              <div class="mini-stat"><strong>${t("statusGood")}</strong><span>${copy("Current wellness state", "当前健康状态")}</span></div>
+              <div class="mini-stat"><strong>${predictiveEnabled ? copy("On", "开启") : copy("Off", "关闭")}</strong><span>${copy("Predictive analytics", "预测分析")}</span></div>
+              <div class="mini-stat"><strong>0</strong><span>${copy("Grades used", "使用成绩数据")}</span></div>
+              <div class="mini-stat"><strong>24h</strong><span>${copy("Consent revocation purge", "撤回同意后清除")}</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="section-head">
+            <div class="section-title"><span class="title-icon i-blue">✓</span><div><h3>${copy("Voluntary Wellness Check-In", "自愿健康打卡")}</h3><p class="page-kicker">${copy("Private input for your own support plan; not a disciplinary or grading tool.", "仅用于你的支持计划，不用于纪律或评分。")}</p></div></div>
+          </div>
+          <div class="wellness-builder">
+            <div class="wellness-panel">
+              <h4>${copy("Mood score", "情绪评分")}</h4>
+              <p class="muted">${copy("Choose the statement that best matches today.", "选择最符合今天状态的一项。")}</p>
+              <div class="mood-choice-list">${moodOptions.map(([label, score]) => {
+                const value = `${label} (${score})`;
+                return `<button class="mood-choice ${selectedMood === value ? "active" : ""}" data-mood="${value}"><span>${label}</span><strong>(${score})</strong></button>`;
+              }).join("")}</div>
+            </div>
+            <div class="wellness-panel">
+              <h4>${copy("Current wellbeing signals", "当前健康信号")}</h4>
+              ${statusScale("stress", copy("Calm focus", "平静专注"), 4, copy("Overwhelmed", "压力很高"), copy("Calm", "平静"))}
+              ${statusScale("sleep", copy("Energy level", "精力水平"), 7, copy("Drained", "疲惫"), copy("Energized", "有活力"))}
+              ${statusScale("workload", copy("Sense of control", "掌控感"), 6, copy("Out of control", "失控"), copy("In control", "可掌控"))}
+              ${statusScale("social", copy("Belonging today", "今日归属感"), 7, copy("Disconnected", "疏离"), copy("Supported", "被支持"))}
+              ${statusScale("activity", copy("Recovery capacity", "恢复能力"), 6, copy("No recovery", "难以恢复"), copy("Restored", "恢复良好"))}
+            </div>
+          </div>
+          <textarea class="reflection-box" id="stateNote" placeholder="${copy("Write a few words about what affected your wellbeing today...", "简单记录今天影响你状态的事情...")}"></textarea>
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;margin-top:18px;">
+            <span class="muted"><strong>${t("last")}:</strong> ${wellnessHistory[wellnessHistory.length - 1]?.date || "-"}</span>
+            <button class="primary-btn" id="submitCheckin">➤ ${t("submit")}</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="section-head">
+            <div class="section-title"><span class="title-icon i-green">⌁</span><h3>${copy("My Wellness Timeline", "我的健康时间线")}</h3></div>
+          </div>
+          ${historyChart()}
+          <div class="history-list">${historyList()}</div>
+        </div>
+      </div>`;
+    }
+
+    function historyChart() {
+      if (!wellnessHistory.length) return `<p class="muted">${t("emptyHistory")}</p>`;
+      const width = 680, left = 64, right = 620, top = 34, bottom = 205;
+      const pts = wellnessHistory.map((r, i) => ({
+        x: left + i * ((right - left) / Math.max(1, wellnessHistory.length - 1)),
+        y: bottom - (r.score / 100) * (bottom - top),
+        r
+      }));
+      const d = pts.map((p, i) => `${i ? "L" : "M"}${p.x},${p.y}`).join(" ");
+      return `<svg class="history-chart" viewBox="0 0 ${width} 260">
+        <line x1="${left}" y1="${top}" x2="${left}" y2="${bottom}" stroke="#dce8f5"/>
+        <line x1="${left}" y1="${bottom}" x2="${right}" y2="${bottom}" stroke="#dce8f5"/>
+        ${[0,25,50,75,100].map(v => {
+          const y = bottom - (v / 100) * (bottom - top);
+          return `<line x1="${left}" x2="${right}" y1="${y}" y2="${y}" stroke="#edf2f7"/><text x="24" y="${y+4}" fill="#68798d" font-size="12">${v}</text>`;
+        }).join("")}
+        <path d="${d}" fill="none" stroke="#3a9f6a" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+        ${pts.map(p => `<circle cx="${p.x}" cy="${p.y}" r="6" fill="#3a9f6a"></circle>`).join("")}
+        ${pts.map(p => `<text x="${p.x-28}" y="232" fill="#68798d" font-size="11">${p.r.date.slice(5,10)}</text>`).join("")}
+        <text x="8" y="122" fill="#68798d" font-size="12" transform="rotate(-90 8 122)">${copy("Score", "评分")}</text>
+        <text x="320" y="252" fill="#68798d" font-size="12">${copy("Date", "日期")}</text>
+      </svg>`;
+    }
+
+    function historyList() {
+      if (!wellnessHistory.length) return `<p class="muted">${t("emptyHistory")}</p>`;
+      return wellnessHistory.slice().reverse().map(r => `<div class="history-item">
+        <div><strong>${r.date}</strong><p>${t("mood")}: ${r.mood} &nbsp; ${copy("Focus", "专注")}: ${r.stress}/10 &nbsp; ${copy("Energy", "精力")}: ${r.sleep}/10 &nbsp; ${copy("Control", "掌控")}: ${r.workload}/10 &nbsp; ${copy("Belonging", "归属")}: ${r.social}/10 &nbsp; ${copy("Recovery", "恢复")}: ${r.activity}/10${r.note ? `<br>${copy("Note", "记录")}: ${escapeHtml(r.note)}` : ""}</p></div>
+        <div><span class="history-score">${t("score")}: ${r.score}/100</span></div>
+      </div>`).join("");
+    }
+
+    function studentPrivacy() {
+      return `<div class="grid">
+        <div class="grid two">
+          <div class="card"><h3>${t("consentHistory")}</h3><ul class="consent-log" id="consentLog">${renderConsentLog()}</ul></div>
+          <div class="card">
+            <h3>${t("supportPreferences")}</h3>
+            <div class="grid two" style="margin-top:14px;">
+              <label class="field"><span>${t("contactMethod")}</span><select class="soft-select">${t("contactOptions").map(x => `<option>${x}</option>`).join("")}</select></label>
+              <label class="field"><span>${t("supportType")}</span><select class="soft-select">${t("supportOptions").map(x => `<option>${x}</option>`).join("")}</select></label>
+            </div>
+            <label class="toggle-row"><span><strong>${t("peerBefore")}</strong></span><span class="switch"><input type="checkbox" checked><span class="slider"></span></span></label>
+            <button class="soft-btn" id="savePrefs">${t("savePreferences")}</button>
+          </div>
+        </div>
+      </div>`;
+    }
+
+    function studentSupport() {
+      const routes = [
+        ["i-blue","1", copy("Self-guided resource library", "自助资源库"), copy("Stress, sleep, study planning, and crisis information remain available without analytics.", "压力、睡眠、学习规划和危机信息无需预测分析也可使用。")],
+        ["i-green","2", copy("Peer and student-led support", "同伴与学生主导支持"), copy("Students can start with a lower-pressure peer route before counselor contact.", "学生可以先选择压力较低的同伴支持路径。")],
+        ["i-purple","3", copy("Voluntary counseling appointment", "自愿咨询预约"), copy("Students choose available slots; no appointment is forced by AI.", "学生自主选择时段，AI 不会强制安排预约。")],
+        ["i-teal","4", copy("Counselor follow-up", "咨询师跟进"), copy("Only trained staff decide whether outreach is appropriate.", "是否联系由受训人员决定。")],
+        ["i-amber","5", copy("Crisis support access", "危机支持入口"), copy("Always visible and available regardless of analytics opt-out.", "无论是否退出预测分析，该入口始终可见可用。")]
+      ];
+      return `<div class="grid">
+        <div class="card">
+          <div class="section-title"><span class="title-icon i-green">✚</span><div><h3>${copy("Support Pathways", "支持路径")}</h3><p class="page-kicker">${copy("Support services are separated from predictive analytics so students can seek help without stigma.", "支持服务与预测分析分离，让学生可以无污名地寻求帮助。")}</p></div></div>
+          <div class="timeline-grid" style="margin-top:16px;">${routes.map(r => `<div class="timeline-card"><span class="title-icon ${r[0]}">${r[1]}</span><strong>${r[2]}</strong><p class="muted">${r[3]}</p></div>`).join("")}</div>
+        </div>
+        <div class="card tint-blue">
+          <h3>${t("messageCenter")} <span class="tag high">1</span> <span class="tag low">${t("private")}</span></h3>
+          <p style="line-height:1.65;color:#344b64;margin-top:14px;">${t("supportMessage").replace("{name}", current.name)}</p>
+          <div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap;"><button class="soft-btn" data-student-action="2">${t("book")}</button><button class="soft-btn" data-student-action="0">${copy("Chat", "聊天")}</button></div>
+        </div>
+      </div>`;
+    }
+
+    function bindStudentControls() {
+      document.querySelectorAll("[data-mood]").forEach(btn => btn.addEventListener("click", () => { selectedMood = btn.dataset.mood; renderStudent(); }));
+      ["stress","sleep","workload","social","activity"].forEach(id => {
+        const range = $(id + "Range");
+        const value = $(id + "Value");
+        if (range && value) range.addEventListener("input", () => value.textContent = range.value + "/10");
+      });
+      const submit = $("submitCheckin");
+      if (submit) submit.addEventListener("click", submitCheckin);
+      document.querySelectorAll("[data-consent-key]").forEach(input => input.addEventListener("change", () => {
+        consentHistory.push({ date: now(), key: input.dataset.consentKey, state: input.checked ? "enabled" : "disabled" });
+        $("consentLog").innerHTML = renderConsentLog();
+      }));
+      const save = $("savePrefs");
+      if (save) save.addEventListener("click", () => { consentHistory.push({ date: now(), key:"supportPreferences", state:"savedState" }); showToast(t("toastSaved")); renderStudent(); activeTab = "privacy"; });
+      document.querySelectorAll("[data-student-action]").forEach(btn => btn.addEventListener("click", () => {
+        const index = Number(btn.dataset.studentAction);
+        if (index === 0) showChat("student");
+        else if (index === 2) showScheduleModal("student");
+        else showModal(t("studentActionTitles")[index], t("studentActionBodies")[index], "i-blue");
+      }));
+    }
+
+    function submitCheckin() {
+      const focus = Number($("stressRange").value);
+      const energy = Number($("sleepRange").value);
+      const control = Number($("workloadRange").value);
+      const belonging = Number($("socialRange").value);
+      const recovery = Number($("activityRange").value);
+      const moodScore = Number((selectedMood.match(/\((\d+)\)/) || [0,30])[1]);
+      const score = Math.round((focus + energy + control + belonging + recovery) / 5 * 5 + moodScore / 2);
+      wellnessHistory.push({ date: now(), score, mood: selectedMood, stress: focus, sleep: energy, workload: control, social: belonging, activity: recovery, note: $("stateNote")?.value.trim() || "" });
+      showToast(t("toastSubmitted"));
+      renderStudent();
+    }
+
+    function counselorAlerts() {
+      return `<div class="grid">
+        ${counselorMetricCards()}
+        <div class="grid case-alert-layout">
+          <div class="card">
+            <div class="filter-row"><div class="section-title"><span class="title-icon i-rose">!</span><h3>${copy("Cases List", "案例列表")}</h3></div><label>${t("filter")} <select class="soft-select" id="riskFilter">${t("filterOptions").map((x,i) => `<option value="${i}">${x}</option>`).join("")}</select></label></div>
+            <div id="riskTable">${riskTable("0")}</div>
+          </div>
+          <div class="card tint-green">${humanReviewPanel()}</div>
+        </div>
+      </div>`;
+    }
+
+    function humanReviewPanel() {
+      if (hiddenCaseIds.has(cases[selectedCase]?.id)) {
+        const next = cases.findIndex(c => !hiddenCaseIds.has(c.id));
+        selectedCase = next >= 0 ? next : 0;
+      }
+      const c = cases[selectedCase];
+      if (!c || hiddenCaseIds.has(c.id)) return `<div class="empty-state">${t("emptyCase")}</div>`;
+      return `<div class="review-panel">
+        <div class="section-title"><span class="title-icon i-green">✓</span><h3>${copy("Human Decision Panel", "人工决策面板")}</h3></div>
+        <p class="muted">${c.id} · ${copy("decision support signal, not diagnosis", "决策支持信号，不是诊断")}</p>
+        <div class="why-pill color-note amber"><strong>${t("aiConcernSummary")}</strong><br>${c.summary}</div>
+        <div><strong>${t("riskCategory")}</strong><br><span class="tag ${c.category < 2 ? "high" : c.category < 4 ? "medium" : "low"}">${t("categories")[c.category]}</span></div>
+        <div><strong>${t("confidence")}</strong><div class="confidence-bar" style="margin-top:8px;"><span style="width:${c.confidence}%"></span></div><p class="muted" style="margin-top:7px;">${c.confidence}% · ${t("confidencePatterns")[c.category]}</p></div>
+        <div><strong>${t("aiFeedback")}</strong><div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:8px;">${t("aiFeedbackOptions").map((x, i) => `<button class="ghost-btn" style="padding:8px 6px;" data-ai-feedback="${i}">${x}</button>`).join("")}</div></div>
+        <div class="why-pill"><strong>${t("recommendedAction")}</strong><br>${t("actionText")}</div>
+        <div class="grid">
+          <button class="ghost-btn" data-counselor-action="1">${t("counselorButtons")[1]}</button>
+          <button class="ghost-btn" data-counselor-action="2">${t("counselorButtons")[2]}</button>
+          <button class="primary-btn" style="background:var(--purple);" data-counselor-chat>${t("openChatWithStudent")}</button>
+        </div>
+      </div>`;
+    }
+
+    function counselorCaseReview() {
+      const visibleCases = cases.filter(c => !hiddenCaseIds.has(c.id));
+      const highPriority = visibleCases.filter(c => c.category < 2).length;
+      const reviewCards = [
+        ["signals", copy("Decision-support signals", "决策支持信号"), visibleCases.length, copy("Open, non-diagnostic pattern flags", "开放的非诊断性模式提示"), ""],
+        ["priority", copy("Priority reviews", "优先审阅"), highPriority, copy("Counselor validation required", "需要咨询师验证"), "purple"],
+        ["work", copy("Admin work reduced", "行政工作减少"), "≈35%", copy("Estimated triage workload reduction", "预计分诊工作量下降"), "green"],
+        ["auto", copy("Auto interventions", "自动干预"), "0", copy("No automated outreach or diagnosis", "无自动联系或诊断"), "rose"]
+      ];
+      return `<div class="grid">
+        <div class="section-title"><span class="title-icon i-blue">▣</span><div><h3>${copy("Case Review Snapshot", "案例审阅快照")}</h3><p class="page-kicker">${copy("Each card opens a brief explanation tied to counselor review and governance.", "每个卡片都可点开查看与咨询师审阅和治理相关的说明。")}</p></div></div>
+        <div class="review-metric-stack">${reviewCards.map(card => `<button class="review-metric-card ${card[4]}" data-review-card="${card[0]}"><span class="label">${card[1]}</span><span class="value">${card[2]}</span><span class="hint">${card[3]}</span></button>`).join("")}</div>
+      </div>`;
+    }
+
+    function reviewMetricDetail(key) {
+      const details = {
+        signals: [copy("Decision-support signals", "决策支持信号"), copy("These are explainable, non-diagnostic pattern flags created only when sustained multi-source changes appear across the approved data boundary.", "这些是可解释、非诊断性的模式提示，只有在已批准数据边界内出现持续、多来源变化时才会生成。"), "i-blue"],
+        priority: [copy("Priority reviews", "优先审阅"), copy("Priority cases require licensed counselor validation before any supportive outreach is considered.", "优先案例必须先由持证咨询师验证，再决定是否进行支持性联系。"), "i-purple"],
+        work: [copy("Admin work reduced", "行政工作减少"), copy("SCWIS summarizes the case evidence so counselors spend less time searching systems and more time exercising professional judgment.", "SCWIS 汇总案例证据，让咨询师减少跨系统查找时间，把更多时间用于专业判断。"), "i-green"],
+        auto: [copy("Auto interventions", "自动干预"), copy("The target remains zero. AI does not send outreach, schedule appointments, diagnose students, or close cases automatically.", "目标始终为零。AI 不会自动联系学生、安排预约、诊断学生或关闭案例。"), "i-rose"]
+      };
+      const item = details[key] || details.signals;
+      showModal(item[0], item[1], item[2]);
+    }
+
+    function renderCounselor() {
+      const body = activeTab === "alerts" ? counselorAlerts() : activeTab === "case" ? counselorCaseReview() : counselorJourney();
+      $("content").innerHTML = `<div class="tab-strip">${navKeys.counselor.map((key, i) => `<button class="${activeTab === key ? "active" : ""}" data-tab="${key}">${t("navCounselor")[i]}</button>`).join("")}</div>${body}${privacyGuarantee()}`;
+      document.querySelectorAll("[data-tab]").forEach(btn => btn.addEventListener("click", () => { activeTab = btn.dataset.tab; renderAll(); }));
+      document.querySelectorAll("[data-case]").forEach(row => row.addEventListener("click", () => { selectedCase = Number(row.dataset.case); renderAll(); }));
+      document.querySelectorAll("[data-review-card]").forEach(card => card.addEventListener("click", () => reviewMetricDetail(card.dataset.reviewCard)));
+      document.querySelectorAll("[data-counselor-action]").forEach(btn => btn.addEventListener("click", () => handleCounselorAction(Number(btn.dataset.counselorAction))));
+      document.querySelectorAll("[data-ai-feedback]").forEach(btn => btn.addEventListener("click", () => {
+        document.querySelectorAll("[data-ai-feedback]").forEach(item => item.classList.remove("active"));
+        btn.classList.add("active");
+        const label = t("aiFeedbackOptions")[Number(btn.dataset.aiFeedback)];
+        showToast(`${label}: ${t("feedbackSaved")}`);
+      }));
+      document.querySelectorAll("[data-counselor-chat]").forEach(btn => btn.addEventListener("click", () => showChat("counselor")));
+      const filter = $("riskFilter");
+      if (filter) filter.addEventListener("change", () => renderRiskTable(filter.value));
+    }
+
+    function adminAnalytics() {
+      const metrics = [
+        [copy("Student ecosystem", "学生生态规模"), "15,000", copy("Designed for university-wide deployment", "面向全校部署")],
+        [copy("System uptime target", "系统在线目标"), "99.5%", copy("Private cloud plus edge resilience", "私有云与边缘弹性")],
+        [copy("Edge nodes", "边缘节点"), "12", copy("Four dedicated to Wi-Fi dead zones", "其中 4 个服务 Wi-Fi 弱区")],
+        [copy("Counselor triage relief", "咨询师分诊减负"), "≈35%", copy("Estimated administrative workload reduction", "预计行政工作量下降")],
+        [copy("Student employment roles", "学生就业岗位"), "5–10", copy("Privacy ambassadors, UX testers, support assistants", "隐私大使、UX 测试、支持助理")]
+      ];
+      const architecture = [
+        [copy("Central Private Cloud Core", "中央私有云核心"), copy("Encrypted warehouse, BI analytics, case management, governance tools, disaster recovery within two hours.", "加密数据仓库、BI 分析、案例管理、治理工具，并支持两小时内灾难恢复。"), "i-blue"],
+        [copy("On-Campus Edge Nodes", "校园边缘节点"), copy("Encrypted local cache for resources, consent tools, booking, and crisis support in weak Wi-Fi areas.", "为弱网区域缓存资源、同意工具、预约和危机支持。"), "i-green"],
+        [copy("Decoupled API Gateway", "松耦合 API 网关"), copy("Integrates LMS, gym, dining, and library systems without creating hard dependencies.", "连接 LMS、健身、餐饮、图书馆系统，但不形成硬依赖。"), "i-purple"]
+      ];
+      return `<div class="grid">
+        <div class="section-title"><span class="title-icon i-blue">📊</span><div><h3>${copy("Campus Intelligence & Architecture Overview", "校园智能与架构概览")}</h3><p class="page-kicker">${copy("Administrator view shows only anonymized campus-level evidence for planning, resource allocation, and strategic reporting.", "管理员视图仅显示匿名化的校园层面证据，用于规划、资源分配和战略报告。")}</p></div></div>
+        <div class="grid five">${metrics.map((m,i) => `<div class="metric ${["","purple","green","amber",""][i]}"><span class="label">${m[0]}</span><span class="value">${m[1]}</span><span class="hint">${m[2]}</span></div>`).join("")}</div>
+        <div class="architecture-map">${architecture.map((a,i) => `<div class="arch-block"><span class="title-icon ${a[2]}">${i+1}</span><h3>${a[0]}</h3><p class="page-kicker">${a[1]}</p></div>`).join("")}</div>
+        <div class="grid admin-trend-layout">
+          <div class="card chart-card"><div class="section-title"><span class="title-icon i-green">⌁</span><h3>${copy("BI Resource Demand Trend", "BI 资源需求趋势")}</h3></div>${campusTrend()}</div>
+          <div class="card tint-blue"><div class="section-title"><span class="title-icon i-blue">AI</span><h3>${copy("AI trend summary", "AI 趋势总结")}</h3></div><div class="insight-list">
+            <div class="insight-line"><strong>${copy("November", "11月")}:</strong> ${copy("Reading week gives students recovery time, so campus wellness rises.", "Reading week 给学生提供恢复时间，因此整体 wellness 上升。")}</div>
+            <div class="insight-line"><strong>${copy("December", "12月")}:</strong> ${copy("Group projects and assignment deadlines increase workload, so wellness declines.", "大量 group project 和 assignment 截止导致负担增加，因此 wellness 下降。")}</div>
+            <div class="insight-line"><strong>${copy("January", "1月")}:</strong> ${copy("Final exam preparation creates the lowest wellbeing point in the first semester.", "学生备战期末考，使 wellness 降到第一学期最低点。")}</div>
+            <div class="insight-line"><strong>${copy("February", "2月")}:</strong> ${copy("Winter holiday improves recovery, sleep, and social connection.", "寒假改善恢复、睡眠和社交联系。")}</div>
+            <div class="insight-line"><strong>${copy("April", "4月")}:</strong> ${copy("The shortened reading week reduces recovery time, so wellness falls compared with March.", "Reading week 缩短使恢复时间减少，因此相较三月下降。")}</div>
+            <div class="insight-line"><strong>${copy("May", "5月")}:</strong> ${copy("Final exam preparation again increases stress and lowers wellness.", "学生再次备战期末考，压力上升，wellness 下降。")}</div>
+          </div></div>
+        </div>
+        <div class="card chart-card"><div class="section-title"><span class="title-icon i-purple">◔</span><h3>${copy("Aggregate Planning Categories", "聚合规划类别")}</h3></div><div class="donut-wrap" style="margin-top:22px;"><div class="donut" style="background:conic-gradient(#2e86ab 0 32%, #55a868 32% 56%, #f2b84b 56% 74%, #df6f6f 74% 88%, #8d6adf 88% 100%);"></div>${legend()}</div></div>
+      </div>`;
+    }
+
+    function legend() {
+      const labels = [
+        [copy("Exam-prep counseling capacity", "考前咨询容量"), "32%", "#2e86ab"],
+        [copy("Sleep and recovery workshops", "睡眠与恢复工作坊"), "24%", "#55a868"],
+        [copy("First-year transition support", "大一过渡支持"), "18%", "#f2b84b"],
+        [copy("Offline access support", "离线访问支持"), "14%", "#df6f6f"],
+        [copy("Consent and privacy education", "同意与隐私教育"), "12%", "#8d6adf"]
+      ];
+      return `<div class="legend">${labels.map(x => `<div class="legend-item"><span class="legend-swatch" style="background:${x[2]}"></span>${x[0]} <strong>${x[1]}</strong></div>`).join("")}</div>`;
+    }
+
+    function adminAI() {
+      const uses = [
+        copy("LMS engagement signals such as assignment submission timing and course access frequency", "LMS 参与信号，例如作业提交时间和课程访问频率"),
+        copy("Campus gym check-in and check-out patterns", "校园健身房进出记录模式"),
+        copy("Campus dining card transaction frequency, without individual purchase details", "校园餐卡交易频率，不包含个人购买明细"),
+        copy("Library building access logs", "图书馆楼宇访问日志"),
+        copy("Voluntary wellness self-check-in data submitted by students", "学生自愿提交的健康自我打卡数据"),
+        copy("Sustained multi-source patterns over a minimum two-week period", "至少持续两周的多来源模式")
+      ];
+      const notUses = [
+        copy("Academic grades or GPA", "学业成绩或 GPA"),
+        copy("Individual dining purchase details", "个人餐饮购买明细"),
+        copy("Disciplinary records or punishment-related data", "纪律记录或处罚相关数据"),
+        copy("Private messages or social media content", "私人消息或社交媒体内容"),
+        copy("Single isolated data points to trigger risk signals", "用单个孤立数据点触发风险信号"),
+        copy("Black-box diagnostic labels or automatic mental health diagnoses", "黑箱诊断标签或自动心理健康诊断")
+      ];
+      const limits = [
+        copy("SCWIS AI is a decision-support tool, not a decision-maker.", "SCWIS AI 是决策支持工具，不是决策者。"),
+        copy("The system only flags sustained multi-source patterns for professional review.", "系统只标记持续、多来源模式，供专业人员审阅。"),
+        copy("No automated intervention, diagnosis, or outreach is generated by AI.", "AI 不会生成自动干预、诊断或联系。"),
+        copy("All medium, high, and critical risk signals must be reviewed by licensed counselors.", "所有中、高、关键风险信号都必须由持证咨询师审阅。"),
+        copy("Student data is never used for academic evaluation, disciplinary action, or purposes outside wellness support.", "学生数据绝不会用于学业评价、纪律处分或健康支持以外目的。"),
+        copy("Students can adjust consent or opt out of predictive analytics at any time without losing access to core wellness resources.", "学生可随时调整同意或退出预测分析，且不会失去核心健康资源。")
+      ];
+      return `<div class="grid">
+        <div class="grid two">
+          <div class="card tint-green"><div class="section-title"><span class="title-icon i-green">✓</span><h3>${copy("What Data the AI Uses", "AI 使用哪些数据")}</h3></div><ul class="check-list">${uses.map(x => `<li><span class="check">✓</span><span>${x}</span></li>`).join("")}</ul></div>
+          <div class="card tint-amber" style="border-left-color:var(--rose);"><div class="section-title"><span class="title-icon i-rose">⊘</span><h3>${copy("What the AI Does NOT Use", "AI 不使用哪些数据")}</h3></div><ul class="check-list">${notUses.map(x => `<li><span style="color:var(--rose);font-weight:950;">×</span><span>${x}</span></li>`).join("")}</ul></div>
+        </div>
+        <div class="warning-box"><div class="section-title"><span class="title-icon i-amber">!</span><h3>${copy("Decision-Support Limits", "决策支持边界")}</h3></div><ul class="bullet-list">${limits.map(x => `<li>${x}</li>`).join("")}</ul></div>
+      </div>`;
+    }
+
+    function adminGovernance() {
+      const budget = [
+        [copy("Hybrid edge-cloud & secure BI", "混合边缘云与安全 BI"), 190000, "25.3%"],
+        [copy("Integration and API gateway", "集成与 API 网关"), 115000, "15.3%"],
+        [copy("AI-assisted risk detection", "AI 辅助风险识别"), 95000, "12.7%"],
+        [copy("Consent, privacy, HITL workflow", "同意、隐私与人在回路流程"), 115000, "15.3%"],
+        [copy("Pilot, training, security validation", "试点、培训与安全验证"), 145000, "19.3%"]
+      ];
+      const risks = [
+        [copy("Privacy anxiety", "隐私焦虑"), copy("Clear opt-out, student-facing transparency, no disciplinary use.", "清晰退出、学生端透明说明、不得纪律使用。")],
+        [copy("AI misjudgment", "AI 误判"), copy("Counselor validation, false-positive review, quarterly bias audits.", "咨询师验证、误报审查、季度偏见审计。")],
+        [copy("System outage", "系统中断"), copy("Private cloud redundancy, edge cache, loose-coupled integrations.", "私有云冗余、边缘缓存、松耦合集成。")]
+      ];
+      return `<div class="grid">
+        <div class="grid two">
+          <div class="card"><div class="section-title"><span class="title-icon i-amber">$</span><h3>${t("budget")}</h3></div><div class="cost-grid"><div class="cost-card">${t("oneTime")}<strong>USD 750,000</strong></div><div class="cost-card">${t("annual")}<strong>USD 180,000</strong></div><div class="cost-card">${copy("Payment model", "付款模式")}<strong>30 / 40 / 30</strong></div><div class="cost-card">${copy("Maintenance focus", "维护重点")}<strong>${copy("Bias + security", "偏见与安全")}</strong></div></div></div>
+          <div class="card"><div class="section-title"><span class="title-icon i-teal">▤</span><h3>${copy("Governance cadence", "治理节奏")}</h3></div><table style="margin-top:12px;"><tbody>${[copy("Monthly user-feedback review", "月度用户反馈审查"),copy("Quarterly AI bias audit", "季度 AI 偏见审计"),copy("Annual disaster recovery drill", "年度灾难恢复演练"),copy("24h revoked-data purge", "24 小时撤回数据清除")].map((r,i) => `<tr><td>${r}</td><td style="text-align:right;font-weight:950;color:${i>1 ? "var(--green)" : "var(--ink)"}">✓</td></tr>`).join("")}</tbody></table></div>
+        </div>
+        <div class="card">
+          <div class="section-title"><span class="title-icon i-amber">$</span><h3>${copy("Implementation budget mapped to architecture", "实施预算与架构映射")}</h3></div>
+          <div class="budget-row">${budget.map(b => `<div><div class="budget-line"><span>${b[0]} <strong>(${b[2]})</strong></span><strong>USD ${b[1].toLocaleString()}</strong></div><div class="bar-track"><div class="bar-fill" style="width:${parseFloat(b[2])}%"></div></div></div>`).join("")}</div>
+        </div>
+        <div class="grid three">${risks.map((r,i) => `<div class="card tint-${["blue","amber","green"][i]}"><div class="section-title"><span class="title-icon ${["i-blue","i-amber","i-green"][i]}">!</span><h3>${r[0]}</h3></div><p class="page-kicker" style="margin-top:10px;">${r[1]}</p></div>`).join("")}</div>
+      </div>`;
+    }
+
+    function renderAdmin() {
+      if (!navKeys.admin.includes(activeTab)) activeTab = "analytics";
+      const body = activeTab === "analytics" ? adminAnalytics() : activeTab === "ai" ? adminAI() : adminGovernance();
+      $("content").innerHTML = `<div class="tab-strip">${navKeys.admin.map((key, i) => `<button class="${activeTab === key ? "active" : ""}" data-tab="${key}">${t("navAdmin")[i]}</button>`).join("")}</div>${body}`;
+      document.querySelectorAll("[data-tab]").forEach(btn => btn.addEventListener("click", () => { activeTab = btn.dataset.tab; renderAll(); }));
+    }
+
+    function l(en, zh, ko, ja) {
+      if (lang === "zh") return zh || en;
+      if (lang === "ko") return ko || en;
+      if (lang === "ja") return ja || en;
+      return en;
+    }
+
+    function renderShell() {
+      $("currentName").textContent = current.name;
+      $("avatarText").textContent = current.initials;
+      $("currentRole").textContent = t("roles")[current.role];
+      $("pageSubtitle").textContent = t("roleSub")[current.role];
+      const labels = t(navLabelKey[current.role]);
+      $("roleNav").innerHTML = navKeys[current.role].map((key, index) => `
+        <button class="nav-btn ${activeTab === key ? "active" : ""}" data-tab="${key}">
+          <span class="nav-icon">${navIcons[key]}</span><span>${labels[index]}</span>
+        </button>`).join("");
+      $("profileDropdown").innerHTML = `
+        <strong>${l("Switch demo account", "切换演示账号", "데모 계정 전환", "デモアカウントを切り替え")}</strong>
+        ${Object.entries(accounts).map(([key, account]) => `
+          <button class="switch-account" type="button" data-switch-account="${key}">
+            <strong>${t("demo")[key]}</strong>
+            <small>${account.user} / ${account.pass}</small>
+          </button>`).join("")}
+        <button class="ghost-btn logout" id="logoutBtn" type="button">${t("logout")}</button>`;
+      document.querySelectorAll("[data-tab]").forEach(btn => btn.addEventListener("click", () => {
+        activeTab = btn.dataset.tab;
+        renderAll();
+      }));
+      $("profileBtn").onclick = () => $("profileDropdown").classList.toggle("show");
+      document.querySelectorAll("[data-switch-account]").forEach(btn => btn.addEventListener("click", () => {
+        $("profileDropdown").classList.remove("show");
+        loginAs(btn.dataset.switchAccount);
+      }));
+      $("logoutBtn").addEventListener("click", () => {
+        $("profileDropdown").classList.remove("show");
+        document.body.classList.add("locked");
+      });
+    }
+
+    function studentMoodOptions() {
+      return [
+        [l("Depressed", "沮丧", "우울함", "落ち込んでいる"), 10],
+        [l("Sad", "难过", "슬픔", "悲しい"), 20],
+        [l("Calm", "平静", "차분함", "落ち着いている"), 30],
+        [l("Happy", "开心", "기쁨", "うれしい"), 40],
+        [l("Excited", "兴奋", "신남", "わくわくしている"), 50]
+      ];
+    }
+
+    function statusScale(id, title, value, left, right) {
+      return `<div class="status-scale">
+        <div class="status-scale-head"><span>${title}</span><span class="value-pill" id="${id}Value">${value}/10</span></div>
+        <div class="range-row">
+          <input type="range" min="0" max="10" value="${value}" id="${id}Range">
+          <div class="range-labels"><span>${left}</span><span>${l("Balanced", "平衡", "균형", "バランス")}</span><span>${right}</span></div>
+        </div>
+      </div>`;
+    }
+
+    function studentWellness() {
+      const principles = [
+        [l("14-day pattern window", "14 天模式窗口", "14일 패턴 확인", "14日間のパターン確認"), l("One isolated data point cannot trigger a risk signal. SCWIS looks for sustained, multi-source changes.", "单个数据点不会触发风险信号；系统只识别持续、多来源的变化。", "하나의 데이터만으로 신호가 생성되지 않으며, 여러 출처의 지속적 변화를 확인합니다.", "単独のデータでは信号を出さず、複数の継続的な変化を確認します。")],
+        [l("Services stay available", "服务始终可用", "서비스는 계속 이용 가능", "サービスは常に利用可能"), l("Booking, resources, peer support, and crisis access remain available even when predictive analytics is off.", "即使关闭预测分析，预约、资源、同伴支持和危机支持仍可使用。", "예측 분석을 꺼도 예약, 자료, 또래 지원, 위기 지원은 계속 이용할 수 있습니다.", "予測分析をオフにしても予約、資料、ピア支援、危機支援は利用できます。")],
+        [l("Student-written context", "学生自述背景", "학생이 직접 쓰는 상황", "学生が書く状況説明"), l("Students can add a short reflection so support staff understand the situation before deciding any next step.", "学生可以补充文字状态，让支持人员先理解背景，再决定下一步。", "학생은 짧은 설명을 추가해 상담자가 상황을 먼저 이해하도록 할 수 있습니다.", "学生は短いメモを追加し、支援担当者が状況を理解できます。")]
+      ];
+      const moodOptions = studentMoodOptions();
+      if (!moodOptions.some(([label, score]) => selectedMood === `${label} (${score})`)) selectedMood = `${moodOptions[2][0]} (30)`;
+      return `<div class="grid">
+        <div class="proposal-hero">
+          <div class="hero-copy">
+            <div class="section-title"><span class="title-icon i-green">♡</span><div><h3>${lang === "en" ? `Welcome Back，${current.name}！👋` : l(`Welcome Back，${current.name}！👋`, `欢迎回来，${current.name}！`, `${current.name}님, 다시 오신 것을 환영합니다!`, `${current.name}さん、おかえりなさい!`)}</h3><p class="page-kicker">${l("This dashboard turns voluntary wellness input into private, student-controlled support options.", "这个仪表板会把你的自愿健康输入转化为私密、由学生控制的支持选择。", "이 대시보드는 자발적 웰니스 입력을 학생이 통제하는 비공개 지원 선택지로 바꿉니다.", "このダッシュボードは任意の入力を、学生が管理する非公開の支援選択に変えます。")}</p></div></div>
+            <div class="principle-grid">${principles.map((p,i) => `<div class="principle-card"><span class="tag ${i === 0 ? "low" : i === 1 ? "medium" : "high"}">${l("Design rule", "设计规则", "설계 원칙", "設計ルール")}</span><strong>${p[0]}</strong><p class="muted">${p[1]}</p></div>`).join("")}</div>
+          </div>
+          <div class="card tint-blue">
+            <h3>${l("Personal care status", "个人支持状态", "개인 지원 상태", "個人サポート状態")}</h3>
+            <div class="mini-stat-grid" style="margin-top:14px;">
+              <div class="mini-stat"><strong>${t("statusGood")}</strong><span>${l("Current wellness state", "当前健康状态", "현재 웰니스 상태", "現在のウェルネス状態")}</span></div>
+              <div class="mini-stat"><strong>${predictiveEnabled ? l("On", "开启", "켜짐", "オン") : l("Off", "关闭", "꺼짐", "オフ")}</strong><span>${l("Predictive analytics", "预测分析", "예측 분석", "予測分析")}</span></div>
+              <div class="mini-stat"><strong>0</strong><span>${l("Grades used", "使用成绩数据", "성적 사용", "成績データ使用")}</span></div>
+              <div class="mini-stat"><strong>24h</strong><span>${l("Consent revocation purge", "撤回同意后清除", "동의 철회 후 삭제", "同意撤回後の削除")}</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="section-head">
+            <div class="section-title"><span class="title-icon i-blue">✓</span><div><h3>${l("Voluntary Wellness Check-In", "自愿健康打卡", "자발적 웰니스 체크인", "任意ウェルネスチェックイン")}</h3><p class="page-kicker">${l("Private input for your own support plan; not a disciplinary or grading tool.", "仅用于你的支持计划，不用于纪律或评分。", "개인 지원 계획을 위한 입력이며 징계나 평가 도구가 아닙니다.", "自分の支援計画のための入力であり、懲戒や成績評価には使いません。")}</p></div></div>
+          </div>
+          <div class="wellness-builder">
+            <div class="wellness-panel">
+              <h4>${l("Mood score", "情绪评分", "기분 점수", "気分スコア")}</h4>
+              <div class="mood-choice-list">${moodOptions.map(([label, score]) => {
+                const value = `${label} (${score})`;
+                return `<button class="mood-choice ${selectedMood === value ? "active" : ""}" data-mood="${value}"><span>${label}</span><strong>(${score})</strong></button>`;
+              }).join("")}</div>
+            </div>
+            <div class="wellness-panel">
+              <h4>${l("Current wellbeing signals", "当前健康信号", "현재 웰니스 신호", "現在のウェルネス信号")}</h4>
+              ${statusScale("stress", l("Calm focus", "平静专注", "차분한 집중", "落ち着いた集中"), 4, l("Overwhelmed", "压力很高", "압도됨", "圧倒されている"), l("Calm", "平静", "차분함", "落ち着き"))}
+              ${statusScale("sleep", l("Energy level", "精力水平", "에너지 수준", "エネルギー水準"), 7, l("Drained", "疲惫", "소진됨", "疲れている"), l("Energized", "有活力", "활력 있음", "元気"))}
+              ${statusScale("workload", l("Sense of control", "掌控感", "통제감", "コントロール感"), 6, l("Out of control", "失控", "통제 어려움", "制御しにくい"), l("In control", "可掌控", "통제 가능", "管理できる"))}
+              ${statusScale("social", l("Belonging today", "今日归属感", "오늘의 소속감", "今日の所属感"), 7, l("Disconnected", "疏离", "단절됨", "つながりが弱い"), l("Supported", "被支持", "지지받음", "支えられている"))}
+              ${statusScale("activity", l("Recovery capacity", "恢复能力", "회복 여력", "回復力"), 6, l("No recovery", "难以恢复", "회복 어려움", "回復しにくい"), l("Restored", "恢复良好", "회복됨", "回復している"))}
+            </div>
+          </div>
+          <textarea class="reflection-box" id="stateNote" placeholder="${l("Write a few words about what affected your wellbeing today...", "简单记录今天影响你状态的事情...", "오늘 웰니스에 영향을 준 일을 짧게 적어보세요...", "今日の状態に影響したことを短く書いてください...")}"></textarea>
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;margin-top:18px;">
+            <span class="muted"><strong>${t("last")}:</strong> ${wellnessHistory[wellnessHistory.length - 1]?.date || "-"}</span>
+            <button class="primary-btn" id="submitCheckin">➤ ${t("submit")}</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="section-head">
+            <div class="section-title"><span class="title-icon i-green">⌁</span><h3>${l("My Wellness Timeline", "我的健康时间线", "나의 웰니스 기록", "自分のウェルネス履歴")}</h3></div>
+          </div>
+          ${historyChart()}
+          <div class="history-list">${historyList()}</div>
+        </div>
+      </div>`;
+    }
+
+    function studentPrivacy() {
+      const toggles = [
+        ["lms", l("LMS activity timing", "LMS 活动时间", "LMS 활동 시간", "LMS活動時間"), l("Submission timing and course access frequency only; no grades.", "仅含提交时间和课程访问频率，不含成绩。", "제출 시간과 강의 접속 빈도만 사용하며 성적은 사용하지 않습니다.", "提出時間とコースアクセス頻度のみで、成績は使いません。"), true],
+        ["gym", l("Gym access patterns", "健身房访问模式", "체육관 이용 패턴", "ジム利用パターン"), l("Check-in/check-out rhythm used only as a wellness context signal.", "进出节奏仅作为健康背景信号。", "출입 리듬은 웰니스 맥락 신호로만 사용됩니다.", "入退館リズムはウェルネス文脈信号としてのみ使用します。"), true],
+        ["dining", l("Dining card frequency", "餐卡使用频率", "식당 카드 이용 빈도", "食堂カード利用頻度"), l("Frequency patterns only; no individual purchase details.", "只看频率模式，不看具体购买内容。", "빈도 패턴만 사용하고 구매 내역은 보지 않습니다.", "頻度のみで、個別購入内容は見ません。"), false],
+        ["library", l("Library building access", "图书馆楼宇访问", "도서관 건물 출입", "図書館建物アクセス"), l("Study-location pattern, never browsing history.", "学习场所模式，不含浏览历史。", "학습 장소 패턴만 사용하고 검색 기록은 사용하지 않습니다.", "学習場所パターンのみで閲覧履歴は使いません。"), true],
+        ["wellnessData", l("Self check-in responses", "自我打卡回复", "자가 체크인 응답", "自己チェックイン回答"), l("Voluntary mood and wellbeing inputs submitted by the student.", "学生自愿提交的情绪和健康输入。", "학생이 자발적으로 제출한 기분과 웰니스 입력입니다.", "学生が任意で提出した気分とウェルネス入力です。"), true]
+      ];
+      const lifecycle = [
+        [l("Consent first", "先同意", "동의 우선", "同意が先"), l("A data source cannot be used unless the student has allowed it.", "学生未授权的数据源不能被使用。", "학생이 허용하지 않은 데이터 출처는 사용할 수 없습니다.", "学生が許可していないデータ源は使用できません。")],
+        [l("Purpose check", "用途检查", "목적 확인", "目的確認"), l("Signals are used only for wellness support, not discipline or grades.", "信号只用于健康支持，不用于纪律或成绩。", "신호는 웰니스 지원에만 사용되며 징계나 성적에는 쓰이지 않습니다.", "信号はウェルネス支援のみに使われ、懲戒や成績には使いません。")],
+        [l("Role-based view", "角色权限视图", "역할별 보기", "役割別表示"), l("Students, counselors, and administrators see different protected views.", "学生、咨询师、管理员看到不同的受保护视图。", "학생, 상담사, 관리자는 서로 다른 보호된 화면을 봅니다.", "学生、カウンセラー、管理者は異なる保護画面を見ます。")],
+        [l("Revocation purge", "撤回后清除", "철회 후 삭제", "撤回後削除"), l("If consent is withdrawn, linked raw data is removed within 24 hours.", "撤回同意后，相关原始数据会在 24 小时内清除。", "동의가 철회되면 관련 원자료는 24시간 안에 삭제됩니다.", "同意を撤回すると関連する生データは24時間以内に削除されます。")]
+      ];
+      return `<div class="grid">
+        <div class="proposal-hero">
+          <div class="card">
+            <div class="section-title"><span class="title-icon i-blue">◎</span><div><h3>${l("Consent & Data Control", "同意与数据控制", "동의 및 데이터 관리", "同意とデータ管理")} <span class="badge">${t("consentBased")}</span></h3><p class="page-kicker">${l("You decide which optional data sources may be used. Turning a source off does not affect services.", "你可以决定哪些可选数据源可被使用。关闭某项不会影响服务。", "어떤 선택 데이터 출처를 사용할지 학생이 결정합니다. 꺼도 서비스 이용에는 영향이 없습니다.", "任意データ源を使うかは学生が決めます。オフにしてもサービスは利用できます。")}</p></div></div>
+            <div style="margin-top:14px;">${toggles.map(row => toggleRow(...row)).join("")}</div>
+            <div class="card tint-amber" style="margin-top:18px;box-shadow:none;">
+              <h4>${t("predictive")}</h4><p class="page-kicker">${t("predictiveWarn")}</p>
+              <button class="${predictiveEnabled ? "danger-btn" : "soft-btn"}" id="predictiveBtn" style="margin-top:12px;">${predictiveEnabled ? t("optOut") : t("enablePredictive")}</button>
+            </div>
+          </div>
+          <div class="card tint-green">
+            <h3>${l("Data protection flow", "数据保护流程", "데이터 보호 흐름", "データ保護フロー")}</h3>
+            <div class="layer-stack" style="margin-top:14px;">${lifecycle.map((item, index) => `<div class="layer-card"><span class="layer-no">${index + 1}</span><div><strong>${item[0]}</strong><p class="muted">${item[1]}</p></div></div>`).join("")}</div>
+          </div>
+        </div>
+      </div>`;
+    }
+
+    function bindStudentControls() {
+      document.querySelectorAll("[data-mood]").forEach(btn => btn.addEventListener("click", () => { selectedMood = btn.dataset.mood; renderStudent(); }));
+      ["stress","sleep","workload","social","activity"].forEach(id => {
+        const range = $(id + "Range");
+        const value = $(id + "Value");
+        if (range && value) range.addEventListener("input", () => value.textContent = range.value + "/10");
+      });
+      const submit = $("submitCheckin");
+      if (submit) submit.addEventListener("click", submitCheckin);
+      document.querySelectorAll("[data-consent-key]").forEach(input => input.addEventListener("change", () => {
+        consentHistory.push({ date: now(), key: input.dataset.consentKey, state: input.checked ? "enabled" : "disabled" });
+        const log = $("consentLog");
+        if (log) log.innerHTML = renderConsentLog();
+        showToast(t("toastSaved"));
+      }));
+      const predictive = $("predictiveBtn");
+      if (predictive) predictive.addEventListener("click", () => {
+        predictiveEnabled = !predictiveEnabled;
+        consentHistory.push({ date: now(), key:"predictive", state: predictiveEnabled ? "enabled" : "disabled" });
+        renderStudent();
+      });
+      document.querySelectorAll("[data-student-action]").forEach(btn => btn.addEventListener("click", () => {
+        const index = Number(btn.dataset.studentAction);
+        if (index === 0) showChat("student");
+        else if (index === 2) showScheduleModal("student");
+        else showModal(t("studentActionTitles")[index], t("studentActionBodies")[index], "i-blue");
+      }));
+    }
+
+    function counselorCaseReview() {
+      const visibleCases = cases.filter(c => !hiddenCaseIds.has(c.id));
+      const highPriority = visibleCases.filter(c => c.category < 2).length;
+      const reviewCards = [
+        ["signals", l("Open signals", "待看信号", "열린 신호", "未確認の信号"), visibleCases.length, l("Five wellness patterns need a look.", "有五类健康模式需要查看。", "다섯 가지 웰니스 패턴을 확인해야 합니다.", "5つのウェルネスパターンを確認します。"), ""],
+        ["priority", l("Urgent reviews", "优先查看", "우선 검토", "優先確認"), highPriority, l("Review these cases first.", "先看这些案例。", "이 사례를 먼저 확인합니다.", "これらのケースを先に確認します。"), "purple"],
+        ["work", l("Time saved", "节省时间", "절약된 시간", "節約時間"), "≈35%", l("Less sorting work for counselors.", "减少咨询师整理工作。", "상담사의 분류 업무를 줄입니다.", "カウンセラーの整理作業を減らします。"), "green"],
+        ["auto", l("Auto actions", "自动操作", "자동 조치", "自動操作"), "0", l("AI never contacts students alone.", "AI 不会单独联系学生。", "AI는 혼자 학생에게 연락하지 않습니다.", "AIだけで学生に連絡しません。"), "rose"]
+      ];
+      return `<div class="grid">
+        <div class="section-title"><span class="title-icon i-blue">▣</span><div><h3>${l("Case Review Snapshot", "案例审阅快照", "사례 검토 요약", "ケース確認サマリー")}</h3><p class="page-kicker">${l("Click a card to see what it means in simple language.", "点击卡片，用简单语言查看含义。", "카드를 눌러 쉬운 설명을 확인하세요.", "カードをクリックして簡単な説明を確認します。")}</p></div></div>
+        <div class="review-metric-stack">${reviewCards.map(card => `<button class="review-metric-card ${card[4]}" data-review-card="${card[0]}"><span class="label">${card[1]}</span><span class="value">${card[2]}</span><span class="hint">${card[3]}</span></button>`).join("")}</div>
+      </div>`;
+    }
+
+    function reviewMetricDetail(key) {
+      const signalList = [
+        l("Study stress", "学习压力", "학업 스트레스", "学習ストレス"),
+        l("Feeling isolated", "社交疏离", "고립감", "孤立感"),
+        l("Poor sleep", "睡眠变差", "수면 저하", "睡眠低下"),
+        l("Lower campus engagement", "校园参与减少", "캠퍼스 참여 감소", "キャンパス参加低下"),
+        l("Wellness check-in concern", "健康打卡异常", "체크인 우려", "チェックイン懸念")
+      ];
+      if (key === "signals") {
+        showRichModal(l("Five open signals", "五类待看信号", "다섯 가지 열린 신호", "5つの未確認信号"), `<ul class="check-list">${signalList.map(item => `<li><span class="check">✓</span><span>${item}</span></li>`).join("")}</ul>`, "i-blue");
+        return;
+      }
+      const details = {
+        priority: [l("Urgent reviews", "优先查看", "우선 검토", "優先確認"), l("These cases should be checked first by a licensed counselor before any message or appointment is offered.", "这些案例应先由持证咨询师查看，再决定是否发消息或提供预约。", "메시지나 예약 전에 면허 상담사가 먼저 확인해야 합니다.", "メッセージや予約の前に有資格カウンセラーが確認します。"), "i-purple"],
+        work: [l("Time saved", "节省时间", "절약된 시간", "節約時間"), l("SCWIS collects the key context in one place, so counselors spend less time sorting information.", "SCWIS 把关键背景集中在一个地方，减少咨询师整理信息的时间。", "SCWIS는 주요 맥락을 한곳에 모아 상담사의 정리 시간을 줄입니다.", "SCWISは重要な文脈を一か所にまとめ、確認時間を減らします。"), "i-green"],
+        auto: [l("Auto actions", "自动操作", "자동 조치", "自動操作"), l("The number stays zero because AI does not send messages, diagnose students, book appointments, or close cases automatically.", "这个数字保持为零，因为 AI 不会自动发消息、诊断、预约或关闭案例。", "AI는 자동으로 메시지, 진단, 예약, 사례 종료를 하지 않으므로 0을 유지합니다.", "AIは自動で連絡、診断、予約、ケース終了をしないため0です。"), "i-rose"]
+      };
+      const item = details[key] || details.priority;
+      showModal(item[0], item[1], item[2]);
+    }
+
+    function counselorJourney() {
+      const stages = [
+        [l("1. Student shares", "1. 学生提交", "1. 학생 입력", "1. 学生が共有"), l("A student completes a voluntary check-in or uses support resources.", "学生完成自愿打卡或使用支持资源。", "학생이 자발적 체크인을 하거나 지원 자료를 사용합니다.", "学生が任意チェックインや支援資料を利用します。")],
+        [l("2. Repeated signal detected", "2. 检测到重复信号", "2. 반복 신호 감지", "2. 反復信号を検出"), l("The system detects a sustained pattern across approved data sources.", "系统在已批准的数据源中检测到持续模式。", "시스템은 승인된 데이터 출처에서 지속적인 패턴을 감지합니다.", "システムは承認済みデータ源から継続的なパターンを検出します。")],
+        [l("3. Counselor checks", "3. 咨询师查看", "3. 상담사 확인", "3. カウンセラー確認"), l("A trained counselor reviews context before any action.", "受训咨询师先查看背景，再决定行动。", "훈련된 상담사가 조치 전에 맥락을 확인합니다.", "担当者が行動前に文脈を確認します。")],
+        [l("4. Support offered", "4. 提供支持", "4. 지원 제공", "4. 支援提示"), l("Support may be resources, peer support, or a voluntary appointment.", "支持可以是资源、同伴支持或自愿预约。", "자료, 또래 지원, 자발적 예약이 제공될 수 있습니다.", "資料、ピア支援、任意予約を提案できます。")],
+        [l("5. Student chooses", "5. 学生选择", "5. 학생 선택", "5. 学生が選択"), l("The student decides whether to reply, book, or simply keep the resources.", "学生决定是否回复、预约或只保留资源。", "학생은 답장, 예약, 자료 보관 중 선택합니다.", "学生は返信、予約、資料利用を選べます。")]
+      ];
+      return `<div class="grid">
+        <div class="card">
+          <div class="section-head"><div class="section-title"><span class="title-icon i-green">↗</span><div><h3>${l("Student Support Journey", "学生支持流程", "학생 지원 과정", "学生支援の流れ")}</h3><p class="page-kicker">${l("A simple view of how a concern becomes human-reviewed support.", "用简单方式展示关注信号如何变成人工审阅的支持。", "우려 신호가 사람이 검토하는 지원으로 이어지는 간단한 과정입니다.", "懸念信号が人の確認を経て支援につながる流れです。")}</p></div></div></div>
+          <div class="timeline-grid">${stages.map((s,i) => `<div class="timeline-card"><span class="title-icon ${["i-blue","i-purple","i-green","i-teal","i-amber"][i]}">${i+1}</span><strong>${s[0]}</strong><p class="muted">${s[1]}</p></div>`).join("")}</div>
+        </div>
+        <div class="card tint-green">
+          <div class="section-title"><span class="title-icon i-green">✓</span><div><h3>${l("Counselor-led support", "咨询师主导支持", "상담사 주도 지원", "カウンセラー主導の支援")}</h3><p class="page-kicker">${l("AI can point out patterns, but trained people decide what support is appropriate.", "AI 可以指出模式，但由受训人员决定合适的支持。", "AI는 패턴을 보여주지만 적절한 지원은 사람이 결정합니다.", "AIは傾向を示しますが、支援内容は人が決めます。")}</p></div></div>
+        </div>
+      </div>`;
+    }
+
+    function renderCounselor() {
+      const body = activeTab === "alerts" ? counselorAlerts() : activeTab === "case" ? counselorCaseReview() : counselorJourney();
+      $("content").innerHTML = `${body}${privacyGuarantee()}`;
+      document.querySelectorAll("[data-case]").forEach(row => row.addEventListener("click", () => { selectedCase = Number(row.dataset.case); renderAll(); }));
+      document.querySelectorAll("[data-review-card]").forEach(card => card.addEventListener("click", () => reviewMetricDetail(card.dataset.reviewCard)));
+      document.querySelectorAll("[data-counselor-action]").forEach(btn => btn.addEventListener("click", () => handleCounselorAction(Number(btn.dataset.counselorAction))));
+      document.querySelectorAll("[data-ai-feedback]").forEach(btn => btn.addEventListener("click", () => {
+        document.querySelectorAll("[data-ai-feedback]").forEach(item => item.classList.remove("active"));
+        btn.classList.add("active");
+        const label = t("aiFeedbackOptions")[Number(btn.dataset.aiFeedback)];
+        showToast(`${label}: ${t("feedbackSaved")}`);
+      }));
+      document.querySelectorAll("[data-counselor-chat]").forEach(btn => btn.addEventListener("click", () => showChat("counselor")));
+      const filter = $("riskFilter");
+      if (filter) filter.addEventListener("change", () => renderRiskTable(filter.value));
+    }
+
+    function adminAnalytics() {
+      const metrics = [
+        [l("Student ecosystem", "学生生态规模", "학생 생태계", "学生規模"), "15,000", l("Designed for university-wide deployment", "面向全校部署", "대학 전체 배포 기준", "大学全体への導入想定")],
+        [l("System uptime target", "系统在线目标", "가동 목표", "稼働目標"), "99.5%", l("Private cloud plus edge resilience", "私有云与边缘弹性", "프라이빗 클라우드와 엣지 복원력", "プライベートクラウドとエッジ耐性")],
+        [l("Edge nodes", "边缘节点", "엣지 노드", "エッジノード"), "12", l("Four dedicated to Wi-Fi dead zones", "其中 4 个服务 Wi-Fi 弱区", "4개는 Wi-Fi 취약 구역용", "4つはWi-Fi弱区用")],
+        [l("Counselor triage relief", "咨询师分诊减负", "상담사 분류 부담 완화", "カウンセラー分類負担軽減"), "≈35%", l("Estimated administrative workload reduction", "预计行政工作量下降", "예상 행정 업무 감소", "推定管理業務削減")],
+        [l("Student employment roles", "学生就业岗位", "학생 고용 역할", "学生雇用枠"), "5–10", l("Privacy ambassadors, UX testers, support assistants", "隐私大使、UX 测试、支持助理", "개인정보 홍보, UX 테스트, 지원 보조", "プライバシー支援、UXテスト、サポート補助")]
+      ];
+      const architecture = [
+        [l("Central Private Cloud Core", "中央私有云核心", "중앙 프라이빗 클라우드", "中央プライベートクラウド"), l("Encrypted warehouse, BI analytics, case management, governance tools, disaster recovery within two hours.", "加密数据仓库、BI 分析、案例管理、治理工具，并支持两小时内灾难恢复。", "암호화 저장소, BI 분석, 사례 관리, 거버넌스 도구, 2시간 내 복구를 포함합니다.", "暗号化倉庫、BI分析、ケース管理、ガバナンス、2時間以内の復旧を含みます。"), "i-blue"],
+        [l("On-Campus Edge Nodes", "校园边缘节点", "캠퍼스 엣지 노드", "学内エッジノード"), l("Encrypted local cache for resources, consent tools, booking, and crisis support in weak Wi-Fi areas.", "为弱网区域缓存资源、同意工具、预约和危机支持。", "Wi-Fi 취약 구역에서 자료, 동의 도구, 예약, 위기 지원을 캐시합니다.", "Wi-Fi弱区で資料、同意ツール、予約、危機支援をキャッシュします。"), "i-green"],
+        [l("Decoupled API Gateway", "松耦合 API 网关", "분리형 API 게이트웨이", "疎結合APIゲートウェイ"), l("Integrates LMS, gym, dining, and library systems without creating hard dependencies.", "连接 LMS、健身、餐饮、图书馆系统，但不形成硬依赖。", "LMS, 체육관, 식당, 도서관을 연결하되 강한 의존을 만들지 않습니다.", "LMS、ジム、食堂、図書館を接続し、強い依存を作りません。"), "i-purple"]
+      ];
+      return `<div class="grid">
+        <div class="section-title"><span class="title-icon i-blue">📊</span><div><h3>${l("Campus Intelligence & Architecture Overview", "校园智能与架构概览", "캠퍼스 인사이트와 아키텍처 개요", "キャンパス分析と構成概要")}</h3><p class="page-kicker">${l("Administrator view shows only anonymized campus-level evidence for planning, resource allocation, and strategic reporting.", "管理员视图仅显示匿名化的校园层面证据，用于规划、资源分配和战略报告。", "관리자 화면은 계획과 자원 배분을 위한 익명화된 캠퍼스 수준 정보만 보여줍니다.", "管理者画面は計画と資源配分のための匿名化された全体情報のみを表示します。")}</p></div></div>
+        <div class="grid five">${metrics.map((m,i) => `<div class="metric ${["","purple","green","amber",""][i]}"><span class="label">${m[0]}</span><span class="value">${m[1]}</span><span class="hint">${m[2]}</span></div>`).join("")}</div>
+        <div class="architecture-map">${architecture.map((a,i) => `<div class="arch-block"><span class="title-icon ${a[2]}">${i+1}</span><h3>${a[0]}</h3><p class="page-kicker">${a[1]}</p></div>`).join("")}</div>
+        <div class="grid admin-trend-layout">
+          <div class="card chart-card"><div class="section-title"><span class="title-icon i-green">📈</span><h3>${l("Wellness Trend", "健康趋势", "웰니스 추세", "ウェルネス傾向")}</h3></div>${campusTrend()}</div>
+          <div class="card tint-blue"><div class="section-title"><span class="title-icon i-blue">AI</span><h3>${l("AI summary", "AI 总结", "AI 요약", "AI要約")}</h3></div><div class="insight-list">
+            <div class="insight-line"><strong>${l("November", "11月", "11월", "11月")}:</strong> ${l("Reading week gives students recovery time, so campus wellness rises.", "Reading week 给学生提供恢复时间，因此整体 wellness 上升。", "리딩 위크가 회복 시간을 제공해 전체 웰니스가 상승합니다.", "Reading week により回復時間が増え、全体のウェルネスが上がります。")}</div>
+            <div class="insight-line"><strong>${l("December", "12月", "12월", "12月")}:</strong> ${l("Group projects and assignment deadlines increase workload, so wellness declines.", "大量 group project 和 assignment 截止导致负担增加，因此 wellness 下降。", "팀 프로젝트와 과제 마감으로 부담이 늘어 웰니스가 하락합니다.", "グループ課題と締切で負担が増え、ウェルネスが下がります。")}</div>
+            <div class="insight-line"><strong>${l("January", "1月", "1월", "1月")}:</strong> ${l("Final exam preparation creates the lowest wellbeing point in the first semester.", "学生备战期末考，使 wellness 降到第一学期最低点。", "기말 준비로 첫 학기 최저점이 나타납니다.", "期末準備により第1学期の最低点になります。")}</div>
+            <div class="insight-line"><strong>${l("February", "2月", "2월", "2月")}:</strong> ${l("Winter holiday improves recovery, sleep, and social connection.", "寒假改善恢复、睡眠和社交联系。", "겨울방학은 회복, 수면, 사회적 연결을 개선합니다.", "冬休みで回復、睡眠、社会的つながりが改善します。")}</div>
+            <div class="insight-line"><strong>${l("April", "4月", "4월", "4月")}:</strong> ${l("The shortened reading week reduces recovery time, so wellness falls compared with March.", "Reading week 缩短使恢复时间减少，因此相较三月下降。", "짧아진 리딩 위크로 회복 시간이 줄어 3월보다 하락합니다.", "短いReading weekで回復時間が減り、3月より下がります。")}</div>
+            <div class="insight-line"><strong>${l("May", "5月", "5월", "5月")}:</strong> ${l("Final exam preparation again increases stress and lowers wellness.", "学生再次备战期末考，压力上升，wellness 下降。", "기말 준비로 스트레스가 다시 올라 웰니스가 낮아집니다.", "期末準備でストレスが上がり、ウェルネスが下がります。")}</div>
+          </div></div>
+        </div>
+        <div class="card chart-card"><div class="section-title"><span class="title-icon i-purple">◔</span><h3>${l("Aggregate Planning Categories", "聚合规划类别", "집계 계획 범주", "集計計画カテゴリ")}</h3></div><div class="donut-wrap" style="margin-top:22px;"><div class="donut" style="background:conic-gradient(#2e86ab 0 32%, #55a868 32% 56%, #f2b84b 56% 74%, #df6f6f 74% 88%, #8d6adf 88% 100%);"></div>${legend()}</div></div>
+      </div>`;
+    }
+
+    function adminAI() {
+      const tiers = [
+        [l("Campus Data Environment", "校园数据环境", "캠퍼스 데이터 환경", "キャンパスデータ環境"), l("Five approved, minimally invasive sources under data minimization.", "五类已批准、最小化的数据来源。", "승인된 최소 침해 데이터 출처 5개입니다.", "承認済みで最小限のデータ源5つです。")],
+        [l("Consent, Privacy & Governance", "同意、隐私与治理", "동의, 개인정보, 거버넌스", "同意・プライバシー・ガバナンス"), l("Non-bypassable gate with opt-out, audit logging, and purpose limitation.", "不可绕过的闸门，包含退出、审计和目的限制。", "옵트아웃, 감사 기록, 목적 제한을 포함한 필수 게이트입니다.", "オプトアウト、監査記録、目的制限を含む必須ゲートです。")],
+        [l("Secure BI Infrastructure", "安全 BI 基础设施", "보안 BI 인프라", "安全なBI基盤"), l("Encrypted warehouse and role-separated data marts.", "加密仓库与角色隔离数据集市。", "암호화 저장소와 역할별 데이터 마트입니다.", "暗号化倉庫と役割別データマートです。")],
+        [l("Analytics & AI Risk Detection", "分析与 AI 风险识别", "분석 및 AI 위험 감지", "分析とAIリスク検出"), l("Rule-based and supervised models generate explainable signals only.", "规则与监督模型只生成可解释信号。", "규칙 기반 및 지도 모델은 설명 가능한 신호만 생성합니다.", "ルールと教師ありモデルは説明可能な信号のみ生成します。")],
+        [l("Decision Support Platform", "决策支持平台", "의사결정 지원 플랫폼", "意思決定支援プラットフォーム"), l("One-page summaries prioritize cases for counselor review.", "一页式摘要用于咨询师优先审阅。", "한 페이지 요약으로 상담사 검토 우선순위를 정합니다.", "1ページ要約で確認優先度を示します。")],
+        [l("Human-in-the-Loop Layer", "人在回路层", "사람 참여 검토층", "人間参加レビュー層"), l("Licensed counselors approve, dismiss, or adjust support actions.", "持证咨询师批准、驳回或调整支持行动。", "면허 상담사가 승인, 보류, 조정합니다.", "有資格者が承認、却下、調整します。")],
+        [l("Student Support Actions", "学生支持行动", "학생 지원 조치", "学生支援アクション"), l("Resources, peer support, voluntary appointments, and crisis access.", "资源、同伴支持、自愿预约和危机入口。", "자료, 또래 지원, 자발적 예약, 위기 지원입니다.", "資料、ピア支援、任意予約、危機支援です。")],
+        [l("Feedback & Continuous Improvement", "反馈与持续改进", "피드백과 지속 개선", "フィードバックと継続改善"), l("Monthly governance reviews and quarterly bias audits refine thresholds.", "月度治理审查与季度偏见审计优化阈值。", "월간 거버넌스 검토와 분기별 편향 감사로 기준을 개선합니다.", "月次レビューと四半期バイアス監査で基準を改善します。")]
+      ];
+      const uses = [
+        l("LMS engagement signals such as assignment submission timing and course access frequency", "LMS 参与信号，例如作业提交时间和课程访问频率", "과제 제출 시간과 접속 빈도 같은 LMS 참여 신호", "課題提出時間やアクセス頻度などのLMS参加信号"),
+        l("Campus gym check-in and check-out patterns", "校园健身房进出记录模式", "체육관 출입 패턴", "ジム入退館パターン"),
+        l("Campus dining card transaction frequency, without individual purchase details", "校园餐卡交易频率，不包含个人购买明细", "구매 상세가 없는 식당 카드 이용 빈도", "購入詳細を含まない食堂カード利用頻度"),
+        l("Library building access logs", "图书馆楼宇访问日志", "도서관 건물 출입 기록", "図書館建物アクセス記録"),
+        l("Voluntary wellness self-check-in data submitted by students", "学生自愿提交的健康自我打卡数据", "학생이 자발적으로 제출한 웰니스 체크인 데이터", "学生が任意で提出したウェルネスチェックイン"),
+        l("Sustained multi-source patterns over a minimum two-week period", "至少持续两周的多来源模式", "최소 2주 이상 지속되는 다중 출처 패턴", "最低2週間続く複数データ源パターン")
+      ];
+      const notUses = [
+        l("Academic grades or GPA", "学业成绩或 GPA", "성적 또는 GPA", "成績またはGPA"),
+        l("Individual dining purchase details", "个人餐饮购买明细", "개별 식사 구매 상세", "個別の食事購入内容"),
+        l("Disciplinary records or punishment-related data", "纪律记录或处罚相关数据", "징계 또는 처벌 관련 데이터", "懲戒記録または処分関連データ"),
+        l("Private messages or social media content", "私人消息或社交媒体内容", "개인 메시지 또는 소셜 미디어", "私的メッセージまたはSNS内容"),
+        l("Single isolated data points to trigger risk signals", "用单个孤立数据点触发风险信号", "단일 고립 데이터로 위험 신호 생성", "単独データ点によるリスク信号"),
+        l("Black-box diagnostic labels or automatic mental health diagnoses", "黑箱诊断标签或自动心理健康诊断", "블랙박스 진단 라벨 또는 자동 정신건강 진단", "ブラックボックス診断ラベルまたは自動診断")
+      ];
+      const limits = [
+        l("SCWIS AI is a decision-support tool, not a decision-maker.", "SCWIS AI 是决策支持工具，不是决策者。", "SCWIS AI는 의사결정 지원 도구이며 결정자가 아닙니다.", "SCWIS AIは意思決定支援ツールであり決定者ではありません。"),
+        l("The system only flags sustained multi-source patterns for professional review.", "系统只标记持续、多来源模式，供专业人员审阅。", "시스템은 지속적인 다중 출처 패턴만 전문가 검토용으로 표시합니다.", "システムは継続的な複数データ源パターンのみ専門確認用に表示します。"),
+        l("No automated intervention, diagnosis, or outreach is generated by AI.", "AI 不会生成自动干预、诊断或联系。", "AI는 자동 개입, 진단, 연락을 생성하지 않습니다.", "AIは自動介入、診断、連絡を生成しません。"),
+        l("All medium, high, and critical risk signals must be reviewed by licensed counselors.", "所有中、高、关键风险信号都必须由持证咨询师审阅。", "중간, 높음, 심각 신호는 모두 면허 상담사가 검토해야 합니다.", "中・高・重要リスク信号は有資格者が確認します。"),
+        l("Student data is never used for academic evaluation, disciplinary action, or purposes outside wellness support.", "学生数据绝不会用于学业评价、纪律处分或健康支持以外目的。", "학생 데이터는 학업 평가, 징계, 웰니스 지원 외 목적으로 사용되지 않습니다.", "学生データは成績評価、懲戒、ウェルネス支援以外に使いません。"),
+        l("Students can adjust consent or opt out of predictive analytics at any time without losing access to core wellness resources.", "学生可随时调整同意或退出预测分析，且不会失去核心健康资源。", "학생은 언제든 동의를 조정하거나 예측 분석을 꺼도 핵심 자료를 이용할 수 있습니다.", "学生はいつでも同意調整や予測分析オフができ、基本資料は利用できます。")
+      ];
+      return `<div class="grid">
+        <div class="card tint-blue">
+          <div class="section-title"><span class="title-icon i-blue">8</span><div><h3>${l("8-Tier Privacy-First Logical Architecture", "八层隐私优先逻辑架构", "8단계 개인정보 우선 논리 구조", "8層プライバシー優先論理構成")}</h3><p class="page-kicker">${l("No data moves forward until governance, consent, and purpose checks are complete.", "数据必须完成治理、同意和目的检查后才能继续流转。", "거버넌스, 동의, 목적 확인이 끝나야 데이터가 다음 단계로 이동합니다.", "ガバナンス、同意、目的確認が完了してからデータが進みます。")}</p></div></div>
+          <div class="layer-stack" style="margin-top:16px;">${tiers.map((tier,i) => `<div class="layer-card"><span class="layer-no">${i+1}</span><div><strong>${tier[0]}</strong><p class="muted">${tier[1]}</p></div></div>`).join("")}</div>
+        </div>
+        <div class="grid two">
+          <div class="card tint-green"><div class="section-title"><span class="title-icon i-green">✓</span><h3>${l("What Data the AI Uses", "AI 使用哪些数据", "AI가 사용하는 데이터", "AIが使用するデータ")}</h3></div><ul class="check-list">${uses.map(x => `<li><span class="check">✓</span><span>${x}</span></li>`).join("")}</ul></div>
+          <div class="card tint-amber" style="border-color:rgba(217,79,95,0.32);"><div class="section-title"><span class="title-icon i-rose">⊘</span><h3>${l("What the AI Does NOT Use", "AI 不使用哪些数据", "AI가 사용하지 않는 데이터", "AIが使用しないデータ")}</h3></div><ul class="check-list">${notUses.map(x => `<li><span style="color:var(--rose);font-weight:950;">×</span><span>${x}</span></li>`).join("")}</ul></div>
+        </div>
+        <div class="warning-box"><div class="section-title"><span class="title-icon i-amber">!</span><h3>${l("Decision-Support Limits", "决策支持边界", "의사결정 지원 한계", "意思決定支援の限界")}</h3></div><ul class="bullet-list">${limits.map(x => `<li>${x}</li>`).join("")}</ul></div>
+      </div>`;
+    }
+
+    function renderAdmin() {
+      if (!navKeys.admin.includes(activeTab)) activeTab = "analytics";
+      const body = activeTab === "analytics" ? adminAnalytics() : activeTab === "ai" ? adminAI() : adminGovernance();
+      $("content").innerHTML = body;
+    }
+
+    function studentGuardrailFooter() {
+      const guardrails = [
+        l("Consent gate before analytics", "分析前必须先经过同意闸门", "분석 전 동의 확인", "分析前の同意確認"),
+        l("No grades, discipline records, or private messages", "不使用成绩、纪律记录或私人消息", "성적, 징계 기록, 개인 메시지는 사용하지 않음", "成績、懲戒記録、私的メッセージは不使用"),
+        l("Opt out without losing support services", "退出预测分析不影响支持服务", "예측 분석을 꺼도 지원 서비스는 유지", "予測分析をオフにしても支援は維持"),
+        l("Counselors, not AI, decide every outreach", "每次联系都由咨询师决定，而不是 AI 决定", "연락 여부는 AI가 아니라 상담사가 결정", "連絡判断はAIではなくカウンセラー")
+      ];
+      const boundaries = [
+        l("LMS timing signals, not grades", "LMS 时间信号，不含成绩", "LMS 시간 신호, 성적 제외", "LMS時間信号、成績なし"),
+        l("Gym, dining, and library patterns only in aggregate context", "健身、餐饮和图书馆模式只用于背景判断", "체육관, 식당, 도서관 패턴은 맥락용", "ジム、食堂、図書館パターンは文脈用"),
+        l("Voluntary check-ins remain student-controlled", "自愿打卡始终由学生控制", "자발적 체크인은 학생이 관리", "任意チェックインは学生が管理")
+      ];
+      return `<div class="student-guardrail-footer">
+        <div class="guardrail-cards">
+          <div class="card tint-green">
+            <h3>${l("Privacy-by-design guardrails", "隐私优先防护", "개인정보 우선 보호장치", "プライバシー優先ガード")}</h3>
+            <ul class="check-list">${guardrails.map(item => `<li><span class="check">✓</span><span>${item}</span></li>`).join("")}</ul>
+          </div>
+          <div class="card">
+            <h3>${l("Approved data boundaries", "已批准的数据边界", "승인된 데이터 경계", "承認済みデータ境界")}</h3>
+            <ul class="check-list">${boundaries.map(item => `<li><span class="check">✓</span><span>${item}</span></li>`).join("")}</ul>
+          </div>
+        </div>
+      </div>`;
+    }
+
+    function studentSupport() {
+      const routes = [
+        ["i-blue","1", l("Self-guided resource library", "自助资源库", "자가 자료실", "セルフ資料ライブラリ"), l("Stress, sleep, study planning, and crisis information remain available without analytics.", "压力、睡眠、学习规划和危机信息无需预测分析也可使用。", "스트레스, 수면, 학습 계획, 위기 정보는 분석 없이도 이용할 수 있습니다.", "ストレス、睡眠、学習計画、危機情報は分析なしでも使えます。")],
+        ["i-green","2", l("Peer and student-led support", "同伴与学生主导支持", "또래 및 학생 주도 지원", "ピア・学生主導支援"), l("Students can start with a lower-pressure peer route before counselor contact.", "学生可以先选择压力较低的同伴支持路径。", "상담사 연락 전 부담이 낮은 또래 지원을 선택할 수 있습니다.", "カウンセラー連絡前に負担の低いピア支援を選べます。")],
+        ["i-purple","3", l("Voluntary counseling appointment", "自愿咨询预约", "자발적 상담 예약", "任意相談予約"), l("Students choose available slots; no appointment is forced by AI.", "学生自主选择时段，AI 不会强制安排预约。", "학생이 시간을 선택하며 AI가 예약을 강제하지 않습니다.", "学生が時間を選び、AIは予約を強制しません。")],
+        ["i-teal","4", l("Counselor follow-up", "咨询师跟进", "상담사 후속 지원", "カウンセラーフォロー"), l("Only trained staff decide whether outreach is appropriate.", "是否联系由受训人员决定。", "연락이 적절한지는 훈련된 직원이 결정합니다.", "連絡の適切性は訓練された担当者が判断します。")],
+        ["i-amber","5", l("Crisis support access", "危机支持入口", "위기 지원 접근", "危機支援アクセス"), l("Always visible and available regardless of analytics opt-out.", "无论是否退出预测分析，该入口始终可见可用。", "예측 분석을 꺼도 항상 보이고 이용 가능합니다.", "予測分析をオフにしても常に利用できます。")]
+      ];
+      return `<div class="grid">
+        <div class="card">
+          <div class="section-title"><span class="title-icon i-green">✚</span><div><h3>${l("Support Pathways", "支持路径", "지원 경로", "支援ルート")}</h3><p class="page-kicker">${l("Support services are separated from predictive analytics so students can seek help without stigma.", "支持服务与预测分析分离，让学生可以无污名地寻求帮助。", "지원 서비스와 예측 분석을 분리해 낙인 없이 도움을 요청할 수 있습니다.", "支援サービスと予測分析を分け、 stigma なく助けを求められます。")}</p></div></div>
+          <div class="timeline-grid" style="margin-top:16px;">${routes.map(r => `<div class="timeline-card"><span class="title-icon ${r[0]}">${r[1]}</span><strong>${r[2]}</strong><p class="muted">${r[3]}</p></div>`).join("")}</div>
+        </div>
+        <div class="card tint-blue">
+          <h3>${t("messageCenter")} <span class="tag high">1</span> <span class="tag low">${t("private")}</span></h3>
+          <p style="line-height:1.65;color:#344b64;margin-top:14px;">${t("supportMessage").replace("{name}", current.name)}</p>
+          <div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap;"><button class="soft-btn" data-student-action="2">${t("book")}</button><button class="soft-btn" data-student-action="0">${l("Chat", "聊天", "채팅", "チャット")}</button></div>
+        </div>
+      </div>`;
+    }
+
+    function counselorAlerts() {
+      return `<div class="grid">
+        ${counselorMetricCards()}
+        <div class="grid case-alert-layout">
+          <div class="card">
+            <div class="filter-row"><div class="section-title"><span class="title-icon i-rose">!</span><h3>${l("Cases List", "案例列表", "사례 목록", "ケース一覧")}</h3></div><label>${t("filter")} <select class="soft-select" id="riskFilter">${t("filterOptions").map((x,i) => `<option value="${i}">${x}</option>`).join("")}</select></label></div>
+            <div id="riskTable">${riskTable("0")}</div>
+          </div>
+          <div class="card tint-green">${humanReviewPanel()}</div>
+        </div>
+      </div>`;
+    }
+
+    function humanReviewPanel() {
+      if (hiddenCaseIds.has(cases[selectedCase]?.id)) {
+        const next = cases.findIndex(c => !hiddenCaseIds.has(c.id));
+        selectedCase = next >= 0 ? next : 0;
+      }
+      const c = cases[selectedCase];
+      if (!c || hiddenCaseIds.has(c.id)) return `<div class="empty-state">${t("emptyCase")}</div>`;
+      return `<div class="review-panel">
+        <div class="section-title"><span class="title-icon i-green">✓</span><h3>${l("Human Decision Panel", "人工决策面板", "사람이 결정하는 패널", "人が判断するパネル")}</h3></div>
+        <p class="muted">${c.id} · ${l("support signal, not diagnosis", "支持信号，不是诊断", "지원 신호, 진단 아님", "支援信号であり診断ではない")}</p>
+        <div class="why-pill color-note amber"><strong>${t("aiConcernSummary")}</strong><br>${c.summary}</div>
+        <div><strong>${t("riskCategory")}</strong><br><span class="tag ${c.category < 2 ? "high" : c.category < 4 ? "medium" : "low"}">${t("categories")[c.category]}</span></div>
+        <div><strong>${t("confidence")}</strong><div class="confidence-bar" style="margin-top:8px;"><span style="width:${c.confidence}%"></span></div><p class="muted" style="margin-top:7px;">${c.confidence}% · ${t("confidencePatterns")[c.category]}</p></div>
+        <div><strong>${t("aiFeedback")}</strong><div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:8px;">${t("aiFeedbackOptions").map((x, i) => `<button class="ghost-btn" style="padding:8px 6px;" data-ai-feedback="${i}">${x}</button>`).join("")}</div></div>
+        <div class="why-pill"><strong>${t("recommendedAction")}</strong><br>${t("actionText")}</div>
+        <div class="grid">
+          <button class="ghost-btn" data-counselor-action="1">${t("counselorButtons")[1]}</button>
+          <button class="ghost-btn" data-counselor-action="2">${t("counselorButtons")[2]}</button>
+          <button class="primary-btn" style="background:var(--purple);" data-counselor-chat>${t("openChatWithStudent")}</button>
+        </div>
+      </div>`;
+    }
+
+    function privacyGuarantee() {
+      return `<div class="section privacy-guarantee"><span class="title-icon i-green">◎</span><div><h3>${l("Privacy and human judgment across every step", "每一步都保护隐私并保留人工判断", "모든 단계에서 개인정보와 사람의 판단 보호", "すべての段階でプライバシーと人の判断を保護")}</h3><p>${l("SCWIS Care360 uses AI as decision support only. Student data is never used for academic evaluation, discipline, scholarships, or campus access decisions; every support action is reviewed and logged.", "SCWIS Care360 只把 AI 用作决策支持。学生数据绝不用作学业评价、纪律、奖学金或校园准入决策；每个支持行动都会被审阅和记录。", "SCWIS Care360은 AI를 의사결정 지원으로만 사용합니다. 학생 데이터는 학업 평가, 징계, 장학금, 캠퍼스 접근 결정에 사용되지 않으며 모든 지원 조치는 검토되고 기록됩니다.", "SCWIS Care360はAIを意思決定支援としてのみ使います。学生データは成績評価、懲戒、奨学金、入構判断に使われず、すべての支援行動は確認・記録されます。")}</p></div></div>`;
+    }
+
+    function adminGovernance() {
+      const budget = [
+        [l("Hybrid edge-cloud & secure BI", "混合边缘云与安全 BI", "하이브리드 엣지 클라우드와 보안 BI", "ハイブリッドエッジクラウドと安全BI"), 190000, "25.3%"],
+        [l("Integration and API gateway", "集成与 API 网关", "통합 및 API 게이트웨이", "統合とAPIゲートウェイ"), 115000, "15.3%"],
+        [l("AI-assisted risk detection", "AI 辅助风险识别", "AI 보조 위험 감지", "AI支援リスク検出"), 95000, "12.7%"],
+        [l("Consent, privacy, HITL workflow", "同意、隐私与人在回路流程", "동의, 개인정보, 사람 검토 흐름", "同意・プライバシー・人間確認フロー"), 115000, "15.3%"],
+        [l("Pilot, training, security validation", "试点、培训与安全验证", "파일럿, 교육, 보안 검증", "試行、研修、安全検証"), 145000, "19.3%"]
+      ];
+      const risks = [
+        [l("Privacy anxiety", "隐私焦虑", "개인정보 불안", "プライバシー不安"), l("Clear opt-out, student-facing transparency, no disciplinary use.", "清晰退出、学生端透明说明、不得纪律使用。", "명확한 옵트아웃, 학생용 투명성, 징계 사용 금지.", "明確なオプトアウト、学生向け透明性、懲戒利用なし。")],
+        [l("AI misjudgment", "AI 误判", "AI 오판", "AI誤判断"), l("Counselor validation, false-positive review, quarterly bias audits.", "咨询师验证、误报审查、季度偏见审计。", "상담사 검증, 오탐 검토, 분기별 편향 감사.", "カウンセラー検証、誤検出確認、四半期バイアス監査。")],
+        [l("System outage", "系统中断", "시스템 중단", "システム停止"), l("Private cloud redundancy, edge cache, loose-coupled integrations.", "私有云冗余、边缘缓存、松耦合集成。", "프라이빗 클라우드 이중화, 엣지 캐시, 느슨한 통합.", "プライベートクラウド冗長化、エッジキャッシュ、疎結合統合。")]
+      ];
+      return `<div class="grid">
+        <div class="grid two">
+          <div class="card"><div class="section-title"><span class="title-icon i-amber">$</span><h3>${t("budget")}</h3></div><div class="cost-grid"><div class="cost-card">${t("oneTime")}<strong>USD 750,000</strong></div><div class="cost-card">${t("annual")}<strong>USD 180,000</strong></div><div class="cost-card">${l("Payment model", "付款模式", "지불 모델", "支払いモデル")}<strong>30 / 40 / 30</strong></div><div class="cost-card">${l("Maintenance focus", "维护重点", "유지관리 초점", "保守重点")}<strong>${l("Bias + security", "偏见与安全", "편향 + 보안", "バイアス + 安全")}</strong></div></div></div>
+          <div class="card"><div class="section-title"><span class="title-icon i-teal">▤</span><h3>${l("Governance cadence", "治理节奏", "거버넌스 주기", "ガバナンス頻度")}</h3></div><table style="margin-top:12px;"><tbody>${[l("Monthly user-feedback review", "月度用户反馈审查", "월간 사용자 피드백 검토", "月次ユーザーフィードバック確認"),l("Quarterly AI bias audit", "季度 AI 偏见审计", "분기별 AI 편향 감사", "四半期AIバイアス監査"),l("Annual disaster recovery drill", "年度灾难恢复演练", "연간 재해 복구 훈련", "年次災害復旧訓練"),l("24h revoked-data purge", "24 小时撤回数据清除", "24시간 철회 데이터 삭제", "24時間撤回データ削除")].map((r,i) => `<tr><td>${r}</td><td style="text-align:right;font-weight:950;color:${i>1 ? "var(--green)" : "var(--ink)"}">✓</td></tr>`).join("")}</tbody></table></div>
+        </div>
+        <div class="card">
+          <div class="section-title"><span class="title-icon i-amber">$</span><h3>${l("Implementation budget mapped to architecture", "实施预算与架构映射", "구현 예산과 구조 연결", "実装予算と構成の対応")}</h3></div>
+          <div class="budget-row">${budget.map(b => `<div><div class="budget-line"><span>${b[0]} <strong>(${b[2]})</strong></span><strong>USD ${b[1].toLocaleString()}</strong></div><div class="bar-track"><div class="bar-fill" style="width:${parseFloat(b[2])}%"></div></div></div>`).join("")}</div>
+        </div>
+        <div class="grid three">${risks.map((r,i) => `<div class="card tint-${["blue","amber","green"][i]}"><div class="section-title"><span class="title-icon ${["i-blue","i-amber","i-green"][i]}">!</span><h3>${r[0]}</h3></div><p class="page-kicker" style="margin-top:10px;">${r[1]}</p></div>`).join("")}</div>
+      </div>`;
+    }
+
     function loginAs(key) {
       currentKey = key || "logan";
       current = accounts[key] || accounts.logan;
@@ -1995,7 +3168,7 @@
     $("loginBtn").addEventListener("click", doLogin);
     $("loginUser").addEventListener("keydown", e => { if (e.key === "Enter") doLogin(); });
     $("loginPass").addEventListener("keydown", e => { if (e.key === "Enter") doLogin(); });
-    $("logoutBtn").addEventListener("click", () => document.body.classList.add("locked"));
+    if ($("logoutBtn")) $("logoutBtn").addEventListener("click", () => document.body.classList.add("locked"));
     $("loginLang").addEventListener("change", e => setLanguage(e.target.value));
     $("systemLang").addEventListener("change", e => setLanguage(e.target.value));
     $("modalClose").addEventListener("click", closeModal);
